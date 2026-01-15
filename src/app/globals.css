@@ -1,26 +1,61 @@
-@import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
+@layer base {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    /* Light mode colors */
+    --background: okclh(0.97 0 0);
+    --foreground: okclh(0.17 0.05 254);
+    --card: okclh(0.97 0 0);
+    --card-foreground: okclh(0.17 0.05 254);
+    --popover: okclh(0.97 0 0);
+    --popover-foreground: okclh(0.17 0.05 254);
+    --primary: okclh(0.26 0.09 256);
+    --primary-foreground: okclh(0.96 0.02 260);
+    --secondary: okclh(0.92 0.04 275);
+    --secondary-foreground: okclh(0.26 0.09 256);
+    --muted: okclh(0.92 0.04 275);
+    --muted-foreground: okclh(0.54 0.04 256);
+    --accent: okclh(0.92 0.04 275);
+    --accent-foreground: okclh(0.26 0.09 256);
+    --destructive: okclh(0.65 0.21 18);
+    --destructive-foreground: okclh(0.96 0.02 260);
+    --border: okclh(0.88 0.03 275);
+    --input: okclh(0.88 0.03 275);
+    --ring: okclh(0.17 0.05 254);
+  }
+
+  .dark {
+    /* Dark mode colors */
+    --background: okclh(0.17 0.05 254);
+    --foreground: okclh(0.96 0.02 260);
+    --card: okclh(0.17 0.05 254);
+    --card-foreground: okclh(0.96 0.02 260);
+    --popover: okclh(0.17 0.05 254);
+    --popover-foreground: okclh(0.96 0.02 260);
+    --primary: okclh(0.96 0.02 260);
+    --primary-foreground: okclh(0.26 0.09 256);
+    --secondary: okclh(0.3 0.07 256);
+    --secondary-foreground: okclh(0.96 0.02 260);
+    --muted: okclh(0.3 0.07 256);
+    --muted-foreground: okclh(0.7 0.03 256);
+    --accent: okclh(0.3 0.07 256);
+    --accent-foreground: okclh(0.96 0.02 260);
+    --destructive: okclh(0.56 0.16 20);
+    --destructive-foreground: okclh(0.96 0.02 260);
+    --border: okclh(0.3 0.07 256);
+    --input: okclh(0.3 0.07 256);
+    --ring: okclh(0.87 0.04 256);
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
 }
+
