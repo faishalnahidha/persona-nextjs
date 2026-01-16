@@ -1,49 +1,105 @@
 import mongoose, { Schema, Document, Model } from 'mongoose';
 
 /**
- * Result Model - Stores assessment results for both guest and registered users
+ * Result Model - Stores assessment results
  *
- * Think about your Meteor newPlayers collection:
- * - It stored guest user data with answers and scores
- * - This model does the same, but also handles registered users!
+ * Current: Users take test once, result stored in User document
+ * Future: Users can retake tests, multiple results per user
+ *
+ * This separate collection makes future expansion easier while
+ * maintaining current "single test" behavior
  */
 export interface IResult extends Document {
+  userId: mongoose.Types.ObjectId; // Reference to User (guest or registered)
   assessmentId: mongoose.Types.ObjectId; // Which assessment was taken
-  userId?: mongoose.Types.ObjectId; // If registered user (optional)
-  guestId?: string; // If guest user (optional)
-  answers: Map<string, unknown>; // Question index -> answer selected
-  scores: Map<string, number>; // Trait -> score (e.g., "introvert": 85)
+
+  // Raw Answers (e.g., ["I", "N", "N", "F", ...])
+  answers: string[];
+
+  // Calculated Scores
+  scores: {
+    extrovert: number;
+    introvert: number;
+    sensory: number;
+    intuitive: number;
+    thinking: number;
+    feeling: number;
+    judging: number;
+    perceiving: number;
+  };
+
+  // Final Result
+  personalityType: string; // e.g., "INFJ"
+  alternativeType1?: string; // e.g., "INTJ"
+  alternativeType2?: string; // e.g., "ISFJ"
+
+  // Metadata
+  completedAt: Date;
+  timeTaken?: number; // In seconds (how long to complete test)
+
+  // For future: Mark as "active" result vs historical
+  isActive: boolean; // true = current result shown to user
+
   createdAt: Date;
 }
 
 const ResultSchema = new Schema<IResult>(
   {
+    userId: {
+      type: Schema.Types.ObjectId,
+      ref: 'User',
+      required: [true, 'User ID is required'],
+    },
     assessmentId: {
       type: Schema.Types.ObjectId,
       ref: 'Assessment',
       required: [true, 'Assessment ID is required'],
     },
-    userId: {
-      type: Schema.Types.ObjectId,
-      ref: 'User',
-      // Optional - only set if user is registered
-    },
-    guestId: {
-      type: String,
-      // Optional - only set if user is guest
-      // In your app, you might generate this from session/cookie
-    },
     answers: {
-      type: Map,
-      of: Schema.Types.Mixed,
+      type: [String],
       required: [true, 'Answers are required'],
-      // Example: { "0": "Option A", "1": "Option C", "2": "Option B" }
+      validate: {
+        validator: function (answers: string[]) {
+          return answers.length > 0;
+        },
+        message: 'At least one answer is required',
+      },
     },
     scores: {
-      type: Map,
-      of: Number,
-      required: [true, 'Scores are required'],
-      // Example: { "introvert": 75, "extrovert": 25, "thinking": 60, "feeling": 40 }
+      extrovert: { type: Number, required: true, min: 0, max: 100 },
+      introvert: { type: Number, required: true, min: 0, max: 100 },
+      sensory: { type: Number, required: true, min: 0, max: 100 },
+      intuitive: { type: Number, required: true, min: 0, max: 100 },
+      thinking: { type: Number, required: true, min: 0, max: 100 },
+      feeling: { type: Number, required: true, min: 0, max: 100 },
+      judging: { type: Number, required: true, min: 0, max: 100 },
+      perceiving: { type: Number, required: true, min: 0, max: 100 },
+    },
+    personalityType: {
+      type: String,
+      required: [true, 'Personality type is required'],
+      uppercase: true,
+      match: [/^[A-Z]{4}$/, 'Personality type must be 4 uppercase letters'],
+    },
+    alternativeType1: {
+      type: String,
+      uppercase: true,
+    },
+    alternativeType2: {
+      type: String,
+      uppercase: true,
+    },
+    completedAt: {
+      type: Date,
+      default: Date.now,
+    },
+    timeTaken: {
+      type: Number,
+      min: 0,
+    },
+    isActive: {
+      type: Boolean,
+      default: true,
     },
   },
   {
@@ -52,30 +108,80 @@ const ResultSchema = new Schema<IResult>(
 );
 
 /**
- * Validation: Either userId OR guestId must be present (not both, not neither)
+ * Indexes for fast queries
  */
-ResultSchema.pre<IResult>('save', async function () {
-  const hasUserId = !!this.userId;
-  const hasGuestId = !!this.guestId;
+ResultSchema.index({ userId: 1, isActive: 1 }); // Get user's active result
+ResultSchema.index({ userId: 1, createdAt: -1 }); // Get user's result history
+ResultSchema.index({ assessmentId: 1 }); // Analytics: all results for an assessment
+ResultSchema.index({ personalityType: 1 }); // Group by personality type
 
-  if (hasUserId && hasGuestId) {
-    throw new Error('Result cannot have both userId and guestId');
-  } else if (!hasUserId && !hasGuestId) {
-    throw new Error('Result must have either userId or guestId');
+/**
+ * Validation: Scores must add up correctly
+ * E.g., extrovert + introvert should equal 100
+ */
+ResultSchema.pre('save', async function () {
+  const { scores } = this;
+
+  // Check if complementary scores add up to 100
+  const pairs = [
+    [scores.extrovert, scores.introvert],
+    [scores.sensory, scores.intuitive],
+    [scores.thinking, scores.feeling],
+    [scores.judging, scores.perceiving],
+  ];
+
+  for (const [score1, score2] of pairs) {
+    if (Math.abs(score1 + score2 - 100) > 0.01) {
+      // Allow small floating point errors
+      throw new Error('Complementary scores must add up to 100');
+    }
   }
 });
 
 /**
- * Indexes for fast queries
- *
- * Common queries:
- * - "Get all results for this user" -> index userId
- * - "Get all results for this assessment" -> index assessmentId
- * - "Get this guest's results" -> index guestId
+ * Static method: Get user's active result
+ * Usage: await Result.getActiveResult(userId)
  */
-ResultSchema.index({ userId: 1, createdAt: -1 }); // User's results, newest first
-ResultSchema.index({ guestId: 1, createdAt: -1 }); // Guest's results, newest first
-ResultSchema.index({ assessmentId: 1 }); // All results for an assessment
+ResultSchema.statics.getActiveResult = async function (
+  userId: mongoose.Types.ObjectId
+) {
+  return await this.findOne({ userId, isActive: true });
+};
+
+/**
+ * Static method: Create new result and mark previous as inactive
+ * Usage: await Result.createNewResult(userId, assessmentId, data)
+ *
+ * This ensures only one result is "active" at a time
+ */
+ResultSchema.statics.createNewResult = async function (
+  userId: mongoose.Types.ObjectId,
+  assessmentId: mongoose.Types.ObjectId,
+  resultData: {
+    answers: string[];
+    scores: IResult['scores'];
+    personalityType: string;
+    alternativeType1?: string;
+    alternativeType2?: string;
+    timeTaken?: number;
+  }
+) {
+  // Mark all previous results as inactive
+  await this.updateMany(
+    { userId, isActive: true },
+    { $set: { isActive: false } }
+  );
+
+  // Create new active result
+  const result = await this.create({
+    userId,
+    assessmentId,
+    ...resultData,
+    isActive: true,
+  });
+
+  return result;
+};
 
 const Result: Model<IResult> =
   mongoose.models.Result || mongoose.model<IResult>('Result', ResultSchema);
