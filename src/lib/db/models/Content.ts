@@ -161,7 +161,7 @@ ContentSchema.index({ parentId: 1, order: 1 });
 /**
  * Validation: personality-sub articles must have parentId and order
  */
-ContentSchema.pre<IContent>('save', async function () {
+ContentSchema.pre('save', async function () {
   if (this.contentType === 'personality-sub') {
     if (!this.parentId) {
       throw new Error('Sub-articles must have a parentId');
