@@ -36,6 +36,30 @@ export interface IAssessment extends Document {
 }
 
 /**
+ * Static methods on Assessment model
+ */
+interface IAssessmentStatics {
+  calculateResult(
+    answers: string[],
+    questionCounts: { EI: number; SN: number; TF: number; JP: number },
+  ): {
+    scores: {
+      extrovert: number;
+      introvert: number;
+      sensory: number;
+      intuitive: number;
+      thinking: number;
+      feeling: number;
+      judging: number;
+      perceiving: number;
+    };
+    personalityType: string;
+    alternativeType1: string | null;
+    alternativeType2: string | null;
+  };
+}
+
+/**
  * Schema for answer options
  */
 const AnswerSchema = new Schema<IAnswer>(
@@ -191,7 +215,6 @@ AssessmentSchema.methods.getQuestionCounts = function () {
  */
 AssessmentSchema.statics.calculateResult = function (
   answers: string[],
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   questionCounts: { EI: number; SN: number; TF: number; JP: number },
 ) {
   // Count occurrences of each letter
@@ -213,7 +236,7 @@ AssessmentSchema.statics.calculateResult = function (
   });
 
   // Calculate percentages
-  /*
+
   const scores = {
     extrovert: Math.round((counts.E / questionCounts.EI) * 100),
     introvert: Math.round((counts.I / questionCounts.EI) * 100),
@@ -223,23 +246,6 @@ AssessmentSchema.statics.calculateResult = function (
     feeling: Math.round((counts.F / questionCounts.TF) * 100),
     judging: Math.round((counts.J / questionCounts.JP) * 100),
     perceiving: Math.round((counts.P / questionCounts.JP) * 100),
-  };
-  */
-
-  /**
-   * Simplified percentage calculation assuming fixed question counts:
-   * EI: 20 questions, SN: 20 questions, TF: 20 questions, JP: 20 questions
-   */
-
-  const scores = {
-    extrovert: Math.round((counts.E / 10) * 100),
-    introvert: Math.round((counts.I / 10) * 100),
-    sensory: Math.round((counts.S / 20) * 100),
-    intuitive: Math.round((counts.N / 20) * 100),
-    thinking: Math.round((counts.T / 20) * 100),
-    feeling: Math.round((counts.F / 20) * 100),
-    judging: Math.round((counts.J / 20) * 100),
-    perceiving: Math.round((counts.P / 20) * 100),
   };
 
   // Determine personality type (take the higher percentage for each dimension)
@@ -275,7 +281,7 @@ function getAlternativeTypes(scores: any, primaryType: string): string[] {
   ];
 
   const alternatives: string[] = [];
-  const closeThreshold = 10; // If difference < 10%, consider it "close"
+  const closeThreshold = 20; // If difference < 20%, consider it "close"
 
   // Find dimensions with close scores
   const closeDimensions = dimensions.filter(dim => {
@@ -299,8 +305,11 @@ function getAlternativeTypes(scores: any, primaryType: string): string[] {
   return alternatives;
 }
 
-const Assessment: Model<IAssessment> =
-  mongoose.models.Assessment ||
-  mongoose.model<IAssessment>('Assessment', AssessmentSchema);
+const Assessment = (mongoose.models.Assessment ||
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  mongoose.model<IAssessment, any>(
+    'Assessment',
+    AssessmentSchema,
+  )) as Model<IAssessment> & IAssessmentStatics;
 
 export default Assessment;

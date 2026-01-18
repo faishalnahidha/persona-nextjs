@@ -43,7 +43,26 @@ export interface IResult extends Document {
   createdAt: Date;
 }
 
-const ResultSchema = new Schema<IResult>(
+/**
+ * Static methods on Result model
+ */
+interface IResultModel extends Model<IResult> {
+  getActiveResult(userId: mongoose.Types.ObjectId): Promise<IResult | null>;
+  createNewResult(
+    userId: mongoose.Types.ObjectId,
+    assessmentId: mongoose.Types.ObjectId,
+    resultData: {
+      answers: string[];
+      scores: IResult['scores'];
+      personalityType: string;
+      alternativeType1?: string;
+      alternativeType2?: string;
+      timeTaken?: number;
+    },
+  ): Promise<IResult>;
+}
+
+const ResultSchema = new Schema<IResult, IResultModel>(
   {
     userId: {
       type: Schema.Types.ObjectId,
@@ -183,7 +202,10 @@ ResultSchema.statics.createNewResult = async function (
   return result;
 };
 
-const Result: Model<IResult> =
-  mongoose.models.Result || mongoose.model<IResult>('Result', ResultSchema);
+const Result = (mongoose.models.Result ||
+  mongoose.model<IResult, IResultModel>(
+    'Result',
+    ResultSchema,
+  )) as Model<IResult> & IResultModel;
 
 export default Result;
