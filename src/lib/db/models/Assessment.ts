@@ -3,7 +3,7 @@ import mongoose, { Schema, Document, Model } from 'mongoose';
 /**
  * Answer option for a question
  */
-interface IAnswer {
+interface IOption {
   text: string;
   value: 'E' | 'I' | 'S' | 'N' | 'T' | 'F' | 'J' | 'P';
 }
@@ -15,7 +15,7 @@ interface IQuestion {
   _id: string; // Question ID (e.g., "1", "2", "3")
   group: 'EI' | 'SN' | 'TF' | 'JP'; // Which personality dimension this tests
   text: string; // Question text
-  answer: [IAnswer, IAnswer]; // Always exactly 2 options
+  options: [IOption, IOption]; // Always exactly 2 options
 }
 
 /**
@@ -62,19 +62,19 @@ interface IAssessmentStatics {
 /**
  * Schema for answer options
  */
-const AnswerSchema = new Schema<IAnswer>(
+const OptionSchema = new Schema<IOption>(
   {
     text: {
       type: String,
-      required: [true, 'Answer text is required'],
+      required: [true, 'Option text is required'],
       trim: true,
     },
     value: {
       type: String,
-      required: [true, 'Answer value is required'],
+      required: [true, 'Option value is required'],
       enum: {
         values: ['E', 'I', 'S', 'N', 'T', 'F', 'J', 'P'],
-        message: '{VALUE} is not a valid answer value',
+        message: '{VALUE} is not a valid option value',
       },
     },
   },
@@ -95,7 +95,7 @@ const QuestionSchema = new Schema<IQuestion>(
       required: [true, 'Question group is required'],
       enum: {
         values: ['EI', 'SN', 'TF', 'JP'],
-        message: '{VALUE} is not a valid question type',
+        message: '{VALUE} is not a valid question group',
       },
     },
     text: {
@@ -103,14 +103,14 @@ const QuestionSchema = new Schema<IQuestion>(
       required: [true, 'Question text is required'],
       trim: true,
     },
-    answer: {
-      type: [AnswerSchema],
-      required: [true, 'Answers are required'],
+    options: {
+      type: [OptionSchema],
+      required: [true, 'Options are required'],
       validate: {
-        validator: function (answers: IAnswer[]) {
-          return answers.length === 2;
+        validator: function (options: IOption[]) {
+          return options.length === 2;
         },
-        message: 'Each question must have exactly 2 answers',
+        message: 'Each question must have exactly 2 options',
       },
     },
   },
@@ -118,24 +118,24 @@ const QuestionSchema = new Schema<IQuestion>(
 );
 
 /**
- * Custom validation: Ensure answer values match question type
- * E.g., if type is "EI", answers must be "E" and "I"
+ * Custom validation: Ensure options values match question type
+ * E.g., if type is "EI", options must be "E" and "I"
  */
 QuestionSchema.pre('validate', async function () {
-  const typeToValues: Record<string, string[]> = {
+  const groupToValues: Record<string, string[]> = {
     EI: ['E', 'I'],
     SN: ['S', 'N'],
     TF: ['T', 'F'],
     JP: ['J', 'P'],
   };
 
-  const expectedValues = typeToValues[this.group];
-  const actualValues = this.answer.map(a => a.value).sort();
-  const expected = expectedValues.sort();
+  const expectedValues = groupToValues[this.group];
+  const actualValues = this.options.map(a => a.value).sort();
+  const expected = (expectedValues || []).sort();
 
   if (JSON.stringify(actualValues) !== JSON.stringify(expected)) {
     throw new Error(
-      `Question type "${this.group}" must have answer values ${expected.join(' and ')}, got ${actualValues.join(' and ')}`,
+      `Question type "${this.group}" must have option values ${expected.join(' and ')}, got ${actualValues.join(' and ')}`,
     );
   }
 });
