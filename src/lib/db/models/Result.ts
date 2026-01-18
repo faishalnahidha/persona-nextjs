@@ -104,7 +104,7 @@ const ResultSchema = new Schema<IResult>(
   },
   {
     timestamps: { createdAt: true, updatedAt: false }, // Only need createdAt
-  }
+  },
 );
 
 /**
@@ -143,7 +143,7 @@ ResultSchema.pre('save', async function () {
  * Usage: await Result.getActiveResult(userId)
  */
 ResultSchema.statics.getActiveResult = async function (
-  userId: mongoose.Types.ObjectId
+  userId: mongoose.Types.ObjectId,
 ) {
   return await this.findOne({ userId, isActive: true });
 };
@@ -164,12 +164,12 @@ ResultSchema.statics.createNewResult = async function (
     alternativeType1?: string;
     alternativeType2?: string;
     timeTaken?: number;
-  }
+  },
 ) {
   // Mark all previous results as inactive
   await this.updateMany(
     { userId, isActive: true },
-    { $set: { isActive: false } }
+    { $set: { isActive: false } },
   );
 
   // Create new active result
