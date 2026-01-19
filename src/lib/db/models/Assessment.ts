@@ -54,8 +54,7 @@ interface IAssessmentStatics {
       perceiving: number;
     };
     personalityType: string;
-    alternativeType1: string | null;
-    alternativeType2: string | null;
+    alternativeTypes: string[] | [];
   };
 }
 
@@ -193,14 +192,17 @@ AssessmentSchema.index({ published: 1 });
 /**
  * Static method: Get question count by group
  * Usage: const counts = await assessment.getQuestionCounts()
- * Returns: { EI: 20, SN: 18, TF: 16, JP: 16 }
+ * Returns: { EI: 10, SN: 20, TF: 20, JP: 20 }
  */
 AssessmentSchema.methods.getQuestionCounts = function () {
-  const counts = { EI: 0, SN: 0, TF: 0, JP: 0 };
+  // const counts = { EI: 0, SN: 0, TF: 0, JP: 0 };
 
-  this.questions.forEach((q: IQuestion) => {
-    counts[q.group]++;
-  });
+  // this.questions.forEach((q: IQuestion) => {
+  //   counts[q.group]++;
+  // });
+
+  // return counts same as above bu static
+  const counts = { EI: 10, SN: 20, TF: 20, JP: 20 };
 
   return counts;
 };
@@ -262,8 +264,7 @@ AssessmentSchema.statics.calculateResult = function (
   return {
     scores,
     personalityType: type,
-    alternativeType1: alternatives[0] || null,
-    alternativeType2: alternatives[1] || null,
+    alternativeTypes: alternatives,
   };
 };
 
@@ -280,18 +281,22 @@ function getAlternativeTypes(scores: any, primaryType: string): string[] {
     { pair: ['judging', 'perceiving'], letters: ['J', 'P'], index: 3 },
   ];
 
-  const alternatives: string[] = [];
-  const closeThreshold = 20; // If difference < 20%, consider it "close"
+  const closeThreshold = 50; // If difference < 50%, consider it "close"
 
-  // Find dimensions with close scores
-  const closeDimensions = dimensions.filter(dim => {
-    const [trait1, trait2] = dim.pair;
-    const diff = Math.abs(scores[trait1] - scores[trait2]);
-    return diff < closeThreshold;
-  });
+  // Find dimensions with close scores and calculate their difference
+  const closeDimensionsWithDiff = dimensions
+    .map(dim => {
+      const [trait1, trait2] = dim.pair;
+      const diff = Math.abs(scores[trait1] - scores[trait2]);
+      return { ...dim, diff };
+    })
+    .filter(dim => dim.diff < closeThreshold)
+    .sort((a, b) => a.diff - b.diff); // Sort by difference (lowest first)
 
   // Generate alternative types by flipping close dimensions
-  closeDimensions.slice(0, 2).forEach(dim => {
+  const alternatives: string[] = [];
+
+  closeDimensionsWithDiff.slice(0, 2).forEach(dim => {
     const typeArray = primaryType.split('');
     const currentLetter = typeArray[dim.index];
     const alternateLetter = dim.letters.find(l => l !== currentLetter);

@@ -16,6 +16,91 @@ import Assessment from '../src/lib/db/models/Assessment';
 import User from '../src/lib/db/models/User';
 import questionData from './question-data.json';
 
+const testCalculation = () => {
+  // Test the scoring calculation
+  console.log('\n🧪 Testing scoring calculation...');
+
+  const counts = { EI: 10, SN: 20, TF: 20, JP: 20 };
+
+  const testAnswers = [
+    'I',
+    'N',
+    'N',
+    'F',
+    'F',
+    'P',
+    'J',
+    'I',
+    'N',
+    'N',
+    'T',
+    'T',
+    'J',
+    'J',
+    'I',
+    'N',
+    'S',
+    'T',
+    'F',
+    'J',
+    'J',
+    'I',
+    'S',
+    'N',
+    'F',
+    'F',
+    'J',
+    'J',
+    'I',
+    'S',
+    'S',
+    'T',
+    'F',
+    'J',
+    'J',
+    'I',
+    'N',
+    'N',
+    'T',
+    'T',
+    'J',
+    'P',
+    'I',
+    'S',
+    'S',
+    'F',
+    'T',
+    'J',
+    'P',
+    'E',
+    'S',
+    'N',
+    'F',
+    'F',
+    'J',
+    'J',
+    'I',
+    'N',
+    'N',
+    'T',
+    'T',
+    'J',
+    'J',
+    'I',
+    'S',
+    'N',
+    'F',
+    'F',
+    'J',
+    'P',
+  ];
+
+  const result = Assessment.calculateResult(testAnswers, counts);
+  console.log('   Test result:', result.personalityType);
+  console.log('   Scores:', result.scores);
+  console.log('   Alternative types:', result.alternativeTypes);
+};
+
 async function seedAssessment() {
   try {
     console.log('🔗 Connecting to database...');
@@ -27,6 +112,7 @@ async function seedAssessment() {
     if (existingAssessment) {
       console.log('⚠️  Assessment already exists. Skipping seed.');
       console.log(`   Assessment ID: ${existingAssessment._id}`);
+      testCalculation();
       process.exit(0);
     }
 
@@ -89,88 +175,7 @@ async function seedAssessment() {
     console.log(`   Questions: ${assessment.questions.length}`);
 
     // Test the scoring calculation
-    console.log('\n🧪 Testing scoring calculation...');
-    const testAnswers = [
-      'I',
-      'N',
-      'N',
-      'F',
-      'F',
-      'P',
-      'J',
-      'I',
-      'N',
-      'N',
-      'T',
-      'T',
-      'J',
-      'J',
-      'I',
-      'N',
-      'S',
-      'T',
-      'F',
-      'J',
-      'J',
-      'I',
-      'S',
-      'N',
-      'F',
-      'F',
-      'J',
-      'J',
-      'I',
-      'S',
-      'S',
-      'T',
-      'F',
-      'J',
-      'J',
-      'I',
-      'N',
-      'N',
-      'T',
-      'T',
-      'J',
-      'P',
-      'I',
-      'S',
-      'S',
-      'F',
-      'T',
-      'J',
-      'P',
-      'E',
-      'S',
-      'N',
-      'F',
-      'F',
-      'J',
-      'J',
-      'I',
-      'N',
-      'N',
-      'T',
-      'T',
-      'J',
-      'J',
-      'I',
-      'S',
-      'N',
-      'F',
-      'F',
-      'J',
-      'P',
-    ];
-
-    const result = Assessment.calculateResult(testAnswers, counts);
-    console.log('   Test result:', result.personalityType);
-    console.log('   Scores:', result.scores);
-    console.log(
-      '   Alternative types:',
-      result.alternativeType1,
-      result.alternativeType2,
-    );
+    testCalculation();
 
     console.log('\n✨ Seed completed successfully!');
     process.exit(0);

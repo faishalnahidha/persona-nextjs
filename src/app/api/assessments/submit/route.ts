@@ -3,7 +3,7 @@ import { connectDB } from '@/lib/db/mongodb';
 import Assessment from '@/lib/db/models/Assessment';
 import Result from '@/lib/db/models/Result';
 import User from '@/lib/db/models/User';
-import { POINTS } from '@/lib/constants/points';
+// import { POINTS } from '@/lib/constants/points';
 
 /**
  * POST /api/assessment/submit
@@ -65,8 +65,7 @@ export async function POST(request: NextRequest) {
       answers,
       scores: calculatedResult.scores,
       personalityType: calculatedResult.personalityType,
-      alternativeType1: calculatedResult.alternativeType1 || undefined,
-      alternativeType2: calculatedResult.alternativeType2 || undefined,
+      alternativeTypes: calculatedResult.alternativeTypes || undefined,
     });
 
     // Return result ID for redirection

@@ -30,8 +30,7 @@ export interface IResult extends Document {
 
   // Final Result
   personalityType: string; // e.g., "INFJ"
-  alternativeType1?: string; // e.g., "INTJ"
-  alternativeType2?: string; // e.g., "ISFJ"
+  alternativeTypes: string[] | []; // e.g., ["INFP", "ENFJ"]
 
   // Metadata
   completedAt: Date;
@@ -55,8 +54,7 @@ interface IResultModel extends Model<IResult> {
       answers: string[];
       scores: IResult['scores'];
       personalityType: string;
-      alternativeType1?: string;
-      alternativeType2?: string;
+      alternativeTypes: string[] | [];
       timeTaken?: number;
     },
   ): Promise<IResult>;
@@ -100,13 +98,15 @@ const ResultSchema = new Schema<IResult, IResultModel>(
       uppercase: true,
       match: [/^[A-Z]{4}$/, 'Personality type must be 4 uppercase letters'],
     },
-    alternativeType1: {
-      type: String,
-      uppercase: true,
-    },
-    alternativeType2: {
-      type: String,
-      uppercase: true,
+    alternativeTypes: {
+      type: [String],
+      default: [],
+      validate: {
+        validator: function (types: string[]) {
+          return types.every(type => /^[A-Z]{4}$/.test(type));
+        },
+        message: 'Each alternative type must be 4 uppercase letters.',
+      },
     },
     completedAt: {
       type: Date,
@@ -180,8 +180,7 @@ ResultSchema.statics.createNewResult = async function (
     answers: string[];
     scores: IResult['scores'];
     personalityType: string;
-    alternativeType1?: string;
-    alternativeType2?: string;
+    alternativeTypes: string[] | [];
     timeTaken?: number;
   },
 ) {
