@@ -11,23 +11,25 @@ import AssessmentClient from './AssessmentClient';
 export default async function AssessmentPage({
   params,
 }: {
-  params: { id: string };
+  params: { id: string } | Promise<{ id: string }>;
 }) {
   await connectDB();
 
-  // Fetch published assessment
-  const assessment = await Assessment.findById(params.id).lean();
+  // Handle possible Promise in params, ensure params is fully resolved and has an id
+  const resolvedParams = await Promise.resolve(params);
+  const assessment = await Assessment.findById(resolvedParams.id).lean();
 
   if (!assessment || !assessment.published) {
     notFound();
   }
+
 
   // Calculate question counts for scoring
 
   const questionCounts = { EI: 0, SN: 0, TF: 0, JP: 0 };
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   assessment.questions.forEach((q: any) => {
-    questionCounts[q.type as keyof typeof questionCounts]++;
+    questionCounts[q.group as keyof typeof questionCounts]++;
   });
 
   // Serialize data for client component
@@ -39,9 +41,9 @@ export default async function AssessmentPage({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     questions: assessment.questions.map((q: any) => ({
       _id: q._id,
-      type: q.type,
+      group: q.group,
       text: q.text,
-      answer: q.answer,
+      options: q.options,
     })),
     questionCounts,
   };

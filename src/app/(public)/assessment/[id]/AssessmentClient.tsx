@@ -4,16 +4,16 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { ChevronLeft, ChevronRight, Save } from 'lucide-react';
 
-interface Answer {
+interface Option {
   text: string;
   value: string;
 }
 
 interface Question {
   _id: string;
-  type: string;
+  group: string;
   text: string;
-  answer: [Answer, Answer];
+  options: [Option, Option];
 }
 
 interface Assessment {
@@ -217,7 +217,7 @@ export default function AssessmentClient({
         <div className='bg-white rounded-lg shadow-lg p-8 mb-6'>
           <div className='mb-2'>
             <span className='inline-block px-3 py-1 bg-indigo-100 text-indigo-700 text-sm font-medium rounded-full'>
-              Tipe: {question.type}
+              Group: {question.group}
             </span>
           </div>
 
@@ -226,23 +226,21 @@ export default function AssessmentClient({
           </h3>
 
           <div className='space-y-4'>
-            {question.answer.map((option, index) => (
+            {question.options.map((option, index) => (
               <button
                 key={index}
                 onClick={() => handleAnswer(question._id, option.value)}
-                className={`w-full text-left p-4 rounded-lg border-2 transition-all ${
-                  answers[question._id] === option.value
+                className={`w-full text-left p-4 rounded-lg border-2 transition-all ${answers[question._id] === option.value
                     ? 'border-indigo-600 bg-indigo-50'
                     : 'border-gray-200 hover:border-indigo-300 hover:bg-gray-50'
-                }`}
+                  }`}
               >
                 <div className='flex items-start gap-3'>
                   <div
-                    className={`flex-shrink-0 w-6 h-6 rounded-full border-2 flex items-center justify-center mt-0.5 ${
-                      answers[question._id] === option.value
+                    className={`flex-shrink-0 w-6 h-6 rounded-full border-2 flex items-center justify-center mt-0.5 ${answers[question._id] === option.value
                         ? 'border-indigo-600 bg-indigo-600'
                         : 'border-gray-300'
-                    }`}
+                      }`}
                   >
                     {answers[question._id] === option.value && (
                       <div className='w-2 h-2 bg-white rounded-full' />
