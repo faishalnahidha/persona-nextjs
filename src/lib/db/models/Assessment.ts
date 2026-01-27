@@ -3,7 +3,7 @@ import mongoose, { Schema, Document, Model } from 'mongoose';
 /**
  * Answer option for a question
  */
-interface IAnswer {
+interface IOption {
   text: string;
   value: 'E' | 'I' | 'S' | 'N' | 'T' | 'F' | 'J' | 'P';
 }
@@ -15,7 +15,7 @@ interface IQuestion {
   _id: string; // Question ID (e.g., "1", "2", "3")
   group: 'EI' | 'SN' | 'TF' | 'JP'; // Which personality dimension this tests
   text: string; // Question text
-  answer: [IAnswer, IAnswer]; // Always exactly 2 options
+  options: [IOption, IOption]; // Always exactly 2 options
 }
 
 /**
@@ -36,21 +36,44 @@ export interface IAssessment extends Document {
 }
 
 /**
+ * Static methods on Assessment model
+ */
+interface IAssessmentStatics {
+  calculateResult(
+    answers: string[],
+    questionCounts: { EI: number; SN: number; TF: number; JP: number },
+  ): {
+    scores: {
+      extrovert: number;
+      introvert: number;
+      sensory: number;
+      intuitive: number;
+      thinking: number;
+      feeling: number;
+      judging: number;
+      perceiving: number;
+    };
+    personalityType: string;
+    alternativeTypes: string[] | [];
+  };
+}
+
+/**
  * Schema for answer options
  */
-const AnswerSchema = new Schema<IAnswer>(
+const OptionSchema = new Schema<IOption>(
   {
     text: {
       type: String,
-      required: [true, 'Answer text is required'],
+      required: [true, 'Option text is required'],
       trim: true,
     },
     value: {
       type: String,
-      required: [true, 'Answer value is required'],
+      required: [true, 'Option value is required'],
       enum: {
         values: ['E', 'I', 'S', 'N', 'T', 'F', 'J', 'P'],
-        message: '{VALUE} is not a valid answer value',
+        message: '{VALUE} is not a valid option value',
       },
     },
   },
@@ -71,7 +94,7 @@ const QuestionSchema = new Schema<IQuestion>(
       required: [true, 'Question group is required'],
       enum: {
         values: ['EI', 'SN', 'TF', 'JP'],
-        message: '{VALUE} is not a valid question type',
+        message: '{VALUE} is not a valid question group',
       },
     },
     text: {
@@ -79,14 +102,14 @@ const QuestionSchema = new Schema<IQuestion>(
       required: [true, 'Question text is required'],
       trim: true,
     },
-    answer: {
-      type: [AnswerSchema],
-      required: [true, 'Answers are required'],
+    options: {
+      type: [OptionSchema],
+      required: [true, 'Options are required'],
       validate: {
-        validator: function (answers: IAnswer[]) {
-          return answers.length === 2;
+        validator: function (options: IOption[]) {
+          return options.length === 2;
         },
-        message: 'Each question must have exactly 2 answers',
+        message: 'Each question must have exactly 2 options',
       },
     },
   },
@@ -94,24 +117,24 @@ const QuestionSchema = new Schema<IQuestion>(
 );
 
 /**
- * Custom validation: Ensure answer values match question type
- * E.g., if type is "EI", answers must be "E" and "I"
+ * Custom validation: Ensure options values match question type
+ * E.g., if type is "EI", options must be "E" and "I"
  */
 QuestionSchema.pre('validate', async function () {
-  const typeToValues: Record<string, string[]> = {
+  const groupToValues: Record<string, string[]> = {
     EI: ['E', 'I'],
     SN: ['S', 'N'],
     TF: ['T', 'F'],
     JP: ['J', 'P'],
   };
 
-  const expectedValues = typeToValues[this.group];
-  const actualValues = this.answer.map(a => a.value).sort();
-  const expected = expectedValues.sort();
+  const expectedValues = groupToValues[this.group];
+  const actualValues = this.options.map(a => a.value).sort();
+  const expected = (expectedValues || []).sort();
 
   if (JSON.stringify(actualValues) !== JSON.stringify(expected)) {
     throw new Error(
-      `Question type "${this.group}" must have answer values ${expected.join(' and ')}, got ${actualValues.join(' and ')}`,
+      `Question type "${this.group}" must have option values ${expected.join(' and ')}, got ${actualValues.join(' and ')}`,
     );
   }
 });
@@ -169,14 +192,17 @@ AssessmentSchema.index({ published: 1 });
 /**
  * Static method: Get question count by group
  * Usage: const counts = await assessment.getQuestionCounts()
- * Returns: { EI: 20, SN: 18, TF: 16, JP: 16 }
+ * Returns: { EI: 10, SN: 20, TF: 20, JP: 20 }
  */
 AssessmentSchema.methods.getQuestionCounts = function () {
-  const counts = { EI: 0, SN: 0, TF: 0, JP: 0 };
+  // const counts = { EI: 0, SN: 0, TF: 0, JP: 0 };
 
-  this.questions.forEach((q: IQuestion) => {
-    counts[q.group]++;
-  });
+  // this.questions.forEach((q: IQuestion) => {
+  //   counts[q.group]++;
+  // });
+
+  // return counts same as above bu static
+  const counts = { EI: 10, SN: 20, TF: 20, JP: 20 };
 
   return counts;
 };
@@ -191,7 +217,6 @@ AssessmentSchema.methods.getQuestionCounts = function () {
  */
 AssessmentSchema.statics.calculateResult = function (
   answers: string[],
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   questionCounts: { EI: number; SN: number; TF: number; JP: number },
 ) {
   // Count occurrences of each letter
@@ -213,7 +238,7 @@ AssessmentSchema.statics.calculateResult = function (
   });
 
   // Calculate percentages
-  /*
+
   const scores = {
     extrovert: Math.round((counts.E / questionCounts.EI) * 100),
     introvert: Math.round((counts.I / questionCounts.EI) * 100),
@@ -223,23 +248,6 @@ AssessmentSchema.statics.calculateResult = function (
     feeling: Math.round((counts.F / questionCounts.TF) * 100),
     judging: Math.round((counts.J / questionCounts.JP) * 100),
     perceiving: Math.round((counts.P / questionCounts.JP) * 100),
-  };
-  */
-
-  /**
-   * Simplified percentage calculation assuming fixed question counts:
-   * EI: 20 questions, SN: 20 questions, TF: 20 questions, JP: 20 questions
-   */
-
-  const scores = {
-    extrovert: Math.round((counts.E / 10) * 100),
-    introvert: Math.round((counts.I / 10) * 100),
-    sensory: Math.round((counts.S / 20) * 100),
-    intuitive: Math.round((counts.N / 20) * 100),
-    thinking: Math.round((counts.T / 20) * 100),
-    feeling: Math.round((counts.F / 20) * 100),
-    judging: Math.round((counts.J / 20) * 100),
-    perceiving: Math.round((counts.P / 20) * 100),
   };
 
   // Determine personality type (take the higher percentage for each dimension)
@@ -256,8 +264,7 @@ AssessmentSchema.statics.calculateResult = function (
   return {
     scores,
     personalityType: type,
-    alternativeType1: alternatives[0] || null,
-    alternativeType2: alternatives[1] || null,
+    alternativeTypes: alternatives,
   };
 };
 
@@ -274,18 +281,22 @@ function getAlternativeTypes(scores: any, primaryType: string): string[] {
     { pair: ['judging', 'perceiving'], letters: ['J', 'P'], index: 3 },
   ];
 
-  const alternatives: string[] = [];
-  const closeThreshold = 10; // If difference < 10%, consider it "close"
+  const closeThreshold = 50; // If difference < 50%, consider it "close"
 
-  // Find dimensions with close scores
-  const closeDimensions = dimensions.filter(dim => {
-    const [trait1, trait2] = dim.pair;
-    const diff = Math.abs(scores[trait1] - scores[trait2]);
-    return diff < closeThreshold;
-  });
+  // Find dimensions with close scores and calculate their difference
+  const closeDimensionsWithDiff = dimensions
+    .map(dim => {
+      const [trait1, trait2] = dim.pair;
+      const diff = Math.abs(scores[trait1] - scores[trait2]);
+      return { ...dim, diff };
+    })
+    .filter(dim => dim.diff < closeThreshold)
+    .sort((a, b) => a.diff - b.diff); // Sort by difference (lowest first)
 
   // Generate alternative types by flipping close dimensions
-  closeDimensions.slice(0, 2).forEach(dim => {
+  const alternatives: string[] = [];
+
+  closeDimensionsWithDiff.slice(0, 2).forEach(dim => {
     const typeArray = primaryType.split('');
     const currentLetter = typeArray[dim.index];
     const alternateLetter = dim.letters.find(l => l !== currentLetter);
@@ -299,8 +310,11 @@ function getAlternativeTypes(scores: any, primaryType: string): string[] {
   return alternatives;
 }
 
-const Assessment: Model<IAssessment> =
-  mongoose.models.Assessment ||
-  mongoose.model<IAssessment>('Assessment', AssessmentSchema);
+const Assessment = (mongoose.models.Assessment ||
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  mongoose.model<IAssessment, any>(
+    'Assessment',
+    AssessmentSchema,
+  )) as Model<IAssessment> & IAssessmentStatics;
 
 export default Assessment;

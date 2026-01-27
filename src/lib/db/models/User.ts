@@ -147,7 +147,7 @@ const UserSchema = new Schema<IUser>(
   },
   {
     timestamps: true,
-  }
+  },
 );
 
 /**
@@ -184,7 +184,7 @@ UserSchema.pre('save', async function () {
 UserSchema.methods.awardPoints = async function (
   points: number,
   reason: string,
-  contentId?: string
+  contentId?: string,
 ) {
   this.totalPoints += points;
   this.pointsHistory.push({
@@ -202,10 +202,10 @@ UserSchema.methods.awardPoints = async function (
  */
 UserSchema.methods.startContent = async function (
   contentId: string,
-  contentType: 'public' | 'private'
+  contentType: 'public' | 'private',
 ) {
   const existingProgress = this.contentProgress.find(
-    (cp: any) => cp.contentId === contentId
+    (cp: any) => cp.contentId === contentId,
   );
 
   if (!existingProgress) {
@@ -231,10 +231,10 @@ UserSchema.methods.startContent = async function (
 UserSchema.methods.completeContent = async function (
   contentId: string,
   timeSpent: number,
-  readPoints: number
+  readPoints: number,
 ) {
   const progress = this.contentProgress.find(
-    (cp: any) => cp.contentId === contentId
+    (cp: any) => cp.contentId === contentId,
   );
 
   if (!progress) {
@@ -258,7 +258,7 @@ UserSchema.methods.completeContent = async function (
  */
 UserSchema.methods.hasReadContent = function (contentId: string): boolean {
   const progress = this.contentProgress.find(
-    (cp: any) => cp.contentId === contentId
+    (cp: any) => cp.contentId === contentId,
   );
 
   return progress ? progress.pointsAwarded : false;
@@ -271,7 +271,7 @@ UserSchema.methods.convertToRegistered = async function (
   email: string,
   password: string,
   username: string,
-  registerPoints: number
+  registerPoints: number,
 ) {
   if (this.userType === 'registered') {
     throw new Error('User is already registered');

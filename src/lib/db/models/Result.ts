@@ -30,8 +30,7 @@ export interface IResult extends Document {
 
   // Final Result
   personalityType: string; // e.g., "INFJ"
-  alternativeType1?: string; // e.g., "INTJ"
-  alternativeType2?: string; // e.g., "ISFJ"
+  alternativeTypes: string[] | []; // e.g., ["INFP", "ENFJ"]
 
   // Metadata
   completedAt: Date;
@@ -43,7 +42,25 @@ export interface IResult extends Document {
   createdAt: Date;
 }
 
-const ResultSchema = new Schema<IResult>(
+/**
+ * Static methods on Result model
+ */
+interface IResultModel extends Model<IResult> {
+  getActiveResult(userId: mongoose.Types.ObjectId): Promise<IResult | null>;
+  createNewResult(
+    userId: mongoose.Types.ObjectId,
+    assessmentId: mongoose.Types.ObjectId,
+    resultData: {
+      answers: string[];
+      scores: IResult['scores'];
+      personalityType: string;
+      alternativeTypes: string[] | [];
+      timeTaken?: number;
+    },
+  ): Promise<IResult>;
+}
+
+const ResultSchema = new Schema<IResult, IResultModel>(
   {
     userId: {
       type: Schema.Types.ObjectId,
@@ -81,13 +98,15 @@ const ResultSchema = new Schema<IResult>(
       uppercase: true,
       match: [/^[A-Z]{4}$/, 'Personality type must be 4 uppercase letters'],
     },
-    alternativeType1: {
-      type: String,
-      uppercase: true,
-    },
-    alternativeType2: {
-      type: String,
-      uppercase: true,
+    alternativeTypes: {
+      type: [String],
+      default: [],
+      validate: {
+        validator: function (types: string[]) {
+          return types.every(type => /^[A-Z]{4}$/.test(type));
+        },
+        message: 'Each alternative type must be 4 uppercase letters.',
+      },
     },
     completedAt: {
       type: Date,
@@ -161,8 +180,7 @@ ResultSchema.statics.createNewResult = async function (
     answers: string[];
     scores: IResult['scores'];
     personalityType: string;
-    alternativeType1?: string;
-    alternativeType2?: string;
+    alternativeTypes: string[] | [];
     timeTaken?: number;
   },
 ) {
@@ -183,7 +201,10 @@ ResultSchema.statics.createNewResult = async function (
   return result;
 };
 
-const Result: Model<IResult> =
-  mongoose.models.Result || mongoose.model<IResult>('Result', ResultSchema);
+const Result = (mongoose.models.Result ||
+  mongoose.model<IResult, IResultModel>(
+    'Result',
+    ResultSchema,
+  )) as Model<IResult> & IResultModel;
 
 export default Result;

@@ -1,0 +1,1056 @@
+{
+  "question": [
+    {
+      "_id": "1",
+      "type": "EI",
+      "text": "Ketika telefon rumah berbunyi yang anda lakukan adalah :",
+      "answer": [
+        {
+          "text": "Bergegas untuk mengangkat telefon",
+          "value": "E"
+        },
+        {
+          "text": "Berharap orang lain akan me­ngangkat telepon",
+          "value": "I"
+        }
+      ]
+    },
+    {
+      "_id": "2",
+      "type": "SN",
+      "text": "Anda merupakan orang yang lebih :",
+      "answer": [
+        {
+          "text": "Suka melakukan uji coba daripada berimajinasi",
+          "value": "S"
+        },
+        {
+          "text": "Suka berimajinasi daripada melakukan uji coba",
+          "value": "N"
+        }
+      ]
+    },
+    {
+      "_id": "3",
+      "type": "SN",
+      "text": "Anda lebih tidak menyukai :",
+      "answer": [
+        {
+          "text": "Ketika banyak beban pikiran",
+          "value": "S"
+        },
+        {
+          "text": "Terjebak dalam rutinitas",
+          "value": "N"
+        }
+      ]
+    },
+    {
+      "_id": "4",
+      "type": "TF",
+      "text": "Ketika berhubungan dengan orang lain, anda termasuk orang yang lebih :",
+      "answer": [
+        {
+          "text": "Tegas daripada lembut",
+          "value": "T"
+        },
+        {
+          "text": "Lembut daripada tegas",
+          "value": "F"
+        }
+      ]
+    },
+    {
+      "_id": "5",
+      "type": "TF",
+      "text": "Dalam mengambil keputusan biasanya anda membuat :",
+      "answer": [
+        {
+          "text": "Penilaian yang kritis",
+          "value": "T"
+        },
+        {
+          "text": "Penilaian yang bijak",
+          "value": "F"
+        }
+      ]
+    },
+    {
+      "_id": "6",
+      "type": "JP",
+      "text": "Jika lingkungan kerja berantakan, anda akan :",
+      "answer": [
+        {
+          "text": "Menyempatkan waktu merapikannya",
+          "value": "J"
+        },
+        {
+          "text": "Mampu mentolerir selama masih layak untuk bekerja",
+          "value": "P"
+        }
+      ]
+    },
+    {
+      "_id": "7",
+      "type": "JP",
+      "text": "Saat akan memilih sesuatu, anda biasanya :",
+      "answer": [
+        {
+          "text": "Memutuskan pikiran dan memilih dengan cepat",
+          "value": "J"
+        },
+        {
+          "text": "Butuh waktu lama untuk memilih-milih",
+          "value": "P"
+        }
+      ]
+    },
+    {
+      "_id": "8",
+      "type": "EI",
+      "text": "Saat mengantri anda biasanya :",
+      "answer": [
+        {
+          "text": "Mengajak orang lain yang antri mengobrol",
+          "value": "E"
+        },
+        {
+          "text": "Tetap fokus mengantri",
+          "value": "I"
+        }
+      ]
+    },
+    {
+      "_id": "9",
+      "type": "SN",
+      "text": "Apakah anda orang yang lebih suka :",
+      "answer": [
+        {
+          "text": "Praktik daripada teori",
+          "value": "S"
+        },
+        {
+          "text": "Teori daripada praktik",
+          "value": "N"
+        }
+      ]
+    },
+    {
+      "_id": "10",
+      "type": "SN",
+      "text": "Saat anda mendengar suatu gosip, anda lebih tertarik pada",
+      "answer": [
+        {
+          "text": "Apa yang sebenarnya terjadi",
+          "value": "S"
+        },
+        {
+          "text": "Apa yang mungkin terjadi",
+          "value": "N"
+        }
+      ]
+    },
+    {
+      "_id": "11",
+      "type": "TF",
+      "text": "Dalam mengambil keputusan, anda seringkali mendasarkan pada :",
+      "answer": [
+        {
+          "text": "Data atau informasi yang ada",
+          "value": "T"
+        },
+        {
+          "text": "Selera yang disukai",
+          "value": "F"
+        }
+      ]
+    },
+    {
+      "_id": "12",
+      "type": "TF",
+      "text": "Dalam menilai orang lain anda cenderung untuk :",
+      "answer": [
+        {
+          "text": "Bersikap objektif dan adil",
+          "value": "T"
+        },
+        {
+          "text": "Bersikap ramah dan bersahabat",
+          "value": "F"
+        }
+      ]
+    },
+    {
+      "_id": "13",
+      "type": "JP",
+      "text": "Anda lebih menyukai jenis kontrak kerja yang :",
+      "answer": [
+        {
+          "text": "Selesai setelah ditandatangani dan diresmikan",
+          "value": "J"
+        },
+        {
+          "text": "Selesai dengan jabat tangan",
+          "value": "P"
+        }
+      ]
+    },
+    {
+      "_id": "14",
+      "type": "JP",
+      "text": "Dalam pekerjaan, anda lebih puas ketika :",
+      "answer": [
+        {
+          "text": "Berhasil menyelesaikan sebuah pekerjaan",
+          "value": "J"
+        },
+        {
+          "text": "Dalam proses bekerja",
+          "value": "P"
+        }
+      ]
+    },
+    {
+      "_id": "15",
+      "type": "EI",
+      "text": "Ketika diadakan suatu pesta atau perayaan, anda :",
+      "answer": [
+        {
+          "text": "Berinteraksi dengan banyak orang, bahkan yang tidak dikenal",
+          "value": "E"
+        },
+        {
+          "text": "Berinteraksi dengan beberapa teman yang akrab",
+          "value": "I"
+        }
+      ]
+    },
+    {
+      "_id": "16",
+      "type": "SN",
+      "text": "Dalam menghadapi permasalahan, anda cenderung :",
+      "answer": [
+        {
+          "text": "Mencari solusi dari pengalaman atau yang ada pada masyarakat pada umumnya",
+          "value": "S"
+        },
+        {
+          "text": "Lebih suka mencari solusi dan kemungki­nan baru",
+          "value": "N"
+        }
+      ]
+    },
+    {
+      "_id": "17",
+      "type": "SN",
+      "text": "Anda lebih suka penulis yang :",
+      "answer": [
+        {
+          "text": "Mengatakan secara langsung apa yang mereka maksudkan",
+          "value": "S"
+        },
+        {
+          "text": "Menggunakan perumpamaan untuk menjelaskan yang dimaksudkan",
+          "value": "N"
+        }
+      ]
+    },
+    {
+      "_id": "18",
+      "type": "TF",
+      "text": "Anda lebih tertarik pada :",
+      "answer": [
+        {
+          "text": "Konsistensi berpikir",
+          "value": "T"
+        },
+        {
+          "text": "Keharmonisan sebuah hubungan",
+          "value": "F"
+        }
+      ]
+    },
+    {
+      "_id": "19",
+      "type": "TF",
+      "text": "Anda lebih sering sulit berhubungan dengan orang yang :",
+      "answer": [
+        {
+          "text": "Sensitif dan mudah tersinggung",
+          "value": "T"
+        },
+        {
+          "text": "Terus terang dan blak-blakan",
+          "value": "F"
+        }
+      ]
+    },
+    {
+      "_id": "20",
+      "type": "JP",
+      "text": "Ketika bekerja, anda lebih suka :",
+      "answer": [
+        {
+          "text": "Terjadwal",
+          "value": "J"
+        },
+        {
+          "text": "Tidak terjadwal",
+          "value": "P"
+        }
+      ]
+    },
+    {
+      "_id": "21",
+      "type": "JP",
+      "text": "Ketika membuat pernyataan, anda seringkali :",
+      "answer": [
+        {
+          "text": "Jarang berubah bila sudah membuat pernyataan",
+          "value": "J"
+        },
+        {
+          "text": "Sering berubah bila sudah membuat pernyataan",
+          "value": "P"
+        }
+      ]
+    },
+    {
+      "_id": "22",
+      "type": "EI",
+      "text": "Berinteraksi dengan orang yang belum dikenal, akan :",
+      "answer": [
+        {
+          "text": "Membuat anda bersemangat",
+          "value": "E"
+        },
+        {
+          "text": "Membuat anda tidak nyaman",
+          "value": "I"
+        }
+      ]
+    },
+    {
+      "_id": "23",
+      "type": "SN",
+      "text": "Fakta adalah :",
+      "answer": [
+        {
+          "text": "Fakta",
+          "value": "S"
+        },
+        {
+          "text": "Dasar dari penjelasan yang lebih lanjut",
+          "value": "N"
+        }
+      ]
+    },
+    {
+      "_id": "24",
+      "type": "SN",
+      "text": "Jika anda mendengar seseorang berbicara teoritis, anda merasa :",
+      "answer": [
+        {
+          "text": "Kadang-kadang jengkel",
+          "value": "S"
+        },
+        {
+          "text": "Sangat tertarik",
+          "value": "N"
+        }
+      ]
+    },
+    {
+      "_id": "25",
+      "type": "TF",
+      "text": "Ketika diskusi mengalami perbedaan pendapat, anda seringkali :",
+      "answer": [
+        {
+          "text": "Kukuh pada pendapat yang dirasa benar",
+          "value": "T"
+        },
+        {
+          "text": "Mencari titik kesepahaman di an­tara perbedaan pendapat yang ada",
+          "value": "F"
+        }
+      ]
+    },
+    {
+      "_id": "26",
+      "type": "TF",
+      "text": "Menurut pandangan orang lain, anda merupakan orang yang :",
+      "answer": [
+        {
+          "text": "Adil",
+          "value": "T"
+        },
+        {
+          "text": "Pengasih",
+          "value": "F"
+        }
+      ]
+    },
+    {
+      "_id": "27",
+      "type": "JP",
+      "text": "Saat anda menerima tugas/pekerjaan, anda akan :",
+      "answer": [
+        {
+          "text": "Segera mengerjakan",
+          "value": "J"
+        },
+        {
+          "text": "Menunggu dekat deadline baru mengerjakan",
+          "value": "P"
+        }
+      ]
+    },
+    {
+      "_id": "28",
+      "type": "JP",
+      "text": "Anda lebih nyaman ketika :",
+      "answer": [
+        {
+          "text": "Sesuatu telah diputuskan",
+          "value": "J"
+        },
+        {
+          "text": "Belum ada keputusan",
+          "value": "P"
+        }
+      ]
+    },
+    {
+      "_id": "29",
+      "type": "EI",
+      "text": "Saat berbicara dengan orang lain, apakah anda cenderung :",
+      "answer": [
+        {
+          "text": "Suka mengungkapkan secara spontan apa yang sedang ada di pikiran",
+          "value": "E"
+        },
+        {
+          "text": "Umumnya lebih suka mendengarkan dahulu, baru berbicara untuk merespon",
+          "value": "I"
+        }
+      ]
+    },
+    {
+      "_id": "30",
+      "type": "SN",
+      "text": "Pendapat masyarakat umum atau mayoritas seringkali :",
+      "answer": [
+        {
+          "text": "Terpercaya",
+          "value": "S"
+        },
+        {
+          "text": "Dapat diragukan dan dapat dipertanyakan kembali",
+          "value": "N"
+        }
+      ]
+    },
+    {
+      "_id": "31",
+      "type": "SN",
+      "text": "Anda lebih maksimal ketika bekerja sebagai :",
+      "answer": [
+        {
+          "text": "Eksekutor atau pelaksana",
+          "value": "S"
+        },
+        {
+          "text": "Konseptor atau penggagas ide",
+          "value": "N"
+        }
+      ]
+    },
+    {
+      "_id": "32",
+      "type": "TF",
+      "text": "Ketika memimpin sebuah tim, terhadap rekan kerja anda cenderung :",
+      "answer": [
+        {
+          "text": "Tegas dan disiplin",
+          "value": "T"
+        },
+        {
+          "text": "Pemaaf dan toleran",
+          "value": "F"
+        }
+      ]
+    },
+    {
+      "_id": "33",
+      "type": "TF",
+      "text": "Anda seringkali terlihat sebagai :",
+      "answer": [
+        {
+          "text": "Orang yang berkepala dingin/berpikiran tenang",
+          "value": "T"
+        },
+        {
+          "text": "Orang yang berhati lembut",
+          "value": "F"
+        }
+      ]
+    },
+    {
+      "_id": "34",
+      "type": "JP",
+      "text": "Dalam mencapai tujuan, anda biasanya :",
+      "answer": [
+        {
+          "text": "Mengorganisir dan mengembangkan strategi ke depan",
+          "value": "J"
+        },
+        {
+          "text": "Percaya solusi akan muncul dengan sendirinya ketika anda telah berjalan",
+          "value": "P"
+        }
+      ]
+    },
+    {
+      "_id": "35",
+      "type": "JP",
+      "text": "Pada banyak situasi anda seringkali :",
+      "answer": [
+        {
+          "text": "Merencanakan sebelumnya",
+          "value": "J"
+        },
+        {
+          "text": "Spontan, tanpa rencana sebelumnya",
+          "value": "P"
+        }
+      ]
+    },
+    {
+      "_id": "36",
+      "type": "EI",
+      "text": "Anda menganggap diri anda sebagai orang yang :",
+      "answer": [
+        {
+          "text": "Supel atau mudah bergaul",
+          "value": "E"
+        },
+        {
+          "text": "Seorang yang membutuhkan privasi, atau banyak meluangkan waktu sendiri",
+          "value": "I"
+        }
+      ]
+    },
+    {
+      "_id": "37",
+      "type": "SN",
+      "text": "Anda merupakan orang yang :",
+      "answer": [
+        {
+          "text": "Suka praktik secara langsung",
+          "value": "S"
+        },
+        {
+          "text": "Suka berimajinasi",
+          "value": "N"
+        }
+      ]
+    },
+    {
+      "_id": "38",
+      "type": "SN",
+      "text": "Anda berbicara seringkali dalam konteks yang :",
+      "answer": [
+        {
+          "text": "Khusus, secara rinci, dan teliti",
+          "value": "S"
+        },
+        {
+          "text": "Umum, secara gambaran besar",
+          "value": "N"
+        }
+      ]
+    },
+    {
+      "_id": "39",
+      "type": "TF",
+      "text": "Anda lebih sering dipuji sebagai orang yang :",
+      "answer": [
+        {
+          "text": "Logis",
+          "value": "T"
+        },
+        {
+          "text": "Berperasaan halus",
+          "value": "F"
+        }
+      ]
+    },
+    {
+      "_id": "40",
+      "type": "TF",
+      "text": "Manakah yang lebih sering mengatur anda?",
+      "answer": [
+        {
+          "text": "Pikiran",
+          "value": "T"
+        },
+        {
+          "text": "Perasaan",
+          "value": "F"
+        }
+      ]
+    },
+    {
+      "_id": "41",
+      "type": "JP",
+      "text": "Ketika anda selesai mengerjakan sebuah tugas, anda biasanya :",
+      "answer": [
+        {
+          "text": "Mengecek kembali, mencari ke­salahan, dan memperbaikinya",
+          "value": "J"
+        },
+        {
+          "text": "Langsung berpindah ke tugas lainnya",
+          "value": "P"
+        }
+      ]
+    },
+    {
+      "_id": "42",
+      "type": "JP",
+      "text": "Apakah anda lebih suka bekerja :",
+      "answer": [
+        {
+          "text": "Dengan batas waktu (deadline)",
+          "value": "J"
+        },
+        {
+          "text": "Sewaktu-waktu",
+          "value": "P"
+        }
+      ]
+    },
+    {
+      "_id": "43",
+      "type": "EI",
+      "text": "Apakah anda merupakan seorang yang :",
+      "answer": [
+        {
+          "text": "Suka berbicara",
+          "value": "E"
+        },
+        {
+          "text": "Tidak terlalu suka berbicara",
+          "value": "I"
+        }
+      ]
+    },
+    {
+      "_id": "44",
+      "type": "SN",
+      "text": "Ketika mendengarkan orang berbicara, anda biasanya fokus untuk : ",
+      "answer": [
+        {
+          "text": "Mengamati apa yang dikatakan secara gamblang atau tersurat",
+          "value": "S"
+        },
+        {
+          "text": "Mencari tahu maksud tersembunyinya atau tersirat",
+          "value": "N"
+        }
+      ]
+    },
+    {
+      "_id": "45",
+      "type": "SN",
+      "text": "Saat memikirkan suatu hal, anda cenderung berfokus pada :",
+      "answer": [
+        {
+          "text": "Apa yang dapat diamati dengan mata",
+          "value": "S"
+        },
+        {
+          "text": "Apa yang hanya dapat diimajinasikan",
+          "value": "N"
+        }
+      ]
+    },
+    {
+      "_id": "46",
+      "type": "TF",
+      "text": "Anda lebih tidak suka menjadi orang yang :",
+      "answer": [
+        {
+          "text": "Lembek",
+          "value": "T"
+        },
+        {
+          "text": "Keras kepala",
+          "value": "F"
+        }
+      ]
+    },
+    {
+      "_id": "47",
+      "type": "TF",
+      "text": "Saat anda dikomentari atau dikritik orang lain, biasanya anda :",
+      "answer": [
+        {
+          "text": "Terlalu cuek",
+          "value": "T"
+        },
+        {
+          "text": "Terlalu sensitif",
+          "value": "F"
+        }
+      ]
+    },
+    {
+      "_id": "48",
+      "type": "JP",
+      "text": "Dalam berbuat sesuatu, anda biasanya cenderung :",
+      "answer": [
+        {
+          "text": "Lebih hati-hati",
+          "value": "J"
+        },
+        {
+          "text": "Kadang-kadang sesuka hati",
+          "value": "P"
+        }
+      ]
+    },
+    {
+      "_id": "49",
+      "type": "JP",
+      "text": "Anda merupakan orang yang cenderung :",
+      "answer": [
+        {
+          "text": "Bergegas dalam mengerjakan sesuatu",
+          "value": "J"
+        },
+        {
+          "text": "Santai dalam mengerjakan sesuatu",
+          "value": "P"
+        }
+      ]
+    },
+    {
+      "_id": "50",
+      "type": "EI",
+      "text": "Dalam bekerja anda cenderung lebih sering :",
+      "answer": [
+        {
+          "text": "Bersosialisasi dengan rekan kerja",
+          "value": "E"
+        },
+        {
+          "text": "Mengerjakan pekerjaan sendiri",
+          "value": "I"
+        }
+      ]
+    },
+    {
+      "_id": "51",
+      "type": "SN",
+      "text": "Anda lebih sering percaya kepada :",
+      "answer": [
+        {
+          "text": "Pengalaman anda",
+          "value": "S"
+        },
+        {
+          "text": "Gagasan atau ide anda",
+          "value": "N"
+        }
+      ]
+    },
+    {
+      "_id": "52",
+      "type": "SN",
+      "text": "Anda merupakan orang yang cenderung berpikir :",
+      "answer": [
+        {
+          "text": "Secara sederhana, mudah dime­ngerti orang lain",
+          "value": "S"
+        },
+        {
+          "text": "Cenderung kompleks, susah dimengerti orang lain",
+          "value": "N"
+        }
+      ]
+    },
+    {
+      "_id": "53",
+      "type": "TF",
+      "text": "Anda menganggap diri anda sebagai orang yang :",
+      "answer": [
+        {
+          "text": "Keras hati",
+          "value": "T"
+        },
+        {
+          "text": "Berhati lembut",
+          "value": "F"
+        }
+      ]
+    },
+    {
+      "_id": "54",
+      "type": "TF",
+      "text": "Anda lebih menganggap diri anda sebagai orang yang :",
+      "answer": [
+        {
+          "text": "Rasional",
+          "value": "T"
+        },
+        {
+          "text": "Setia atau berbakti",
+          "value": "F"
+        }
+      ]
+    },
+    {
+      "_id": "55",
+      "type": "JP",
+      "text": "Anda biasanya menginginkan segala sesuatu :",
+      "answer": [
+        {
+          "text": "Telah ditetapkan dan diputuskan",
+          "value": "J"
+        },
+        {
+          "text": "Hanya digarisbawahi intinya saja, tidak perlu ditetapkan",
+          "value": "P"
+        }
+      ]
+    },
+    {
+      "_id": "56",
+      "type": "JP",
+      "text": "Saat akan membuat keputusan, anda lebih suka :",
+      "answer": [
+        {
+          "text":
+            "Segera menentukan pilihan, se­hingga semakin dekat dengan hasil yang ingin dicapai",
+          "value": "J"
+        },
+        {
+          "text":
+            "Sebisa mungkin menunda atau menimbang-nimbang untuk menentukan pilihan, sehingga memiliki banyak kemungkinan yang bisa dilakukan",
+          "value": "P"
+        }
+      ]
+    },
+    {
+      "_id": "57",
+      "type": "EI",
+      "text": "Anda menganggap diri anda sebagai :",
+      "answer": [
+        {
+          "text": "Pembicara yang baik",
+          "value": "E"
+        },
+        {
+          "text": "Pendengar yang baik",
+          "value": "I"
+        }
+      ]
+    },
+    {
+      "_id": "58",
+      "type": "SN",
+      "text": "Anda merupakan orang yang :",
+      "answer": [
+        {
+          "text": "Realistis",
+          "value": "S"
+        },
+        {
+          "text": "Imajinatif",
+          "value": "N"
+        }
+      ]
+    },
+    {
+      "_id": "59",
+      "type": "SN",
+      "text": "Anda lebih tertarik untuk hidup :",
+      "answer": [
+        {
+          "text": "Mengikuti tradisi yang ada",
+          "value": "S"
+        },
+        {
+          "text": "Berinovasi dan menciptakan tren baru",
+          "value": "N"
+        }
+      ]
+    },
+    {
+      "_id": "60",
+      "type": "TF",
+      "text": "Manakah yang menurut anda lebih buruk?",
+      "answer": [
+        {
+          "text": "Terlalu lembut",
+          "value": "T"
+        },
+        {
+          "text": "Terlalu tidak sensitif",
+          "value": "F"
+        }
+      ]
+    },
+    {
+      "_id": "61",
+      "type": "TF",
+      "text": "Anda biasanya lebih terpengaruh pada pembicara yang menggunakan :",
+      "answer": [
+        {
+          "text": "Bukti yang meyakinkan",
+          "value": "T"
+        },
+        {
+          "text": "Presentasi memikat yang menyentuh perasaan",
+          "value": "F"
+        }
+      ]
+    },
+    {
+      "_id": "62",
+      "type": "JP",
+      "text": "Teman anda melihat anda sebagai orang yang :",
+      "answer": [
+        {
+          "text": "Tekun dan sungguh-sungguh",
+          "value": "J"
+        },
+        {
+          "text": "Santai",
+          "value": "P"
+        }
+      ]
+    },
+    {
+      "_id": "63",
+      "type": "JP",
+      "text": "Anda akan melaksanakan suatu kegiatan, maka :",
+      "answer": [
+        {
+          "text": "Mempersiapkan segala sesuatu di depan sebelum kegiatan",
+          "value": "J"
+        },
+        {
+          "text": "Kegiatan dilaksanakan secara mengalir",
+          "value": "P"
+        }
+      ]
+    },
+    {
+      "_id": "64",
+      "type": "EI",
+      "text": "Anda merupakan seseorang yang :",
+      "answer": [
+        {
+          "text": "Mudah untuk akrab dan gampang didekati",
+          "value": "E"
+        },
+        {
+          "text": "Kadang-kadang pendiam dan perlu waktu lebih untuk akrab",
+          "value": "I"
+        }
+      ]
+    },
+    {
+      "_id": "65",
+      "type": "SN",
+      "text": "Anda lebih menyukai jenis film :",
+      "answer": [
+        {
+          "text": "Aksi dan petualangan",
+          "value": "S"
+        },
+        {
+          "text": "Fantasi dan kepahlawanan atau biografi",
+          "value": "N"
+        }
+      ]
+    },
+    {
+      "_id": "66",
+      "type": "SN",
+      "text": "Lebih mudah untuk anda :",
+      "answer": [
+        {
+          "text": "Segera praktik bersama teman-teman untuk mengerjakan sesuatu",
+          "value": "S"
+        },
+        {
+          "text": "Mendiskusikan ide dan konsep sebelum mengerjakan sesuatu",
+          "value": "N"
+        }
+      ]
+    },
+    {
+      "_id": "67",
+      "type": "TF",
+      "text": "Anda berharap memiliki :",
+      "answer": [
+        {
+          "text": "Kemauan atau kehendak yang kuat",
+          "value": "T"
+        },
+        {
+          "text": "Kepekaan emosi yang tinggi",
+          "value": "F"
+        }
+      ]
+    },
+    {
+      "_id": "68",
+      "type": "TF",
+      "text": "Secara umum anda orang yang :",
+      "answer": [
+        {
+          "text": "Bermuka tebal",
+          "value": "T"
+        },
+        {
+          "text": "Gampang tersinggung",
+          "value": "F"
+        }
+      ]
+    },
+    {
+      "_id": "69",
+      "type": "JP",
+      "text": "Ruangan kerja dan kamar anda seringkali :",
+      "answer": [
+        {
+          "text": "Rapi",
+          "value": "J"
+        },
+        {
+          "text": "Tidak teratur",
+          "value": "P"
+        }
+      ]
+    },
+    {
+      "_id": "70",
+      "type": "JP",
+      "text": "Anda merupakan orang yang :",
+      "answer": [
+        {
+          "text": "Terjadwal",
+          "value": "J"
+        },
+        {
+          "text": "Fleksibel",
+          "value": "P"
+        }
+      ]
+    }
+  ]
+}
