@@ -152,9 +152,9 @@ const UserSchema = new Schema<IUser>(
 
 /**
  * Indexes for fast queries
+ * Note: email and username indexes are already created by `sparse: true`
+ * in field definitions above, so we only add the remaining indexes here
  */
-UserSchema.index({ email: 1 }, { sparse: true }); // Find by email (registered users)
-UserSchema.index({ username: 1 }, { sparse: true }); // Find by username
 UserSchema.index({ userType: 1, isActive: 1 }); // Filter users by type
 UserSchema.index({ personalityType: 1 }); // Group by personality type
 UserSchema.index({ totalPoints: -1 }); // Leaderboard queries

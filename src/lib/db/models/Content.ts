@@ -146,13 +146,14 @@ const ContentSchema = new Schema<IContent>(
   },
   {
     timestamps: true,
-  }
+  },
 );
 
 /**
  * Indexes for fast queries
+ * Note: slug index is already created by `unique: true` in field definition
+ * so we only add the remaining indexes here
  */
-ContentSchema.index({ slug: 1 });
 ContentSchema.index({ personalityId: 1, contentType: 1 });
 ContentSchema.index({ contentType: 1, published: 1 });
 ContentSchema.index({ category: 1, published: 1 });
@@ -195,7 +196,7 @@ ContentSchema.methods.getNavigation = async function () {
     .lean();
 
   const currentIndex = siblings.findIndex(
-    s => s._id.toString() === this._id.toString()
+    s => s._id.toString() === this._id.toString(),
   );
 
   return {
