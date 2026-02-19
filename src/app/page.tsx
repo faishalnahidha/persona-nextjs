@@ -1,14 +1,25 @@
-export default function HomePage() {
+import type { Metadata } from "next";
+import { readexPro, openSans, arvo, geistMono } from "@/lib/fonts";
+import "./globals.css";
+
+export const metadata: Metadata = {
+  title: "Persona My ID",
+  description: "Discover your personality through interactive assessments",
+};
+
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
-    <div className='flex min-h-screen items-center justify-center'>
-      <div className='text-center'>
-        <h1 className='text-4xl font-bold tracking-tight'>
-          Welcome to Persona
-        </h1>
-        <p className='mt-4 text-lg text-muted-foreground'>
-          Project setup complete! 🎉
-        </p>
-      </div>
-    </div>
+    <html
+      lang="en"
+      className={`${readexPro.variable} ${openSans.variable} ${arvo.variable} ${geistMono.variable}`}
+    >
+      <body className="min-h-screen bg-white font-body antialiased">
+        {children}
+      </body>
+    </html>
   );
 }
