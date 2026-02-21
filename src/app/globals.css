@@ -48,6 +48,35 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
+
+  /* Brand Neutral (zinc) */
+  --color-brand-neutral-50: var(--color-zinc-50);
+  --color-brand-neutral-100: var(--color-zinc-100);
+  --color-brand-neutral-200: var(--color-zinc-200);
+  --color-brand-neutral-300: var(--color-zinc-300);
+  --color-brand-neutral-400: var(--color-zinc-400);
+  --color-brand-neutral-500: var(--color-zinc-500);
+  --color-brand-neutral-600: var(--color-zinc-600);
+  --color-brand-neutral-700: var(--color-zinc-700);
+  --color-brand-neutral-800: var(--color-zinc-800);
+  --color-brand-neutral-900: var(--color-zinc-900);
+  --color-brand-neutral-950: var(--color-zinc-950);
+
+  /* Brand Accent (purple) */
+  --color-brand-accent-50: var(--color-purple-50);
+  --color-brand-accent-100: var(--color-purple-100);
+  --color-brand-accent-200: var(--color-purple-200);
+  --color-brand-accent-300: var(--color-purple-300);
+  --color-brand-accent-400: var(--color-purple-400);
+  --color-brand-accent-500: var(--color-purple-500);
+  --color-brand-accent-600: var(--color-purple-600);
+  --color-brand-accent-700: var(--color-purple-700);
+  --color-brand-accent-800: var(--color-purple-800);
+  --color-brand-accent-900: var(--color-purple-900);
+  --color-brand-accent-950: var(--color-purple-950);
+
+  /* Other Custom Color */
+  --color-foreground-alt: var(--color-zinc-700);
 }
 
 @layer base {
@@ -146,5 +175,89 @@
   }
   button {
     @apply font-heading;
+  }
+}
+
+@layer components {
+  /* Headings */
+  .heading-1 {
+    @apply font-heading text-5xl font-medium leading-none tracking-[-0.5px];
+  }
+  .heading-2 {
+    @apply font-heading text-3xl font-semibold leading-9 tracking-[0.25px];
+  }
+  .heading-3 {
+    @apply font-heading text-2xl font-semibold leading-7 tracking-[0px];
+  }
+  .heading-4 {
+    @apply font-heading text-xl font-semibold leading-6 tracking-[0.1px];
+  }
+
+  /* Responsive headings */
+  .sm-heading-1 {
+    @apply font-heading text-4xl font-medium leading-10 tracking-[-0.25px];
+  }
+  .sm-heading-2 {
+    @apply font-heading text-2xl font-semibold leading-7 tracking-[0px];
+  }
+
+  /* Paragraph - Regular */
+  .para-regular {
+    @apply font-body text-base font-normal leading-6 tracking-[0px];
+  }
+  .para-regular-medium {
+    @apply font-body text-base font-medium leading-6 tracking-[0px];
+  }
+  .para-regular-bold {
+    @apply font-body text-base font-semibold leading-6 tracking-[-0.1px];
+  }
+
+  /* Paragraph - Small */
+  .para-sm {
+    @apply font-body text-sm font-normal leading-5 tracking-[0px];
+  }
+  .para-sm-medium {
+    @apply font-body text-sm font-medium leading-5 tracking-[0px];
+  }
+  .para-sm-bold {
+    @apply font-body text-sm font-semibold leading-5 tracking-[-0.1px];
+  }
+
+  /* Paragraph - Large */
+  .para-lg {
+    @apply font-body text-lg font-normal leading-7 tracking-[-0.1px];
+  }
+  .para-lg-medium {
+    @apply font-body text-lg font-medium leading-7 tracking-[-0.1px];
+  }
+  .para-lg-bold {
+    @apply font-body text-lg font-semibold leading-7 tracking-[-0.2px];
+  }
+
+  /* Paragraph - Mini */
+  .para-mini {
+    @apply font-body text-xs font-normal leading-4 tracking-[0.1px];
+  }
+  .para-mini-medium {
+    @apply font-body text-xs font-medium leading-4 tracking-[0.1px];
+  }
+  .para-mini-bold {
+    @apply font-body text-xs font-semibold leading-4 tracking-[0px];
+  }
+
+  /* Button */
+  .btn-text {
+    @apply font-heading text-base font-normal leading-none tracking-[0.25px];
+  }
+  .btn-text-sm {
+    @apply font-heading text-sm font-normal leading-none tracking-[0.25px];
+  }
+
+  /* Misc */
+  .caption {
+    @apply font-body text-xs font-normal leading-4 tracking-[1.5px];
+  }
+  .monospaced {
+    @apply font-mono text-base font-normal leading-5 tracking-[0.25px];
   }
 }
