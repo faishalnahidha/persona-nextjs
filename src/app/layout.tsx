@@ -1,9 +1,10 @@
-import type { Metadata } from 'next';
-import './globals.css';
+import type { Metadata } from "next";
+import { readexPro, openSans, arvo, geistMono } from '@/lib/fonts'
+import "./globals.css";
 
 export const metadata: Metadata = {
-  title: 'Persona - Personality Assessment',
-  description: 'Discover your personality through interactive assessments',
+  title: "Persona My ID",
+  description: "Discover your personality through interactive assessments",
 };
 
 export default function RootLayout({
@@ -12,8 +13,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang='en'>
-      <body className='min-h-screen bg-background font-sans antialiased'>
+    <html
+      lang="en"
+      className={`${readexPro.variable} ${openSans.variable} ${arvo.variable} ${geistMono.variable}`}
+    >
+      <body className="min-h-screen bg-background font-body antialiased">
         {children}
       </body>
     </html>

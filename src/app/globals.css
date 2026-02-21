@@ -1,20 +1,15 @@
-/* @config "../../tailwind.config.ts"; */
+@import 'tailwindcss';
+@import 'tw-animate-css';
 
 @plugin "tailwindcss-animate";
-@import 'tw-animate-css';
-@import 'tailwindcss';
 
 @custom-variant dark (&:is(.dark *));
 
-/* @tailwind base;
-@tailwind components;
-@tailwind utilities; */
-
-@theme inline {
-  --font-family-heading: var(--font-heading);
-  --font-family-body: var(--font-body);
-  --font-family-serif: var(--font-serif);
-  --font-family-mono: var(--font-mono);
+@theme {
+  --font-heading: var(--font-heading);
+  --font-body: var(--font-body);
+  --font-serif: var(--font-serif);
+  --font-mono: var(--font-mono);
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
