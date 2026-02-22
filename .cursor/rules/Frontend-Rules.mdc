@@ -1,49 +1,50 @@
 ---
-description: 
-alwaysApply: true
+description: Standards for frontend coding
+alwaysApply: false
 ---
 
-# Frontend Rules
+# Styling & Components
 
-## Styling & Components
 - Use ONLY Tailwind utility classes for layout and spacing
 - Use Shadcn UI components for interactive elements (buttons, forms, cards, etc.)
 - Never write custom CSS
-- Use configured font variables: font-heading, font-body, font-mono
-- Use configured semantic theme in src\app\globals.css
-- Use zinc colors for neutral palette
-- Use purple for accent colors
+- Use configured typography scale and semantic theme from globals.css
 - Use '@tabler/icons-react' for icons
 
-## Shadcn UI
+# Shadcn UI
+
 - Always use Shadcn components when appropriate (Button, Card, Input, etc.)
 - Install components as needed: `npx shadcn@latest add [component-name]`
 - Import from @/components/ui/[component-name]
 - Use Shadcn's built-in variants (default, secondary, destructive, outline, ghost, link)
 - Extend variants in component files if needed for custom styles
 
-## Available Shadcn Components
-- Before using, check if installed. Common components:
-- button, card, input, label, form, table, dialog, dropdown-menu, select, toast
+# Available Shadcn Components
+
+- Before using, check if installed.
 - If not installed, suggest installation command
 
-## Next.js & React
-- Prefer Server Components (no 'use client' unless needed)
-- Use Next.js Link for navigation
-- Use Tabler Icons (@tabler/icons-react) for all icons
+# Next.js & React
 
-## Design-to-Code Workflow (MCP)
+- Prefer Server Components (no 'use client' unless needed)
+
+# Design-to-Code Workflow (MCP)
+
 - When I provide a Penpot URL, ALWAYS use the Penpot MCP tools to inspect the design before writing code.
 
-## Coding Standards
+# Coding Standards
+
 - Use TypeScript for all components.
 - If a component requires state, use functional components with Hooks.
 - For complex layouts, prioritize CSS Grid/Flexbox as defined in the Penpot file.
+- Inspect design token defined in the Penpot and apply the closest global.css variables or Tailwind equivalent.
 - Do not hallucinate properties; if a Penpot value is missing, ask me or use the closest Tailwind equivalent.
 
-## Do NOT
+# Do NOT
+
 - Add comments explaining obvious code
 - Add features not requested
 - Use external libraries beyond what's installed (Next.js, Tailwind, Shadcn, Tabler Icons)
+- Use raw hex code or pixel measurement for styling
 - Create additional components unless asked
-- Use HTML buttons when Shadcn Button is appropriate
+
