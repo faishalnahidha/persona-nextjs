@@ -8,15 +8,15 @@ import {
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { SiteHeader } from "@/components/site-header";
+import Header from "@/components/header";
 
 export default function HomePage() {
   return (
-    <main className="min-h-screen bg-linear-to-r from-brand-neutral-100 to-brand-neutral-50">
-      <SiteHeader />
+    <main className="min-h-screen">
+      <Header />
 
-      <section className="mx-auto w-full max-w-[1440px] px-10 pt-[189px]">
-        <div className="grid grid-cols-[3fr_2fr] gap-10">
+      <section className="w-full h-400 pt-18 bg-linear-to-r from-brand-neutral-100 to-brand-neutral-50">
+        <div className="container mx-auto w-full items-center grid grid-cols-[3fr_2fr] gap-10 px-6 md:px-10">
           <div className="flex flex-col gap-6">
             <div className="flex flex-col gap-6">
               <h1 className="text-6xl font-medium text-[#27272a]">
