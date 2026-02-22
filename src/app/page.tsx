@@ -3,45 +3,17 @@ import Link from "next/link";
 import {
   IconArrowDownLeft,
   IconFileTextSpark,
-  IconLogin2,
   IconFlareFilled,
 } from "@tabler/icons-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { SiteHeader } from "@/components/site-header";
 
 export default function HomePage() {
   return (
     <main className="min-h-screen bg-linear-to-r from-brand-neutral-100 to-brand-neutral-50">
-      <header className="mx-auto flex h-[72px] w-full max-w-[1440px] items-center justify-between px-10">
-        <div className="flex items-center gap-2">
-          <div className="size-7 rounded-full bg-brand-accent-600" />
-          <span className="text-nav font-semibold text-brand-accent-500">
-            PERSONA{" "}
-            <span className="text-[#7c3aed]">
-              MY<span className="text-[#27272a]">.ID</span>
-            </span>
-          </span>
-        </div>
-
-        <nav className="flex items-center gap-4">
-          <Link href="#artikel-panduan" className="text-nav text-[#27272a]">
-            Artikel Panduan
-          </Link>
-          <Link href="#blog" className="text-nav text-[#27272a]">
-            Blog
-          </Link>
-          <Link href="#buku" className="text-nav text-[#27272a]">
-            Buku (Legacy)
-          </Link>
-
-          <Button size="lg"
-          >
-            Login
-            <IconLogin2 />
-          </Button>
-        </nav>
-      </header>
+      <SiteHeader />
 
       <section className="mx-auto w-full max-w-[1440px] px-10 pt-[189px]">
         <div className="grid grid-cols-[3fr_2fr] gap-10">
