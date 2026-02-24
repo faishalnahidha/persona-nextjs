@@ -107,7 +107,7 @@ export function DatePickerInput() {
             data-empty={!date}
             className="data-[empty=true]:text-muted-foreground w-full rounded-lg pl-3 pr-2.5"
           >
-            <div className="flex flex-row w-full items-center gap-4 text-base lg:text-sm font-body">
+            <div className="flex flex-row w-full items-center gap-4 text-base md:text-sm font-body">
               <div className="flex flex-row grow items-center gap-2">
                 {/* <IconCake stroke={1.5} className="size-5 text-muted-foreground/64" /> */}
                 {date ? formatDate(date) : <span>Pilih tanggal lahir</span>}

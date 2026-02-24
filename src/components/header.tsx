@@ -52,10 +52,10 @@ export default function Header({ scrollEffect = true }: HeaderProps) {
           ? 'bg-background/95 backdrop-blur-sm border-b border-border'
           : 'bg-transparent'
       )}>
-        <div className="container mx-auto flex items-center justify-between w-full pl-3 pr-4 md:px-6 lg:px-10">
+        <div className="container mx-auto flex items-center justify-between pl-3 pr-4 md:pl-8 md:pr-10 lg:px-10">
 
           {/* Mobile: Logo + Hamburger */}
-          <div className="flex items-center gap-2 md:hidden">
+          <div className="flex items-center gap-2 lg:hidden">
             <Button
               variant="ghost"
               size="icon"
@@ -76,7 +76,7 @@ export default function Header({ scrollEffect = true }: HeaderProps) {
           </div>
 
           {/* Desktop: Logo */}
-          <Link href="/" className="hidden md:block">
+          <Link href="/" className="hidden lg:block">
             <Image
               src="/images/logo-persona-full.svg"
               alt="Persona My Id Logo"
@@ -87,13 +87,13 @@ export default function Header({ scrollEffect = true }: HeaderProps) {
           </Link>
 
           {/* Mobile: Login Icon */}
-          <Button asChild size="icon" className="rounded-full md:hidden pr-[2px]" aria-label="Login">
+          <Button asChild size="icon" className="rounded-full lg:hidden pr-[2px]" aria-label="Login">
             <Link href="#login"><IconLogin2 /></Link>
           </Button>
 
           {/* Desktop: Nav */}
-          <NavigationMenu className="hidden md:flex">
-            <NavigationMenuList className="gap-4">
+          <NavigationMenu className="hidden lg:flex">
+            <NavigationMenuList className="gap-0">
               {navLinks.map(({ href, label }) => (
                 <NavigationMenuItem key={href}>
                   <NavigationMenuLink asChild className={`${navigationMenuTriggerStyle()} rounded-full btn-text-sm bg-transparent`}>
@@ -103,7 +103,7 @@ export default function Header({ scrollEffect = true }: HeaderProps) {
               ))}
               <NavigationMenuItem>
                 <Button asChild size="lg" className="rounded-full pl-6 pr-5 ml-4">
-                  <Link href="#login">Login <IconLogin2 /></Link>
+                  <Link href="#login">Login<IconLogin2 /></Link>
                 </Button>
               </NavigationMenuItem>
             </NavigationMenuList>
