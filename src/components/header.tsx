@@ -116,13 +116,13 @@ export default function Header({ scrollEffect = true }: HeaderProps) {
       <Drawer open={mobileMenuOpen} onOpenChange={setMobileMenuOpen} direction="left">
         <DrawerContent>
           <DrawerTitle className="sr-only">Navigation Menu</DrawerTitle>
-          <div className="px-4 pt-5 pb-3">
+          <div className="px-4 pt-5 pb-4">
             <Link href="/" onClick={() => setMobileMenuOpen(false)}>
               <Image
                 src="/images/logo-persona-full.svg"
                 alt="Persona My Id Logo"
-                width={160}
-                height={26}
+                width={200}
+                height={32}
                 priority
               />
             </Link>
@@ -132,7 +132,7 @@ export default function Header({ scrollEffect = true }: HeaderProps) {
               <DrawerClose key={href} asChild>
                 <Link
                   href={href}
-                  className="btn-text-sm py-3 border-b border-border last:border-b-0 text-foreground"
+                  className="btn-text-sm py-4 border-b border-border last:border-b-0 text-foreground"
                 >
                   {label}
                 </Link>
