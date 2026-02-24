@@ -117,7 +117,7 @@ export function DatePickerInput() {
 
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-auto p-0" align="start">
+        <PopoverContent className="w-fit p-4 pb-5" align="start">
           <Calendar
             mode="single"
             captionLayout="dropdown"
@@ -127,6 +127,7 @@ export function DatePickerInput() {
               setDate(selectedDate)
               setOpen(false)
             }}
+            className="p-0 [--cell-size:--spacing(9)]"
           />
         </PopoverContent>
       </Popover>
