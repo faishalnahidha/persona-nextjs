@@ -26,9 +26,9 @@ function formatDate(date: Date | undefined) {
     return ""
   }
 
-  return date.toLocaleDateString("en-US", {
+  return date.toLocaleDateString("id-ID", {
     day: "2-digit",
-    month: "long",
+    month: "short",
     year: "numeric",
   })
 }
@@ -105,13 +105,19 @@ export function DatePickerInput() {
             variant="outline"
             size="lg"
             data-empty={!date}
-            className="data-[empty=true]:text-muted-foreground w-full px-2 rounded-lg justify-between text-left para-sm"
+            className="data-[empty=true]:text-muted-foreground w-full rounded-lg pl-3 pr-2.5"
           >
-            {date ? formatDate(date) : <span>Pilih tanggal lahir</span>}
-            <IconCalendarFilled className="size-5 text-muted-foreground" />
+            <div className="flex flex-row w-full items-center gap-4 text-base md:text-sm font-body">
+              <div className="flex flex-row grow items-center gap-2">
+                {/* <IconCake stroke={1.5} className="size-5 text-muted-foreground/64" /> */}
+                {date ? formatDate(date) : <span>Pilih tanggal lahir</span>}
+              </div>
+              <IconCalendarFilled className="size-5 text-muted-foreground" />
+            </div>
+
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-auto p-0" align="start">
+        <PopoverContent className="w-fit p-4 pb-5" align="start">
           <Calendar
             mode="single"
             captionLayout="dropdown"
@@ -121,32 +127,33 @@ export function DatePickerInput() {
               setDate(selectedDate)
               setOpen(false)
             }}
+            className="p-0 [--cell-size:--spacing(9)]"
           />
         </PopoverContent>
       </Popover>
-    </Field>
+    </Field >
   )
 }
 
 export function HeroForm() {
   return (
-    <Card className="relative flex flex-col grow justify-end w-md rounded-2xl bg-primary p-10">
-      <div className="absolute top-8 right-8 grid size-12 place-items-center rounded-full bg-muted/50">
-        <IconArrowDownLeft className="size-8 text-foreground" stroke={2} />
+    <Card className="relative flex flex-col grow justify-end w-full xl:w-md rounded-2xl bg-primary p-6 lg:p-10">
+      <div className="absolute top-4 lg:top-8 right-4 lg:right-8 p-2 place-items-center rounded-full bg-muted/40">
+        <IconArrowDownLeft className="size-6 lg:size-8 text-foreground" stroke={2.5} />
       </div>
-      <CardContent className="flex flex-col p-0 gap-10">
-        <h2 className="heading-2 text-primary-foreground">
+      <CardContent className="flex flex-col p-0 gap-8 lg:gap-10">
+        <h2 className="heading-2-sm lg:heading-2 text-primary-foreground">
           Tes gratis di sini
         </h2>
-        <form className="flex flex-col gap-10">
+        <form className="flex flex-col gap-8 lg:gap-10">
           <FieldGroup className="gap-6">
             <Field>
               <Input
                 id="name"
                 name="name"
-                placeholder="Masukkan nama kamu"
+                placeholder="Masukkan nama kamu..."
                 autoComplete="given-name"
-                className="h-10 rounded-lg bg-background border-border px-4"
+                className="h-10 rounded-lg bg-background border-border"
               />
             </Field>
 
@@ -172,17 +179,18 @@ export function HeroForm() {
           >
             <span className='btn-text'>Mulai Tes</span>
           </Button>
-
-          <div className="flex flex-row items-center justify-center -mt-4 text-sm text-primary-foreground/70">
-            <p>Sudah punya akun?</p>
-            <Button asChild variant="link" className="para-sm-medium text-primary-foreground px-2">
-              <Link href="#login">Login</Link>
-            </Button>
-          </div>
-
         </form>
+
+        <div className="flex flex-row items-center justify-center -mt-4 text-sm text-primary-foreground/70">
+          <p>Sudah punya akun?</p>
+          <Button asChild variant="link" className="para-sm-medium text-primary-foreground px-2">
+            <Link href="#login">Login</Link>
+          </Button>
+        </div>
+
+
       </CardContent>
 
-    </Card>
+    </Card >
   )
 }

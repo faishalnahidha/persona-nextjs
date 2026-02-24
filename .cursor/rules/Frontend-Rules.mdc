@@ -14,15 +14,11 @@ alwaysApply: false
 # Shadcn UI
 
 - Always use Shadcn components when appropriate (Button, Card, Input, etc.)
-- Install components as needed: `npx shadcn@latest add [component-name]`
+- Before using component, check if it was installed.
+- If not installed, install components as needed: `npx shadcn@latest add [component-name]`
 - Import from @/components/ui/[component-name]
 - Use Shadcn's built-in variants (default, secondary, destructive, outline, ghost, link)
 - Extend variants in component files if needed for custom styles
-
-# Available Shadcn Components
-
-- Before using, check if installed.
-- If not installed, suggest installation command
 
 # Next.js & React
 

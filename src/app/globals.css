@@ -194,10 +194,10 @@
   }
 
   /* Responsive headings */
-  .sm-heading-1 {
+  .heading-1-sm {
     @apply font-heading text-4xl font-medium leading-10 tracking-[-0.25px];
   }
-  .sm-heading-2 {
+  .heading-2-sm {
     @apply font-heading text-2xl font-semibold leading-7 tracking-[0px];
   }
 

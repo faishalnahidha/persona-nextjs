@@ -3,7 +3,7 @@ import { Readex_Pro, Open_Sans, Arvo, Geist_Mono } from 'next/font/google';
 // Heading font
 export const readexPro = Readex_Pro({
   subsets: ['latin'],
-  weight: ['300', '400', '500', '600'],
+  weight: ['400', '500', '600'],
   variable: '--font-heading',
   display: 'swap',
 });
@@ -11,7 +11,7 @@ export const readexPro = Readex_Pro({
 // Body font (Sans Serif)
 export const openSans = Open_Sans({
   subsets: ['latin'],
-  weight: ['400', '500', '600', '700'],
+  weight: ['400', '500', '600'],
   variable: '--font-body',
   display: 'swap',
 });
@@ -27,7 +27,7 @@ export const arvo = Arvo({
 // Monospace font
 export const geistMono = Geist_Mono({
   subsets: ['latin'],
-  weight: ['400', '500', '600', '700'],
+  weight: ['400', '500', '600'],
   variable: '--font-mono',
   display: 'swap',
 });
