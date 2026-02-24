@@ -4,29 +4,16 @@ import * as React from 'react';
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
 
-import { IconArrowDownLeft, IconArrowRight, IconGenderFemale, IconGenderMale, IconCalendarFilled, IconChevronDown } from "@tabler/icons-react"
+import { IconArrowDownLeft, IconGenderFemale, IconGenderMale, IconCalendarFilled } from "@tabler/icons-react"
 
 import { Button } from "@/components/ui/button"
-import { Field, FieldDescription, FieldGroup, FieldLabel } from "@/components/ui/field"
+import { Field, FieldGroup, } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import {
   Card,
-  CardAction,
   CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
 } from "@/components/ui/card"
 import { Calendar } from "@/components/ui/calendar"
-import {
-  InputGroup,
-  InputGroupAddon,
-  InputGroupButton,
-  InputGroupInput,
-} from "@/components/ui/input-group"
 import {
   Popover,
   PopoverContent,
@@ -45,18 +32,6 @@ function formatDate(date: Date | undefined) {
     year: "numeric",
   })
 }
-
-function isValidDate(date: Date | undefined) {
-  if (!date) {
-    return false
-  }
-  return !isNaN(date.getTime())
-}
-
-const GENDER_OPTIONS = [
-  { value: "male", label: "Laki-laki", icon: IconGenderMale },
-  { value: "female", label: "Perempuan", icon: IconGenderFemale },
-] as const
 
 interface ChipOption {
   label: string;
