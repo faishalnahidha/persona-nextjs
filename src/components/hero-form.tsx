@@ -4,7 +4,7 @@ import * as React from 'react';
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
 
-import { IconArrowDownLeft, IconGenderFemale, IconGenderMale, IconCalendarFilled, IconCake, IconUser } from "@tabler/icons-react"
+import { IconArrowDownLeft, IconGenderFemale, IconGenderMale, IconCalendarFilled } from "@tabler/icons-react"
 
 import { Button } from "@/components/ui/button"
 import { Field, FieldGroup, } from "@/components/ui/field"
@@ -20,7 +20,6 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover"
 import Link from 'next/link';
-import { InputGroup, InputGroupAddon, InputGroupInput } from './ui/input-group';
 
 function formatDate(date: Date | undefined) {
   if (!date) {

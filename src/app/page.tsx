@@ -13,7 +13,7 @@ export default function HomePage() {
       <Header />
 
       <section className="flex w-full h-fit lg:h-screen items-center bg-linear-to-r from-brand-neutral-100 to-brand-neutral-50">
-        <div className="mx-auto grid grid-cols-1 lg:grid-cols-[3fr_2fr] justify-start lg:justify-center gap-4 md:gap-6 xl:gap-10 px-6 md:px-10 pt-38 pb-10 lg:py-0">
+        <div className="mx-auto grid grid-cols-1 lg:grid-cols-[3fr_2fr] justify-start lg:justify-center gap-4 md:gap-6 xl:gap-10 px-6 md:px-10 pt-24 pb-10 lg:py-0">
 
           {/* Left Side */}
           <div className="flex flex-col items-stretch justify-center gap-4 lg:gap-6">
