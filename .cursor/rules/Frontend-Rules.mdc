@@ -1,0 +1,46 @@
+---
+description: Standards for frontend coding
+alwaysApply: false
+---
+
+# Styling & Components
+
+- Use ONLY Tailwind utility classes for layout and spacing
+- Use Shadcn UI components for interactive elements (buttons, forms, cards, etc.)
+- Never write custom CSS
+- Use configured typography scale and semantic theme from globals.css
+- Use '@tabler/icons-react' for icons
+
+# Shadcn UI
+
+- Always use Shadcn components when appropriate (Button, Card, Input, etc.)
+- Before using component, check if it was installed.
+- If not installed, install components as needed: `npx shadcn@latest add [component-name]`
+- Import from @/components/ui/[component-name]
+- Use Shadcn's built-in variants (default, secondary, destructive, outline, ghost, link)
+- Extend variants in component files if needed for custom styles
+
+# Next.js & React
+
+- Prefer Server Components (no 'use client' unless needed)
+
+# Design-to-Code Workflow (MCP)
+
+- When I provide a Penpot URL, ALWAYS use the Penpot MCP tools to inspect the design before writing code.
+
+# Coding Standards
+
+- Use TypeScript for all components.
+- If a component requires state, use functional components with Hooks.
+- For complex layouts, prioritize CSS Grid/Flexbox as defined in the Penpot file.
+- Inspect design token defined in the Penpot and apply the closest global.css variables or Tailwind equivalent.
+- Do not hallucinate properties; if a Penpot value is missing, ask me or use the closest Tailwind equivalent.
+
+# Do NOT
+
+- Add comments explaining obvious code
+- Add features not requested
+- Use external libraries beyond what's installed (Next.js, Tailwind, Shadcn, Tabler Icons)
+- Use raw hex code or pixel measurement for styling
+- Create additional components unless asked
+
