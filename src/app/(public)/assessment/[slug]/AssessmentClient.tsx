@@ -18,6 +18,7 @@ interface Question {
 
 interface Assessment {
   _id: string;
+  slug: string;
   title: string;
   description: string;
   instructions?: string;
@@ -117,7 +118,7 @@ export default function AssessmentClient({
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          assessmentId: assessment._id,
+          assessmentSlug: assessment.slug,
           answers: answersArray,
           questionCounts: assessment.questionCounts,
         }),
@@ -130,7 +131,7 @@ export default function AssessmentClient({
         sessionStorage.removeItem(`assessment_${assessment._id}`);
 
         // Redirect to results page
-        router.push(`/assessment/${assessment._id}/result/${result.resultId}`);
+        router.push(`/assessment/${assessment.slug}/result/${result.resultId}`);
       } else {
         alert('Terjadi kesalahan: ' + result.error);
       }
@@ -231,15 +232,15 @@ export default function AssessmentClient({
                 key={index}
                 onClick={() => handleAnswer(question._id, option.value)}
                 className={`w-full text-left p-4 rounded-lg border-2 transition-all ${answers[question._id] === option.value
-                    ? 'border-indigo-600 bg-indigo-50'
-                    : 'border-gray-200 hover:border-indigo-300 hover:bg-gray-50'
+                  ? 'border-indigo-600 bg-indigo-50'
+                  : 'border-gray-200 hover:border-indigo-300 hover:bg-gray-50'
                   }`}
               >
                 <div className='flex items-start gap-3'>
                   <div
                     className={`flex-shrink-0 w-6 h-6 rounded-full border-2 flex items-center justify-center mt-0.5 ${answers[question._id] === option.value
-                        ? 'border-indigo-600 bg-indigo-600'
-                        : 'border-gray-300'
+                      ? 'border-indigo-600 bg-indigo-600'
+                      : 'border-gray-300'
                       }`}
                   >
                     {answers[question._id] === option.value && (

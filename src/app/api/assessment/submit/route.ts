@@ -19,10 +19,10 @@ export async function POST(request: NextRequest) {
     await connectDB();
 
     const body = await request.json();
-    const { assessmentId, answers, questionCounts, userName } = body;
+    const { assessmentSlug, answers, questionCounts, userName } = body;
 
     // Validate input
-    if (!assessmentId || !answers || !Array.isArray(answers)) {
+    if (!assessmentSlug || !answers || !Array.isArray(answers)) {
       return NextResponse.json(
         { error: 'Invalid request data' },
         { status: 400 },
@@ -30,13 +30,18 @@ export async function POST(request: NextRequest) {
     }
 
     // Verify assessment exists
-    const assessment = await Assessment.findById(assessmentId);
+    const assessment = await Assessment.findOne({
+      slug: assessmentSlug,
+      published: true,
+    });
     if (!assessment) {
       return NextResponse.json(
         { error: 'Assessment not found' },
         { status: 404 },
       );
     }
+
+    const assessmentId = assessment._id;
 
     // Calculate scores using Assessment model method
     const calculatedResult = Assessment.calculateResult(

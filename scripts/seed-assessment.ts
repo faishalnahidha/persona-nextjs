@@ -160,6 +160,7 @@ async function seedAssessment() {
     console.log('📝 Creating MBTI assessment...');
     const assessment = await Assessment.create({
       title: 'MBTI Personality Assessment',
+      slug: 'mbti-v1',
       description:
         'Tes kepribadian MBTI untuk mengetahui tipe kepribadian Anda. Terdiri dari 70 pertanyaan yang akan mengungkap dimensi kepribadian Anda.',
       instructions:

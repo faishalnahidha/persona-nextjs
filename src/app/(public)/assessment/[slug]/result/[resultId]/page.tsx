@@ -12,15 +12,12 @@ import ResultClient from './ResultClient';
 export default async function ResultPage({
   params,
 }: {
-  params: Promise<{ id: string; resultId: string }>;
+  params: Promise<{ slug: string; resultId: string }>;
 }) {
   await connectDB();
 
-  // Resolve params (Next may provide params as a Promise)
-  const { id, resultId } = await params;
-
   // Fetch result
-  const result = await Result.findById(resultId)
+  const result = await Result.findById((await params).resultId)
     .populate('userId', 'name userType')
     .lean();
 
