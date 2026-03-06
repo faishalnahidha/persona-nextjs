@@ -1,4 +1,9 @@
-import { Readex_Pro, Open_Sans, Arvo, Geist_Mono } from 'next/font/google';
+import {
+  Readex_Pro,
+  Open_Sans,
+  Geist_Mono,
+  Roboto_Serif,
+} from 'next/font/google';
 
 // Heading font
 export const readexPro = Readex_Pro({
@@ -17,9 +22,9 @@ export const openSans = Open_Sans({
 });
 
 // Serif font
-export const arvo = Arvo({
+export const robotoSerif = Roboto_Serif({
   subsets: ['latin'],
-  weight: ['400', '700'],
+  weight: ['400', '500', '600'],
   variable: '--font-serif',
   display: 'swap',
 });

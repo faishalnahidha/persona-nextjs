@@ -64,7 +64,7 @@ export default function Header({ scrollEffect = true }: HeaderProps) {
             >
               <IconMenu2 />
             </Button>
-            <Link href="/">
+            {/* <Link href="/">
               <Image
                 src="/images/logo-persona-full.svg"
                 alt="Persona My Id Logo"
@@ -72,16 +72,17 @@ export default function Header({ scrollEffect = true }: HeaderProps) {
                 height={26}
                 priority
               />
-            </Link>
+            </Link> */}
           </div>
 
-          {/* Desktop: Logo */}
-          <Link href="/" className="hidden lg:block">
+          {/* Responsive Logo */}
+          <Link href="/" className="block h-6.5 md:h-7 xl:h-8 mr-1">
             <Image
               src="/images/logo-persona-full.svg"
               alt="Persona My Id Logo"
               width={200}
               height={32}
+              className="w-auto h-full"
               priority
             />
           </Link>
@@ -102,7 +103,7 @@ export default function Header({ scrollEffect = true }: HeaderProps) {
                 </NavigationMenuItem>
               ))}
               <NavigationMenuItem>
-                <Button asChild size="lg" className="rounded-full pl-6 pr-5 ml-4">
+                <Button asChild size="lg" className="rounded-full ml-4">
                   <Link href="#login">Login<IconLogin2 /></Link>
                 </Button>
               </NavigationMenuItem>

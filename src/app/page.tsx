@@ -133,16 +133,16 @@ export default function HomePage() {
     <main className="min-h-screen">
       <Header />
 
-      <section className="flex w-full h-fit md:min-h-screen items-center bg-linear-to-r from-brand-neutral-100 to-brand-neutral-50">
+      <section className="flex w-full h-fit md:min-h-screen items-center bg-linear-to-r from-zinc-100 to-slate-100">
         <div className="container md:max-lg:w-lg mx-auto grid grid-cols-1 lg:grid-cols-[3fr_2fr] justify-start lg:justify-center gap-6 xl:gap-10 px-6 lg:px-10 pt-24 pb-10 lg:py-0">
 
           {/* Left Side */}
-          <div className="flex flex-col items-stretch justify-center gap-4 lg:gap-6">
+          <div className="flex flex-col items-stretch justify-center mb-6 lg:mb-0 gap-4 lg:gap-6">
             <div className="flex flex-col gap-4 lg:gap-6">
-              <h1 className="text-4xl/10 xl:text-6xl/16 font-semibold xl:font-medium text-foreground">
+              <h1 className="text-center lg:text-left text-4xl/10 xl:text-6xl/16 font-semibold xl:font-medium tracking-[-0.016em] xl:tracking-[-0.031em] text-foreground">
                 Kenali diri untuk temukan pekerjaan terbaik
               </h1>
-              <p className="para-regular xl:para-lg text-foreground-alt w-full xl:w-2/3">
+              <p className="text-center lg:text-left para-regular xl:para-lg text-foreground-alt w-full xl:w-2/3">
                 Tes kepribadian MBTI <span className="italic">online</span> &amp; panduan potensi diri dalam
                 mencapai karir terbaik
               </p>

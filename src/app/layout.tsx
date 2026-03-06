@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { readexPro, openSans, arvo, geistMono } from '@/lib/fonts'
+import { readexPro, openSans, robotoSerif, geistMono } from '@/lib/fonts'
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -15,7 +15,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${readexPro.variable} ${openSans.variable} ${arvo.variable} ${geistMono.variable}`}
+      className={`${readexPro.variable} ${openSans.variable} ${robotoSerif.variable} ${geistMono.variable}`}
     >
       <body className="min-h-screen bg-background font-body antialiased">
         {children}
