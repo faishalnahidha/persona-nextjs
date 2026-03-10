@@ -18,6 +18,10 @@ export interface IUser extends Document {
   username?: string;
   name: string;
 
+  // Personal Required Info
+  dateOfBirth?: Date;
+  gender?: 'male' | 'female';
+
   // Profile
   profilePicture?: string;
   personalityType?: string; // e.g., "INFJ" (from latest assessment)
