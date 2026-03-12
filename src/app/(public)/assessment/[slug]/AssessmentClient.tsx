@@ -15,6 +15,8 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion';
+import Header from '@/components/header';
+import { Button } from '@/components/ui/button';
 
 interface GuestData {
   guestName: string;
@@ -54,19 +56,25 @@ const FAQ_ITEMS = [
     id: 'faq-1',
     question: 'Apakah hasil tes ini akurat?',
     answer:
-      'Hasil tes didasarkan pada metodologi MBTI yang telah digunakan secara luas selama puluhan tahun. Kejujuran dalam menjawab setiap pertanyaan sangat memengaruhi akurasi hasil. Tidak ada jawaban benar atau salah — setiap tipe kepribadian memiliki kekuatan masing-masing.',
+      'Hasil tes didasarkan pada metodologi MBTI (Myers-Briggs Type Indicator) yang telah digunakan secara luas di dunia selama puluhan tahun. Kejujuran dalam menjawab setiap pertanyaan sangat memengaruhi akurasi hasil. Tidak ada jawaban benar atau salah — setiap tipe kepribadian memiliki kekuatan masing-masing.',
   },
   {
     id: 'faq-2',
-    question: 'Berapa lama waktu yang dibutuhkan?',
+    question: 'Apakah metode ini ilmiah?',
     answer:
-      'Tes ini terdiri dari 70 pertanyaan dan umumnya membutuhkan waktu sekitar 15–20 menit. Anda dapat menjawab dengan santai tanpa terburu-buru, karena tidak ada batas waktu yang ditetapkan.',
+      'Metode Tipologi Jung ataupun MBTI bukanlah alat pengukuran yang sangat acak seperti astrologi. Metode ini telah diteliti selama tujuh dekade oleh para ilmuan. Hasil riset membuktikan metode ini memiliki tingkat validitas dan reliabilitas mencapai 80–90% yang berarti memiliki tingkat keakuratan yang sangat tinggi dengan penyimpangan yang sangat kecil terhadap kesalahan hasilnya.',
   },
   {
     id: 'faq-3',
+    question: 'Berapa lama waktu yang dibutuhkan?',
+    answer:
+      'Tes ini terdiri dari 70 pertanyaan dan umumnya membutuhkan waktu sekitar 15–20 menit. Jawablah dengan santai tanpa terburu-buru, karena tidak ada batas waktu.',
+  },
+  {
+    id: 'faq-4',
     question: 'Apakah saya bisa mengulang tes?',
     answer:
-      'Ya, Anda dapat mengulang tes kapan saja. Perlu diingat bahwa hasil bisa sedikit berbeda tergantung kondisi dan suasana hati Anda saat menjawab. Kami menyarankan untuk menjawab sesuai kebiasaan Anda sehari-hari, bukan situasi ideal.',
+      'Ya, kamu dapat mengulang tes kapan saja. Hasil bisa sedikit berbeda tergantung kondisi dan suasana hati saat menjawab. Cobalah menjawab sesuai kebiasaanmu sehari-hari, bukan situasi ideal. Coba juga untuk tidak terpengaruh norma/nilai di masyarakat dan lingkungan sekitarmu.',
   },
 ];
 
@@ -188,85 +196,86 @@ export default function AssessmentClient({
   // ── Instruction Page ───────────────────────────────────────────────────────
   if (showInstructions) {
     return (
-      <div className='min-h-screen bg-background flex items-center justify-center p-6'>
-        <div className='max-w-[768px] w-full flex flex-col gap-6'>
+      <div className='min-h-screen bg-background'>
+        <Header scrollEffect={false} />
+        <div className='flex justify-center my-20 md:mt-38'>
+          <div className='max-w-3xl w-full flex flex-col gap-6 px-6 lg:px-0'>
 
-          {/* Main intro card */}
-          <div className='bg-card border border-brand-neutral-200 rounded-2xl p-10 flex flex-col gap-6'>
-            {guestData?.guestName && (
-              <p className='heading-2 text-foreground'>
-                Hai, {guestData.guestName}!
-              </p>
-            )}
+            {/* Main intro card */}
+            <div className='bg-card border border-brand-neutral-200 rounded-2xl p-4 md:p-10 flex flex-col gap-4 md:gap-6'>
 
-            <div className='flex flex-col gap-2'>
-              <h1 className='heading-4 text-card-foreground'>
-                {assessment.title}
-              </h1>
-              <p className='para-regular text-card-foreground'>
-                {assessment.description}
-              </p>
+              <div className='flex flex-col gap-2'>
+                {guestData?.guestName && (
+                  <h2 className='heading-2 text-foreground'>
+                    Hai, {guestData.guestName}!
+                  </h2>
+                )}
+                <h4 className='heading-4 text-foreground-alt'>
+                  Selamat datang di {assessment.title}
+                </h4>
+                <div className='para-regular text-foreground-alt mt-2' dangerouslySetInnerHTML={{ __html: assessment.description }} />
+
+              </div>
+
+              {assessment.instructions && (
+                <div className='bg-background border border-border rounded-xl p-4 flex flex-col gap-2'>
+                  <div className='flex items-center gap-2'>
+                    <IconAlertCircle size={20} className='text-muted-foreground shrink-0' />
+                    <span className='para-lg-bold text-accent-foreground'>Instruksi</span>
+                  </div>
+                  <div className='para-regular text-card-foreground' dangerouslySetInnerHTML={{ __html: assessment.instructions }} />
+                  <div className='flex flex-col md:flex-row gap-2 md:gap-4'>
+                    <span className='para-regular text-card-foreground'>
+                      Jumlah Pertanyaan: <strong>{totalQuestions}</strong>
+                    </span>
+                    <span className='para-regular text-card-foreground'>
+                      Estimasi Waktu: <strong>15–20 menit</strong>
+                    </span>
+                  </div>
+                </div>
+              )}
+
+              <Button
+                size="lg"
+                onClick={() => setShowInstructions(false)}
+                className='w-full rounded-full md:h-12'
+              >
+                Mulai Tes Sekarang
+              </Button>
             </div>
 
-            {assessment.instructions && (
-              <div className='bg-background border border-brand-neutral-200 rounded-xl p-4 flex flex-col gap-3'>
-                <div className='flex items-center gap-2'>
-                  <IconAlertCircle size={20} className='text-foreground shrink-0' />
-                  <span className='para-lg-bold text-foreground'>Instruksi</span>
-                </div>
-                <p className='para-regular text-card-foreground'>
-                  {assessment.instructions}
-                </p>
-                <div className='flex gap-4 pt-1'>
-                  <span className='para-sm text-card-foreground'>
-                    Jumlah Pertanyaan: <strong>{totalQuestions}</strong>
-                  </span>
-                  <span className='para-sm text-card-foreground'>
-                    Estimasi Waktu: <strong>{Math.ceil(totalQuestions * 0.5)} menit</strong>
-                  </span>
-                </div>
-              </div>
-            )}
+            {/* FAQ card */}
+            <div className='bg-card border border-brand-neutral-200 rounded-2xl px-4 py-2 md:px-6 md:py-4'>
+              <Accordion type='single' collapsible className='w-full' defaultValue='faq-root'>
+                <AccordionItem value='faq-root' className='border-none'>
+                  <AccordionTrigger className='items-center text-2xl font-semibold text-foreground hover:no-underline py-2'>
+                    FAQ
+                  </AccordionTrigger>
+                  <AccordionContent className='pb-0'>
+                    <Accordion type='single' collapsible className='w-full'>
+                      {FAQ_ITEMS.map((item, index) => (
+                        <AccordionItem
+                          key={item.id}
+                          value={item.id}
+                          className={index === FAQ_ITEMS.length - 1 ? 'border-none' : ''}
+                        >
+                          <AccordionTrigger className='text-base font-body font-semibold text-foreground-alt text-left'>
+                            {item.question}
+                          </AccordionTrigger>
+                          <AccordionContent>
+                            <p className='para-regular text-foreground-alt'>
+                              {item.answer}
+                            </p>
+                          </AccordionContent>
+                        </AccordionItem>
+                      ))}
+                    </Accordion>
+                  </AccordionContent>
+                </AccordionItem>
+              </Accordion>
+            </div>
 
-            <button
-              onClick={() => setShowInstructions(false)}
-              className='w-full rounded-full bg-primary text-primary-foreground btn-text py-3 hover:opacity-90 transition-opacity'
-            >
-              Mulai Tes Sekarang
-            </button>
           </div>
-
-          {/* FAQ card */}
-          <div className='bg-card border border-brand-neutral-200 rounded-2xl p-6'>
-            <Accordion type='single' collapsible className='w-full'>
-              <AccordionItem value='faq-root' className='border-none'>
-                <AccordionTrigger className='heading-3 text-foreground hover:no-underline py-0 pb-4'>
-                  FAQ
-                </AccordionTrigger>
-                <AccordionContent className='pb-0'>
-                  <Accordion type='single' collapsible className='w-full'>
-                    {FAQ_ITEMS.map((item, index) => (
-                      <AccordionItem
-                        key={item.id}
-                        value={item.id}
-                        className={index === FAQ_ITEMS.length - 1 ? 'border-none' : ''}
-                      >
-                        <AccordionTrigger className='para-regular-bold text-foreground hover:no-underline text-left'>
-                          {item.question}
-                        </AccordionTrigger>
-                        <AccordionContent>
-                          <p className='para-regular text-card-foreground'>
-                            {item.answer}
-                          </p>
-                        </AccordionContent>
-                      </AccordionItem>
-                    ))}
-                  </Accordion>
-                </AccordionContent>
-              </AccordionItem>
-            </Accordion>
-          </div>
-
         </div>
       </div>
     );
@@ -279,151 +288,151 @@ export default function AssessmentClient({
   const isLastQuestion = currentQuestion === totalQuestions - 1;
 
   return (
-    <div className='min-h-screen bg-background p-6'>
-      <div className='max-w-[768px] mx-auto flex flex-col gap-6'>
+    <div className='min-h-screen bg-background'>
+      <Header scrollEffect={false} />
+      <div className='p-6 pt-20 md:pt-24'>
+        <div className='max-w-[768px] mx-auto flex flex-col gap-6'>
 
-        {/* Progress card */}
-        <div className='bg-card border border-brand-neutral-200 rounded-2xl p-6 flex flex-col gap-6'>
+          {/* Progress card */}
+          <div className='bg-card border border-brand-neutral-200 rounded-2xl p-6 flex flex-col gap-6'>
 
-          {/* Header row */}
-          <div className='flex items-center justify-between'>
-            <div className='flex items-center gap-4'>
-              {guestData?.guestName && (
-                <span className='heading-4 text-foreground'>
-                  {guestData.guestName}
-                </span>
-              )}
-              {/* Static score badge */}
-              <div className='bg-brand-neutral-200 rounded-lg px-2 py-0.5 flex items-center gap-1'>
-                <IconCircleLetterS size={12} className='text-foreground' />
-                <span className='para-mini-medium font-mono text-foreground'>100</span>
+            {/* Header row */}
+            <div className='flex items-center justify-between'>
+              <div className='flex items-center gap-4'>
+                {guestData?.guestName && (
+                  <span className='heading-4 text-foreground'>
+                    {guestData.guestName}
+                  </span>
+                )}
+                {/* Static score badge */}
+                <div className='bg-brand-neutral-200 rounded-lg px-2 py-0.5 flex items-center gap-1'>
+                  <IconCircleLetterS size={12} className='text-foreground' />
+                  <span className='para-mini-medium font-mono text-foreground'>100</span>
+                </div>
               </div>
+
+              <button
+                onClick={handleSave}
+                className='rounded-full border border-brand-neutral-200 px-4 py-2 flex items-center gap-2 hover:bg-background transition-colors'
+              >
+                <IconDeviceFloppy size={16} className='text-foreground' />
+                <span className='btn-text-sm text-foreground'>Simpan Progress</span>
+              </button>
             </div>
 
-            <button
-              onClick={handleSave}
-              className='rounded-full border border-brand-neutral-200 px-4 py-2 flex items-center gap-2 hover:bg-background transition-colors'
-            >
-              <IconDeviceFloppy size={16} className='text-foreground' />
-              <span className='btn-text-sm text-foreground'>Simpan Progress</span>
-            </button>
-          </div>
-
-          {/* Progress bar with checkpoint labels */}
-          <div className='flex flex-col gap-2'>
-            <div className='relative h-5 w-full'>
-              {/* Track */}
-              <div className='absolute inset-0 bg-brand-neutral-300 rounded-full' />
-              {/* Fill */}
-              <div
-                className='absolute left-0 top-0 h-5 bg-primary rounded-full transition-all duration-300'
-                style={{ width: `${progress}%` }}
-              />
-              {/* Checkpoint labels */}
-              <div className='absolute inset-0 flex justify-between items-center px-2'>
-                {CHECKPOINTS.map(cp => (
-                  <span
-                    key={cp}
-                    className={`para-mini-medium leading-none ${
-                      progress >= cp
+            {/* Progress bar with checkpoint labels */}
+            <div className='flex flex-col gap-2'>
+              <div className='relative h-5 w-full'>
+                {/* Track */}
+                <div className='absolute inset-0 bg-brand-neutral-300 rounded-full' />
+                {/* Fill */}
+                <div
+                  className='absolute left-0 top-0 h-5 bg-primary rounded-full transition-all duration-300'
+                  style={{ width: `${progress}%` }}
+                />
+                {/* Checkpoint labels */}
+                <div className='absolute inset-0 flex justify-between items-center px-2'>
+                  {CHECKPOINTS.map(cp => (
+                    <span
+                      key={cp}
+                      className={`para-mini-medium leading-none ${progress >= cp
                         ? 'text-primary-foreground font-semibold'
                         : 'text-muted-foreground opacity-80'
-                    }`}
-                  >
-                    {cp}%
-                  </span>
-                ))}
+                        }`}
+                    >
+                      {cp}%
+                    </span>
+                  ))}
+                </div>
               </div>
+
+              <p className='para-sm text-muted-foreground'>
+                Pertanyaan {currentQuestion + 1} dari {totalQuestions}
+              </p>
             </div>
 
-            <p className='para-sm text-muted-foreground'>
-              Pertanyaan {currentQuestion + 1} dari {totalQuestions}
-            </p>
           </div>
 
-        </div>
+          {/* Question card */}
+          <div className='bg-card border border-brand-neutral-200 rounded-2xl p-10 flex flex-col gap-6'>
+            <h3 className='heading-4 text-card-foreground'>
+              {question.text}
+            </h3>
 
-        {/* Question card */}
-        <div className='bg-card border border-brand-neutral-200 rounded-2xl p-10 flex flex-col gap-6'>
-          <h3 className='heading-4 text-card-foreground'>
-            {question.text}
-          </h3>
-
-          <div className='flex flex-col gap-4'>
-            {question.options.map((option, index) => {
-              const selected = answers[question._id] === option.value;
-              return (
-                <button
-                  key={index}
-                  onClick={() => handleAnswer(question._id, option.value)}
-                  className={`w-full text-left p-4 rounded-2xl border transition-all ${
-                    selected
+            <div className='flex flex-col gap-4'>
+              {question.options.map((option, index) => {
+                const selected = answers[question._id] === option.value;
+                return (
+                  <button
+                    key={index}
+                    onClick={() => handleAnswer(question._id, option.value)}
+                    className={`w-full text-left p-4 rounded-2xl border transition-all ${selected
                       ? 'bg-brand-accent-200 border-brand-accent-600'
                       : 'bg-card border-brand-neutral-200 hover:border-brand-neutral-300'
-                  }`}
-                >
-                  <div className='flex items-start gap-3'>
-                    <div
-                      className={`shrink-0 w-5 h-5 rounded-full border-2 flex items-center justify-center mt-0.5 ${
-                        selected
+                      }`}
+                  >
+                    <div className='flex items-start gap-3'>
+                      <div
+                        className={`shrink-0 w-5 h-5 rounded-full border-2 flex items-center justify-center mt-0.5 ${selected
                           ? 'border-brand-accent-500 bg-white'
                           : 'border-brand-neutral-300 bg-white'
-                      }`}
-                    >
-                      {selected && (
-                        <div className='w-2.5 h-2.5 bg-brand-accent-700 rounded-full' />
-                      )}
+                          }`}
+                      >
+                        {selected && (
+                          <div className='w-2.5 h-2.5 bg-brand-accent-700 rounded-full' />
+                        )}
+                      </div>
+                      <span
+                        className={selected ? 'para-regular-medium text-card-foreground' : 'para-regular text-card-foreground'}
+                      >
+                        {option.text}
+                      </span>
                     </div>
-                    <span
-                      className={selected ? 'para-regular-medium text-card-foreground' : 'para-regular text-card-foreground'}
-                    >
-                      {option.text}
-                    </span>
-                  </div>
-                </button>
-              );
-            })}
+                  </button>
+                );
+              })}
+            </div>
           </div>
-        </div>
 
-        {/* Navigation */}
-        <div className='flex items-center justify-between'>
-          <button
-            onClick={handlePrevious}
-            disabled={currentQuestion === 0}
-            className='w-10 h-10 rounded-xl border border-brand-neutral-200 bg-card flex items-center justify-center hover:bg-background disabled:opacity-50 disabled:cursor-not-allowed transition-colors'
-          >
-            <IconChevronLeft size={20} className='text-foreground' />
-          </button>
-
-          {isLastQuestion ? (
+          {/* Navigation */}
+          <div className='flex items-center justify-between'>
             <button
-              onClick={handleSubmit}
-              disabled={!allAnswered || isSubmitting}
-              className='flex items-center gap-2 px-6 py-2.5 rounded-xl bg-primary border border-primary text-primary-foreground disabled:opacity-50 disabled:cursor-not-allowed transition-opacity hover:opacity-90'
-            >
-              <span className='btn-text-sm text-primary-foreground'>
-                {isSubmitting ? 'Memproses...' : 'Selesai'}
-              </span>
-              <IconChevronRight size={20} />
-            </button>
-          ) : (
-            <button
-              onClick={handleNext}
-              disabled={!isAnswered}
+              onClick={handlePrevious}
+              disabled={currentQuestion === 0}
               className='w-10 h-10 rounded-xl border border-brand-neutral-200 bg-card flex items-center justify-center hover:bg-background disabled:opacity-50 disabled:cursor-not-allowed transition-colors'
             >
-              <IconChevronRight size={20} className='text-foreground' />
+              <IconChevronLeft size={20} className='text-foreground' />
             </button>
+
+            {isLastQuestion ? (
+              <button
+                onClick={handleSubmit}
+                disabled={!allAnswered || isSubmitting}
+                className='flex items-center gap-2 px-6 py-2.5 rounded-xl bg-primary border border-primary text-primary-foreground disabled:opacity-50 disabled:cursor-not-allowed transition-opacity hover:opacity-90'
+              >
+                <span className='btn-text-sm text-primary-foreground'>
+                  {isSubmitting ? 'Memproses...' : 'Selesai'}
+                </span>
+                <IconChevronRight size={20} />
+              </button>
+            ) : (
+              <button
+                onClick={handleNext}
+                disabled={!isAnswered}
+                className='w-10 h-10 rounded-xl border border-brand-neutral-200 bg-card flex items-center justify-center hover:bg-background disabled:opacity-50 disabled:cursor-not-allowed transition-colors'
+              >
+                <IconChevronRight size={20} className='text-foreground' />
+              </button>
+            )}
+          </div>
+
+          {!isAnswered && (
+            <p className='text-center para-sm text-muted-foreground'>
+              Pilih salah satu jawaban untuk melanjutkan
+            </p>
           )}
+
         </div>
-
-        {!isAnswered && (
-          <p className='text-center para-sm text-muted-foreground'>
-            Pilih salah satu jawaban untuk melanjutkan
-          </p>
-        )}
-
       </div>
     </div>
   );
