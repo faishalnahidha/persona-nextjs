@@ -2,7 +2,25 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { ChevronLeft, ChevronRight, Save } from 'lucide-react';
+import {
+  IconChevronLeft,
+  IconChevronRight,
+  IconDeviceFloppy,
+  IconAlertCircle,
+  IconCircleLetterS,
+} from '@tabler/icons-react';
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '@/components/ui/accordion';
+
+interface GuestData {
+  guestName: string;
+  dateOfBirth?: string;
+  gender?: string;
+}
 
 interface Option {
   text: string;
@@ -31,6 +49,29 @@ interface Assessment {
   };
 }
 
+const FAQ_ITEMS = [
+  {
+    id: 'faq-1',
+    question: 'Apakah hasil tes ini akurat?',
+    answer:
+      'Hasil tes didasarkan pada metodologi MBTI yang telah digunakan secara luas selama puluhan tahun. Kejujuran dalam menjawab setiap pertanyaan sangat memengaruhi akurasi hasil. Tidak ada jawaban benar atau salah — setiap tipe kepribadian memiliki kekuatan masing-masing.',
+  },
+  {
+    id: 'faq-2',
+    question: 'Berapa lama waktu yang dibutuhkan?',
+    answer:
+      'Tes ini terdiri dari 70 pertanyaan dan umumnya membutuhkan waktu sekitar 15–20 menit. Anda dapat menjawab dengan santai tanpa terburu-buru, karena tidak ada batas waktu yang ditetapkan.',
+  },
+  {
+    id: 'faq-3',
+    question: 'Apakah saya bisa mengulang tes?',
+    answer:
+      'Ya, Anda dapat mengulang tes kapan saja. Perlu diingat bahwa hasil bisa sedikit berbeda tergantung kondisi dan suasana hati Anda saat menjawab. Kami menyarankan untuk menjawab sesuai kebiasaan Anda sehari-hari, bukan situasi ideal.',
+  },
+];
+
+const CHECKPOINTS = [0, 25, 50, 75, 100];
+
 export default function AssessmentClient({
   assessment,
 }: {
@@ -41,11 +82,16 @@ export default function AssessmentClient({
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [showInstructions, setShowInstructions] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [guestData, setGuestData] = useState<GuestData | null>(null);
 
   const totalQuestions = assessment.questions.length;
   const progress = (Object.keys(answers).length / totalQuestions) * 100;
 
-  // Load saved answers from sessionStorage (for guests)
+  useEffect(() => {
+    const guestRaw = sessionStorage.getItem('guest_data');
+    if (guestRaw) setGuestData(JSON.parse(guestRaw));
+  }, []);
+
   useEffect(() => {
     const saved = sessionStorage.getItem(`assessment_${assessment._id}`);
     if (saved) {
@@ -57,7 +103,6 @@ export default function AssessmentClient({
     }
   }, [assessment._id]);
 
-  // Auto-save to sessionStorage
   useEffect(() => {
     if (!showInstructions && Object.keys(answers).length > 0) {
       sessionStorage.setItem(
@@ -84,13 +129,11 @@ export default function AssessmentClient({
   };
 
   const handleSave = () => {
-    // Prompt user to register to save progress
     if (
       confirm(
         'Untuk menyimpan progress, Anda perlu mendaftar. Lanjutkan ke halaman registrasi?',
       )
     ) {
-      // Store current state before redirecting
       sessionStorage.setItem(
         `assessment_${assessment._id}`,
         JSON.stringify({ answers, currentQuestion }),
@@ -110,10 +153,8 @@ export default function AssessmentClient({
     setIsSubmitting(true);
 
     try {
-      // Convert answers object to array in question order
       const answersArray = assessment.questions.map(q => answers[q._id]);
 
-      // Submit to API
       const response = await fetch('/api/assessment/submit', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -121,16 +162,17 @@ export default function AssessmentClient({
           assessmentSlug: assessment.slug,
           answers: answersArray,
           questionCounts: assessment.questionCounts,
+          guestName: guestData?.guestName,
+          dateOfBirth: guestData?.dateOfBirth,
+          gender: guestData?.gender,
         }),
       });
 
       const result = await response.json();
 
       if (response.ok) {
-        // Clear session storage
         sessionStorage.removeItem(`assessment_${assessment._id}`);
-
-        // Redirect to results page
+        sessionStorage.removeItem('guest_data');
         router.push(`/assessment/${assessment.slug}/result/${result.resultId}`);
       } else {
         alert('Terjadi kesalahan: ' + result.error);
@@ -143,154 +185,245 @@ export default function AssessmentClient({
     }
   };
 
+  // ── Instruction Page ───────────────────────────────────────────────────────
   if (showInstructions) {
     return (
-      <div className='min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 flex items-center justify-center p-6'>
-        <div className='max-w-2xl w-full bg-white rounded-lg shadow-lg p-8'>
-          <h1 className='text-3xl font-bold text-gray-800 mb-4'>
-            {assessment.title}
-          </h1>
-          <p className='text-gray-600 mb-6'>{assessment.description}</p>
+      <div className='min-h-screen bg-background flex items-center justify-center p-6'>
+        <div className='max-w-[768px] w-full flex flex-col gap-6'>
 
-          {assessment.instructions && (
-            <div className='bg-blue-50 border-l-4 border-blue-500 p-4 mb-6'>
-              <h2 className='font-semibold text-blue-900 mb-2'>Instruksi:</h2>
-              <p className='text-blue-800'>{assessment.instructions}</p>
+          {/* Main intro card */}
+          <div className='bg-card border border-brand-neutral-200 rounded-2xl p-10 flex flex-col gap-6'>
+            {guestData?.guestName && (
+              <p className='heading-2 text-foreground'>
+                Hai, {guestData.guestName}!
+              </p>
+            )}
+
+            <div className='flex flex-col gap-2'>
+              <h1 className='heading-4 text-card-foreground'>
+                {assessment.title}
+              </h1>
+              <p className='para-regular text-card-foreground'>
+                {assessment.description}
+              </p>
             </div>
-          )}
 
-          <div className='bg-gray-50 rounded-lg p-4 mb-6'>
-            <p className='text-sm text-gray-600 mb-2'>
-              <strong>Jumlah Pertanyaan:</strong> {totalQuestions}
-            </p>
-            <p className='text-sm text-gray-600'>
-              <strong>Estimasi Waktu:</strong> {Math.ceil(totalQuestions * 0.5)}{' '}
-              menit
-            </p>
+            {assessment.instructions && (
+              <div className='bg-background border border-brand-neutral-200 rounded-xl p-4 flex flex-col gap-3'>
+                <div className='flex items-center gap-2'>
+                  <IconAlertCircle size={20} className='text-foreground shrink-0' />
+                  <span className='para-lg-bold text-foreground'>Instruksi</span>
+                </div>
+                <p className='para-regular text-card-foreground'>
+                  {assessment.instructions}
+                </p>
+                <div className='flex gap-4 pt-1'>
+                  <span className='para-sm text-card-foreground'>
+                    Jumlah Pertanyaan: <strong>{totalQuestions}</strong>
+                  </span>
+                  <span className='para-sm text-card-foreground'>
+                    Estimasi Waktu: <strong>{Math.ceil(totalQuestions * 0.5)} menit</strong>
+                  </span>
+                </div>
+              </div>
+            )}
+
+            <button
+              onClick={() => setShowInstructions(false)}
+              className='w-full rounded-full bg-primary text-primary-foreground btn-text py-3 hover:opacity-90 transition-opacity'
+            >
+              Mulai Tes Sekarang
+            </button>
           </div>
 
-          <button
-            onClick={() => setShowInstructions(false)}
-            className='w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors'
-          >
-            Mulai Tes
-          </button>
+          {/* FAQ card */}
+          <div className='bg-card border border-brand-neutral-200 rounded-2xl p-6'>
+            <Accordion type='single' collapsible className='w-full'>
+              <AccordionItem value='faq-root' className='border-none'>
+                <AccordionTrigger className='heading-3 text-foreground hover:no-underline py-0 pb-4'>
+                  FAQ
+                </AccordionTrigger>
+                <AccordionContent className='pb-0'>
+                  <Accordion type='single' collapsible className='w-full'>
+                    {FAQ_ITEMS.map((item, index) => (
+                      <AccordionItem
+                        key={item.id}
+                        value={item.id}
+                        className={index === FAQ_ITEMS.length - 1 ? 'border-none' : ''}
+                      >
+                        <AccordionTrigger className='para-regular-bold text-foreground hover:no-underline text-left'>
+                          {item.question}
+                        </AccordionTrigger>
+                        <AccordionContent>
+                          <p className='para-regular text-card-foreground'>
+                            {item.answer}
+                          </p>
+                        </AccordionContent>
+                      </AccordionItem>
+                    ))}
+                  </Accordion>
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
+          </div>
+
         </div>
       </div>
     );
   }
 
+  // ── Assessment Page ────────────────────────────────────────────────────────
   const question = assessment.questions[currentQuestion];
   const isAnswered = !!answers[question._id];
   const allAnswered = Object.keys(answers).length === totalQuestions;
+  const isLastQuestion = currentQuestion === totalQuestions - 1;
 
   return (
-    <div className='min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 p-6'>
-      <div className='max-w-3xl mx-auto'>
-        {/* Header with Progress */}
-        <div className='bg-white rounded-lg shadow-md p-6 mb-6'>
-          <div className='flex items-center justify-between mb-4'>
-            <h2 className='text-lg font-semibold text-gray-800'>
-              Pertanyaan {currentQuestion + 1} dari {totalQuestions}
-            </h2>
+    <div className='min-h-screen bg-background p-6'>
+      <div className='max-w-[768px] mx-auto flex flex-col gap-6'>
+
+        {/* Progress card */}
+        <div className='bg-card border border-brand-neutral-200 rounded-2xl p-6 flex flex-col gap-6'>
+
+          {/* Header row */}
+          <div className='flex items-center justify-between'>
+            <div className='flex items-center gap-4'>
+              {guestData?.guestName && (
+                <span className='heading-4 text-foreground'>
+                  {guestData.guestName}
+                </span>
+              )}
+              {/* Static score badge */}
+              <div className='bg-brand-neutral-200 rounded-lg px-2 py-0.5 flex items-center gap-1'>
+                <IconCircleLetterS size={12} className='text-foreground' />
+                <span className='para-mini-medium font-mono text-foreground'>100</span>
+              </div>
+            </div>
+
             <button
               onClick={handleSave}
-              className='flex items-center gap-2 text-indigo-600 hover:text-indigo-700 font-medium'
+              className='rounded-full border border-brand-neutral-200 px-4 py-2 flex items-center gap-2 hover:bg-background transition-colors'
             >
-              <Save size={18} />
-              Simpan Progress
+              <IconDeviceFloppy size={16} className='text-foreground' />
+              <span className='btn-text-sm text-foreground'>Simpan Progress</span>
             </button>
           </div>
 
-          {/* Progress Bar */}
-          <div className='w-full bg-gray-200 rounded-full h-2'>
-            <div
-              className='bg-indigo-600 h-2 rounded-full transition-all duration-300'
-              style={{ width: `${progress}%` }}
-            />
+          {/* Progress bar with checkpoint labels */}
+          <div className='flex flex-col gap-2'>
+            <div className='relative h-5 w-full'>
+              {/* Track */}
+              <div className='absolute inset-0 bg-brand-neutral-300 rounded-full' />
+              {/* Fill */}
+              <div
+                className='absolute left-0 top-0 h-5 bg-primary rounded-full transition-all duration-300'
+                style={{ width: `${progress}%` }}
+              />
+              {/* Checkpoint labels */}
+              <div className='absolute inset-0 flex justify-between items-center px-2'>
+                {CHECKPOINTS.map(cp => (
+                  <span
+                    key={cp}
+                    className={`para-mini-medium leading-none ${
+                      progress >= cp
+                        ? 'text-primary-foreground font-semibold'
+                        : 'text-muted-foreground opacity-80'
+                    }`}
+                  >
+                    {cp}%
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            <p className='para-sm text-muted-foreground'>
+              Pertanyaan {currentQuestion + 1} dari {totalQuestions}
+            </p>
           </div>
-          <p className='text-sm text-gray-600 mt-2'>
-            {Object.keys(answers).length} dari {totalQuestions} dijawab
-          </p>
+
         </div>
 
-        {/* Question Card */}
-        <div className='bg-white rounded-lg shadow-lg p-8 mb-6'>
-          <div className='mb-2'>
-            <span className='inline-block px-3 py-1 bg-indigo-100 text-indigo-700 text-sm font-medium rounded-full'>
-              Group: {question.group}
-            </span>
-          </div>
-
-          <h3 className='text-xl font-semibold text-gray-800 mb-6'>
+        {/* Question card */}
+        <div className='bg-card border border-brand-neutral-200 rounded-2xl p-10 flex flex-col gap-6'>
+          <h3 className='heading-4 text-card-foreground'>
             {question.text}
           </h3>
 
-          <div className='space-y-4'>
-            {question.options.map((option, index) => (
-              <button
-                key={index}
-                onClick={() => handleAnswer(question._id, option.value)}
-                className={`w-full text-left p-4 rounded-lg border-2 transition-all ${answers[question._id] === option.value
-                  ? 'border-indigo-600 bg-indigo-50'
-                  : 'border-gray-200 hover:border-indigo-300 hover:bg-gray-50'
+          <div className='flex flex-col gap-4'>
+            {question.options.map((option, index) => {
+              const selected = answers[question._id] === option.value;
+              return (
+                <button
+                  key={index}
+                  onClick={() => handleAnswer(question._id, option.value)}
+                  className={`w-full text-left p-4 rounded-2xl border transition-all ${
+                    selected
+                      ? 'bg-brand-accent-200 border-brand-accent-600'
+                      : 'bg-card border-brand-neutral-200 hover:border-brand-neutral-300'
                   }`}
-              >
-                <div className='flex items-start gap-3'>
-                  <div
-                    className={`flex-shrink-0 w-6 h-6 rounded-full border-2 flex items-center justify-center mt-0.5 ${answers[question._id] === option.value
-                      ? 'border-indigo-600 bg-indigo-600'
-                      : 'border-gray-300'
+                >
+                  <div className='flex items-start gap-3'>
+                    <div
+                      className={`shrink-0 w-5 h-5 rounded-full border-2 flex items-center justify-center mt-0.5 ${
+                        selected
+                          ? 'border-brand-accent-500 bg-white'
+                          : 'border-brand-neutral-300 bg-white'
                       }`}
-                  >
-                    {answers[question._id] === option.value && (
-                      <div className='w-2 h-2 bg-white rounded-full' />
-                    )}
+                    >
+                      {selected && (
+                        <div className='w-2.5 h-2.5 bg-brand-accent-700 rounded-full' />
+                      )}
+                    </div>
+                    <span
+                      className={selected ? 'para-regular-medium text-card-foreground' : 'para-regular text-card-foreground'}
+                    >
+                      {option.text}
+                    </span>
                   </div>
-                  <span className='text-gray-700'>{option.text}</span>
-                </div>
-              </button>
-            ))}
+                </button>
+              );
+            })}
           </div>
         </div>
 
         {/* Navigation */}
-        <div className='flex items-center justify-between gap-4'>
+        <div className='flex items-center justify-between'>
           <button
             onClick={handlePrevious}
             disabled={currentQuestion === 0}
-            className='flex items-center gap-2 px-6 py-3 bg-white border border-gray-300 rounded-lg font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors'
+            className='w-10 h-10 rounded-xl border border-brand-neutral-200 bg-card flex items-center justify-center hover:bg-background disabled:opacity-50 disabled:cursor-not-allowed transition-colors'
           >
-            <ChevronLeft size={20} />
-            Sebelumnya
+            <IconChevronLeft size={20} className='text-foreground' />
           </button>
 
-          {currentQuestion === totalQuestions - 1 ? (
+          {isLastQuestion ? (
             <button
               onClick={handleSubmit}
               disabled={!allAnswered || isSubmitting}
-              className='flex items-center gap-2 px-8 py-3 bg-green-600 hover:bg-green-700 disabled:bg-gray-400 text-white font-semibold rounded-lg transition-colors disabled:cursor-not-allowed'
+              className='flex items-center gap-2 px-6 py-2.5 rounded-xl bg-primary border border-primary text-primary-foreground disabled:opacity-50 disabled:cursor-not-allowed transition-opacity hover:opacity-90'
             >
-              {isSubmitting ? 'Memproses...' : 'Selesai & Lihat Hasil'}
+              <span className='btn-text-sm text-primary-foreground'>
+                {isSubmitting ? 'Memproses...' : 'Selesai'}
+              </span>
+              <IconChevronRight size={20} />
             </button>
           ) : (
             <button
               onClick={handleNext}
               disabled={!isAnswered}
-              className='flex items-center gap-2 px-6 py-3 bg-indigo-600 hover:bg-indigo-700 disabled:bg-gray-400 text-white font-semibold rounded-lg transition-colors disabled:cursor-not-allowed'
+              className='w-10 h-10 rounded-xl border border-brand-neutral-200 bg-card flex items-center justify-center hover:bg-background disabled:opacity-50 disabled:cursor-not-allowed transition-colors'
             >
-              Selanjutnya
-              <ChevronRight size={20} />
+              <IconChevronRight size={20} className='text-foreground' />
             </button>
           )}
         </div>
 
-        {/* Help Text */}
         {!isAnswered && (
-          <p className='text-center text-sm text-gray-500 mt-4'>
+          <p className='text-center para-sm text-muted-foreground'>
             Pilih salah satu jawaban untuk melanjutkan
           </p>
         )}
+
       </div>
     </div>
   );
