@@ -7,7 +7,7 @@ import { cn } from '@/lib/utils';
 import { IconArrowDownLeft, IconGenderFemale, IconGenderMale, IconCalendarFilled } from "@tabler/icons-react"
 
 import { Button } from "@/components/ui/button"
-import { Field, FieldGroup, } from "@/components/ui/field"
+import { Field, FieldError, FieldGroup, } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import {
   Card,
@@ -20,6 +20,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover"
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 function formatDate(date: Date | undefined) {
   if (!date) {
@@ -92,7 +93,12 @@ export default function ChipRadioGroup({
   );
 }
 
-export function DatePickerInput() {
+interface DatePickerInputProps {
+  onDateChange?: (date: Date | undefined) => void;
+  error?: string;
+}
+
+export function DatePickerInput({ onDateChange, error }: DatePickerInputProps) {
   const [open, setOpen] = React.useState(false)
   const [date, setDate] = React.useState<Date | undefined>()
 
@@ -105,16 +111,15 @@ export function DatePickerInput() {
             variant="outline"
             size="lg"
             data-empty={!date}
-            className="data-[empty=true]:text-muted-foreground w-full rounded-lg pl-3 pr-2.5"
+            data-invalid={!!error}
+            className="data-[empty=true]:text-muted-foreground data-[invalid=true]:border-destructive data-[invalid=true]:ring-1 data-[invalid=true]:ring-destructive w-full rounded-lg pl-3 pr-2.5"
           >
             <div className="flex flex-row w-full items-center gap-4 text-base md:text-sm font-body">
               <div className="flex flex-row grow items-center gap-2">
-                {/* <IconCake stroke={1.5} className="size-5 text-muted-foreground/64" /> */}
                 {date ? formatDate(date) : <span>Pilih tanggal lahir</span>}
               </div>
               <IconCalendarFilled className="size-5 text-muted-foreground" />
             </div>
-
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-fit p-4 pb-5" align="start">
@@ -124,18 +129,59 @@ export function DatePickerInput() {
             selected={date}
             defaultMonth={date}
             onSelect={(selectedDate) => {
-              setDate(selectedDate)
-              setOpen(false)
+              setDate(selectedDate);
+              onDateChange?.(selectedDate);
+              setOpen(false);
             }}
             className="p-0 [--cell-size:--spacing(9)]"
           />
         </PopoverContent>
       </Popover>
-    </Field >
+      {error && (
+        <FieldError className="para-mini text-destructive-foreground">{error}</FieldError>
+      )}
+    </Field>
   )
 }
 
 export function HeroForm() {
+  const router = useRouter();
+  const [name, setName] = useState('');
+  const [date, setDate] = useState<Date | undefined>();
+  const [gender, setGender] = useState('male');
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [dateError, setDateError] = useState('');
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError('');
+    setDateError('');
+
+    let hasError = false;
+    if (!name.trim()) {
+      setError('Nama harus diisi');
+      hasError = true;
+    }
+    if (!date) {
+      setDateError('Tanggal lahir harus diisi');
+      hasError = true;
+    }
+    if (hasError) return;
+
+    setIsLoading(true);
+
+    // Save guest data to sessionStorage
+    sessionStorage.setItem('guest_data', JSON.stringify({
+      guestName: name.trim(),
+      dateOfBirth: date?.toISOString(),
+      gender,
+    }));
+
+    // Redirect to assessment
+    router.push('/assessment/mbti-v1');
+  };
+
   return (
     <Card className="relative flex flex-col grow justify-end w-full xl:w-md rounded-2xl bg-primary p-6 lg:p-10">
       <div className="absolute top-4 lg:top-8 right-4 lg:right-8 p-2 place-items-center rounded-full bg-muted/40">
@@ -145,19 +191,34 @@ export function HeroForm() {
         <h2 className="heading-2-sm lg:heading-2 text-primary-foreground">
           Tes gratis di sini
         </h2>
-        <form className="flex flex-col gap-8 lg:gap-10">
+        <form onSubmit={handleSubmit} className="flex flex-col gap-8 lg:gap-10">
           <FieldGroup className="gap-6">
             <Field>
               <Input
                 id="name"
                 name="name"
+                value={name}
+                onChange={(e) => {
+                  setName(e.target.value);
+                  setError('');
+                }}
                 placeholder="Masukkan nama kamu..."
                 autoComplete="given-name"
                 className="h-10 rounded-lg bg-background border-border"
               />
+              {/* {error && (
+                <p className="para-mini text-rose-400 mt-1">{error}</p>
+              )} */}
+              <FieldError className="para-mini text-destructive-foreground">{error}</FieldError>
             </Field>
 
-            <DatePickerInput />
+            <DatePickerInput
+              onDateChange={(d) => {
+                setDate(d);
+                if (d) setDateError('');
+              }}
+              error={dateError}
+            />
 
             <Field>
               <ChipRadioGroup
@@ -166,18 +227,20 @@ export function HeroForm() {
                   { label: 'Perempuan', value: 'female', icon: <IconGenderFemale className="size-5" /> },
                 ]}
                 defaultValue="male"
-                onChange={(value) => console.log(value)}
+                onChange={setGender}
               />
             </Field>
-
           </FieldGroup>
 
           <Button
             type="submit"
             size="lg"
+            disabled={isLoading}
             className="w-full h-12 rounded-full bg-linear-to-r from-purple-600 to-indigo-500 text-white btn-text hover:from-purple-700 hover:to-indigo-600 border-0 transition-colors duration-200"
           >
-            <span className='btn-text'>Mulai Tes</span>
+            <span className="btn-text">
+              {isLoading ? 'Memuat...' : 'Mulai Tes'}
+            </span>
           </Button>
         </form>
 
