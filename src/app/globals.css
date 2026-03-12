@@ -182,24 +182,18 @@
 @layer components {
   /* Headings */
   .heading-1 {
-    @apply font-heading text-5xl font-medium leading-none tracking-[-0.5px];
+    @apply font-heading text-4xl font-medium leading-10 tracking-[-0.25px];
+    @apply md:text-5xl md:leading-none md:tracking-[-0.5px];
   }
   .heading-2 {
-    @apply font-heading text-3xl font-semibold leading-9 tracking-[0.25px];
+    @apply font-heading text-2xl font-semibold leading-7 tracking-[0px];
+    @apply md:text-3xl md:leading-9 md:tracking-[0.25px];
   }
   .heading-3 {
     @apply font-heading text-2xl font-semibold leading-7 tracking-[0px];
   }
   .heading-4 {
     @apply font-heading text-xl font-semibold leading-6 tracking-[0.1px];
-  }
-
-  /* Responsive headings */
-  .heading-1-sm {
-    @apply font-heading text-4xl font-medium leading-10 tracking-[-0.25px];
-  }
-  .heading-2-sm {
-    @apply font-heading text-2xl font-semibold leading-7 tracking-[0px];
   }
 
   /* Paragraph - Regular */
