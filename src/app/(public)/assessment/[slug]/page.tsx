@@ -11,13 +11,16 @@ import AssessmentClient from './AssessmentClient';
 export default async function AssessmentPage({
   params,
 }: {
-  params: { id: string } | Promise<{ id: string }>;
+  params: Promise<{ slug: string }>;
 }) {
+  const { slug } = await params;
   await connectDB();
 
-  // Handle possible Promise in params, ensure params is fully resolved and has an id
-  const resolvedParams = await Promise.resolve(params);
-  const assessment = await Assessment.findById(resolvedParams.id).lean();
+  // Fetch published assessment by slug
+  const assessment = await Assessment.findOne({
+    slug,
+    published: true
+  }).lean();
 
   if (!assessment || !assessment.published) {
     notFound();
@@ -35,6 +38,7 @@ export default async function AssessmentPage({
   // Serialize data for client component
   const assessmentData = {
     _id: assessment._id.toString(),
+    slug: assessment.slug,
     title: assessment.title,
     description: assessment.description,
     instructions: assessment.instructions,

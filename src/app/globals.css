@@ -32,6 +32,7 @@
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
   --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
@@ -77,6 +78,7 @@
 
   /* Other Custom Color */
   --color-foreground-alt: var(--color-zinc-700);
+  --background-image-background-gradient: var(--background-gradient);
 }
 
 @layer base {
@@ -117,6 +119,12 @@
     --primary-light: oklch(0.37 0.013 285.805);
     --primary-dark: oklch(0.274 0.006 286.033);
     --primary-ring: oklch(0.21 0.006 285.885);
+    --background-gradient: linear-gradient(
+      to bottom right,
+      oklch(0.985 0 0) 0%,
+      oklch(0.984 0.003 247.858) 50%,
+      oklch(0.985 0.002 247.839) 100%
+    );
   }
 
   .dark {
@@ -155,6 +163,12 @@
     --primary-light: oklch(0.985 0 0);
     --primary-dark: oklch(0.967 0.001 286.375);
     --primary-ring: oklch(0.92 0.004 286.32);
+    --background-gradient: linear-gradient(
+      to bottom right,
+      oklch(0.274 0.006 286.033) 0%,
+      oklch(0.278 0.033 256.848) 50%,
+      oklch(0.279 0.041 260.031) 100%
+    );
   }
 }
 
@@ -181,24 +195,18 @@
 @layer components {
   /* Headings */
   .heading-1 {
-    @apply font-heading text-5xl font-medium leading-none tracking-[-0.5px];
+    @apply font-heading text-4xl font-medium leading-10 tracking-[-0.25px];
+    @apply md:text-5xl md:leading-none md:tracking-[-0.5px];
   }
   .heading-2 {
-    @apply font-heading text-3xl font-semibold leading-9 tracking-[0.25px];
+    @apply font-heading text-2xl font-semibold leading-7 tracking-[0px];
+    @apply md:text-3xl md:leading-9 md:tracking-[0.25px];
   }
   .heading-3 {
     @apply font-heading text-2xl font-semibold leading-7 tracking-[0px];
   }
   .heading-4 {
     @apply font-heading text-xl font-semibold leading-6 tracking-[0.1px];
-  }
-
-  /* Responsive headings */
-  .heading-1-sm {
-    @apply font-heading text-4xl font-medium leading-10 tracking-[-0.25px];
-  }
-  .heading-2-sm {
-    @apply font-heading text-2xl font-semibold leading-7 tracking-[0px];
   }
 
   /* Paragraph - Regular */

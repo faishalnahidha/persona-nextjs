@@ -159,11 +159,12 @@ async function seedAssessment() {
     // Create assessment
     console.log('📝 Creating MBTI assessment...');
     const assessment = await Assessment.create({
-      title: 'MBTI Personality Assessment',
+      title: 'Persona Test',
+      slug: 'mbti-v1',
       description:
-        'Tes kepribadian MBTI untuk mengetahui tipe kepribadian Anda. Terdiri dari 70 pertanyaan yang akan mengungkap dimensi kepribadian Anda.',
+        'Persona Test disusun berdasarkan MBTI, dimana kepribadianmu berhubungan dengan bakat, <em>passion,</em> dan tujuan hidup. Hasil dari tes ini akan dihubungkan dengan pemilihan karir, lingkungan kerja, bahkan tipe bos yang ideal untuk kamu.',
       instructions:
-        'Jawab setiap pertanyaan dengan jujur sesuai dengan preferensi dan kecenderungan Anda. Tidak ada jawaban yang benar atau salah. Pilih jawaban yang paling menggambarkan diri Anda.',
+        'Tidak ada jawaban benar atau salah. Pilih jawaban yang paling menggambarkan dirimu. <strong>Kejujuran dalam menjawab pertanyaan </strong>menentukan keakuratan hasil analisis kepribadianmu.',
       questions,
       published: true,
       createdBy: adminUser._id,

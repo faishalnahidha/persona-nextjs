@@ -27,6 +27,7 @@ interface IQuestion {
 export interface IAssessment extends Document {
   title: string;
   description: string;
+  slug: string;
   instructions?: string; // How to take the assessment
   questions: IQuestion[];
   published: boolean;
@@ -150,6 +151,17 @@ const AssessmentSchema = new Schema<IAssessment>(
       trim: true,
       maxlength: [100, 'Title cannot exceed 100 characters'],
     },
+    slug: {
+      type: String,
+      required: [true, 'Slug is required'],
+      unique: true,
+      lowercase: true,
+      trim: true,
+      match: [
+        /^[a-z0-9-]+$/,
+        'Slug can only contain lowercase letters, numbers, and hyphens',
+      ],
+    },
     description: {
       type: String,
       required: [true, 'Description is required'],
@@ -186,6 +198,7 @@ const AssessmentSchema = new Schema<IAssessment>(
 
 /**
  * Index for querying published assessments
+ * Note: slug index already created by unique: true
  */
 AssessmentSchema.index({ published: 1 });
 
@@ -201,7 +214,7 @@ AssessmentSchema.methods.getQuestionCounts = function () {
   //   counts[q.group]++;
   // });
 
-  // return counts same as above bu static
+  // return counts same as above but statically defined
   const counts = { EI: 10, SN: 20, TF: 20, JP: 20 };
 
   return counts;

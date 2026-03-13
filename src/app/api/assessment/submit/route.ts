@@ -5,6 +5,9 @@ import Result from '@/lib/db/models/Result';
 import User from '@/lib/db/models/User';
 // import { POINTS } from '@/lib/constants/points';
 
+import type { IUser } from '@/lib/db/models/User';
+import type { IResult } from '@/lib/db/models/Result';
+
 /**
  * POST /api/assessment/submit
  *
@@ -19,18 +22,32 @@ export async function POST(request: NextRequest) {
     await connectDB();
 
     const body = await request.json();
-    const { assessmentId, answers, questionCounts, userName } = body;
+    const {
+      assessmentSlug,
+      answers,
+      questionCounts,
+      guestName,
+      dateOfBirth,
+      gender,
+    } = body;
 
     // Validate input
-    if (!assessmentId || !answers || !Array.isArray(answers)) {
+    if (!assessmentSlug || !answers || !Array.isArray(answers)) {
       return NextResponse.json(
         { error: 'Invalid request data' },
         { status: 400 },
       );
     }
 
+    if (!guestName?.trim()) {
+      return NextResponse.json({ error: 'Name is required' }, { status: 400 });
+    }
+
     // Verify assessment exists
-    const assessment = await Assessment.findById(assessmentId);
+    const assessment = await Assessment.findOne({
+      slug: assessmentSlug,
+      published: true,
+    });
     if (!assessment) {
       return NextResponse.json(
         { error: 'Assessment not found' },
@@ -38,19 +55,20 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    const assessmentId = assessment._id;
+
     // Calculate scores using Assessment model method
     const calculatedResult = Assessment.calculateResult(
       answers,
       questionCounts,
     );
 
-    // Check if user is authenticated (you'll implement auth later)
-    // For now, we'll create a guest user
-    const guestName = userName || `Guest_${Date.now()}`;
-
-    const guestUser = await User.create({
+    // Create guest user with pre-assessment form data
+    const guestUser: IUser = await User.create({
       userType: 'guest',
-      name: guestName,
+      name: guestName.trim(),
+      dateOfBirth: dateOfBirth ? new Date(dateOfBirth) : undefined,
+      gender,
       personalityType: calculatedResult.personalityType,
     });
 
@@ -61,12 +79,16 @@ export async function POST(request: NextRequest) {
     // );
 
     // Save result
-    const result = await Result.createNewResult(guestUser._id, assessmentId, {
-      answers,
-      scores: calculatedResult.scores,
-      personalityType: calculatedResult.personalityType,
-      alternativeTypes: calculatedResult.alternativeTypes || undefined,
-    });
+    const result: IResult = await Result.createNewResult(
+      guestUser._id,
+      assessmentId,
+      {
+        answers,
+        scores: calculatedResult.scores,
+        personalityType: calculatedResult.personalityType,
+        alternativeTypes: calculatedResult.alternativeTypes || undefined,
+      },
+    );
 
     // Return result ID for redirection
     return NextResponse.json({
