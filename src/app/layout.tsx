@@ -17,7 +17,7 @@ export default function RootLayout({
       lang="en"
       className={`${readexPro.variable} ${openSans.variable} ${robotoSerif.variable} ${geistMono.variable}`}
     >
-      <body className="min-h-screen bg-background font-body antialiased">
+      <body className="min-h-screen bg-background-gradient font-body antialiased">
         {children}
       </body>
     </html>

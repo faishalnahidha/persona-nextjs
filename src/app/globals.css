@@ -78,6 +78,7 @@
 
   /* Other Custom Color */
   --color-foreground-alt: var(--color-zinc-700);
+  --background-image-background-gradient: var(--background-gradient);
 }
 
 @layer base {
@@ -118,6 +119,12 @@
     --primary-light: oklch(0.37 0.013 285.805);
     --primary-dark: oklch(0.274 0.006 286.033);
     --primary-ring: oklch(0.21 0.006 285.885);
+    --background-gradient: linear-gradient(
+      to bottom right,
+      oklch(0.985 0 0) 0%,
+      oklch(0.984 0.003 247.858) 50%,
+      oklch(0.985 0.002 247.839) 100%
+    );
   }
 
   .dark {
@@ -156,6 +163,12 @@
     --primary-light: oklch(0.985 0 0);
     --primary-dark: oklch(0.967 0.001 286.375);
     --primary-ring: oklch(0.92 0.004 286.32);
+    --background-gradient: linear-gradient(
+      to bottom right,
+      oklch(0.274 0.006 286.033) 0%,
+      oklch(0.278 0.033 256.848) 50%,
+      oklch(0.279 0.041 260.031) 100%
+    );
   }
 }
 
