@@ -368,7 +368,7 @@ export default function AssessmentClient({
                     <FieldLabel
                       key={index}
                       htmlFor={`${question._id}-${index}`}
-                      className='rounded-xl! border-brand-neutral-200 has-data-[state=checked]:border-brand-accent-600 has-data-[state=checked]:bg-brand-accent-200 hover:border-brand-neutral-300 hover:bg-brand-accent-50 transition-all cursor-pointer'
+                      className='rounded-xl! border-border has-data-[state=checked]:border-brand-accent-600 has-data-[state=checked]:bg-brand-accent-200 hover:border-border hover:bg-brand-accent-50 transition-all cursor-pointer'
                     >
                       <Field orientation='horizontal'>
                         <RadioGroupItem
