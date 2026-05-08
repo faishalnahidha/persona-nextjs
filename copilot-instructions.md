@@ -67,18 +67,60 @@ NEXTAUTH_URL=http://localhost:3000
 - Client components marked with `'use client'` at top
 - Utility functions in `src/lib/` organized by domain: `db/`, `auth/`, `constants/`
 
+### Frontend Styling & Components
+
+- **Tailwind CSS Only**: Use Tailwind utility classes exclusively for layout and spacing; no custom CSS files or inline styles
+- **Shadcn/UI First**: Use Shadcn components for all interactive elements (Button, Card, Input, Form, etc.)
+  - Before using: verify installed with `npx shadcn@latest list`
+  - Install missing: `npx shadcn@latest add [component-name]`
+  - Import: `@/components/ui/[component-name]`
+  - Use built-in variants; extend in component files if needed
+- **Icons**: '@tabler/icons-react' primary, 'lucide-react' fallback
+- **Typography & Theme**: Apply globals.css design tokens and Tailwind semantic colors
+- **Responsive Design**: Use Tailwind breakpoints (sm, md, lg, xl, 2xl)
+
+### React & Next.js
+
+- **Prefer Server Components**: Only use `'use client'` when interactivity or hooks are required
+- **Route Group Pattern**: Organize with `(public)`, `(protected)`, `(auth)`, `admin/` groups
+- **Form Handling**: React Hook Form + Zod validation on client and server
+- **Server vs Client**: RSC handles data fetching/validation; pass serialized data to client components
+
 ### TypeScript & Type Safety
 
 - Strict TSConfig enabled
 - Mongoose models define shape at DB layer
 - API responses typed via TypeScript interfaces (not just Zod)
 - No `any` types—infer or define explicitly
+- For complex layouts, prioritize CSS Grid/Flexbox
 
 ### Database Queries
 
 - Always connect via `connectDB()` in API routes (idempotent)
 - Use `.lean()` when serializing to JSON for performance
 - Model methods kept static where possible (e.g., `Assessment.calculateResult()`)
+- Store guest/temporary state in `sessionStorage` for form persistence
+
+### Error Handling
+
+- Add error.tsx files in route groups for graceful error UI
+- API routes: Validate input with Zod; respond with `{ error: string }` on failure
+- Client components: try/catch for fetch calls; display user-friendly error messages
+- Database: Handle connection errors gracefully
+
+### Design-to-Code (Penpot)
+
+- When provided a Penpot URL, use Penpot MCP tools to inspect design before coding
+- Extract design tokens (colors, spacing, typography) and map to globals.css or Tailwind
+- Don't hallucinate properties—ask if Penpot value is missing
+
+### Coding Standards: DO NOT
+
+- Add comments explaining obvious code
+- Add unrequested features
+- Use external libraries beyond: Next.js, Tailwind, Shadcn, Tabler Icons, Lucide React, React Hook Form, Zod
+- Use raw hex codes or pixel measurements for styling
+- Create additional components unless explicitly requested
 
 ### Common Patterns: When Adding Features
 

@@ -7,40 +7,73 @@ alwaysApply: false
 
 - Use ONLY Tailwind utility classes for layout and spacing
 - Use Shadcn UI components for interactive elements (buttons, forms, cards, etc.)
-- Never write custom CSS
+- Never write custom CSS—no inline styles or CSS files
 - Use configured typography scale and semantic theme from globals.css
-- Use '@tabler/icons-react' for icons
+- Use '@tabler/icons-react' for icons; fallback to lucide-react if icon not available
+- Ensure responsive design with Tailwind breakpoints (sm, md, lg, xl, 2xl)
 
 # Shadcn UI
 
-- Always use Shadcn components when appropriate (Button, Card, Input, etc.)
-- Before using component, check if it was installed.
-- If not installed, install components as needed: `npx shadcn@latest add [component-name]`
+- Always use Shadcn components when appropriate (Button, Card, Input, Form, etc.)
+- Before using component, check if it was installed: `npx shadcn@latest list`
+- If not installed, install as needed: `npx shadcn@latest add [component-name]`
 - Import from @/components/ui/[component-name]
 - Use Shadcn's built-in variants (default, secondary, destructive, outline, ghost, link)
-- Extend variants in component files if needed for custom styles
+- Extend variants in component files if needed; document custom variants in component comments
 
 # Next.js & React
 
-- Prefer Server Components (no 'use client' unless needed)
+- Prefer Server Components (no 'use client' unless needed for interactivity or hooks)
+- Use route groups `(public)`, `(protected)`, `(auth)`, `admin/` for logical organization
+- Dynamic routes use `[param]` naming convention
+- Client components marked with `'use client'` at top of file
+
+# Database & API
+
+- Always call `connectDB()` in API routes (it's idempotent)
+- Use `.lean()` when serializing Mongoose documents to JSON for performance
+- Keep model methods static where possible (e.g., Assessment.calculateResult())
+- API responses should be strongly typed with TypeScript interfaces (not just Zod validation)
+- Store guest/temporary state in `sessionStorage` for form data persistence
+
+# Forms & Validation
+
+- Use React Hook Form + Zod for all forms
+- Validate on both client and server
+- Type form inputs based on Zod schema inferred types
 
 # Design-to-Code Workflow (MCP)
 
-- When I provide a Penpot URL, ALWAYS use the Penpot MCP tools to inspect the design before writing code.
+- When provided a Penpot URL, ALWAYS use the Penpot MCP tools to inspect the design before writing code
+- Extract design tokens (colors, spacing, typography) from Penpot and map to globals.css variables or Tailwind config
 
-# Coding Standards
+# Error Handling
 
-- Use TypeScript for all components.
-- If a component requires state, use functional components with Hooks.
-- For complex layouts, prioritize CSS Grid/Flexbox as defined in the Penpot file.
-- Inspect design token defined in the Penpot and apply the closest global.css variables or Tailwind equivalent.
-- Do not hallucinate properties; if a Penpot value is missing, ask me or use the closest Tailwind equivalent.
+- Add error boundaries with error.tsx in route groups for graceful error UI
+- API routes: Always validate input with Zod, respond with `{ error: string }` on validation failure
+- Client components: Use try/catch for fetch calls, display user-friendly error messages
+- Database operations: Ensure connectDB() is called; handle connection errors gracefully
+
+# TypeScript & Coding Standards
+
+- Strict TypeScript mode enabled (tsconfig.json)
+- Use TypeScript for all components and utility functions
+- If a component requires state, use functional components with React Hooks
+- No `any` types—infer or define types explicitly
+- For complex layouts, prioritize CSS Grid/Flexbox as defined in design files
+
+# Architecture Patterns
+
+- **Protected Routes**: Place in `(protected)/` group (auth middleware exists in /src/lib/auth)
+- **Admin Routes**: Place in `admin/` group with admin role checks
+- **Server vs Client**: RSC for data fetching/validation; pass serialized data to client components
+- **Questions & Scoring**: Refer to Assessment model for static scoring logic; don't duplicate calculations
 
 # Do NOT
 
-- Add comments explaining obvious code
-- Add features not requested
-- Use external libraries beyond what's installed (Next.js, Tailwind, Shadcn, Tabler Icons)
-- Use raw hex code or pixel measurement for styling
-- Create additional components unless asked
-
+- Add comments explaining obvious code (self-documenting code only)
+- Add features not requested or mentioned by user
+- Use external libraries beyond what's installed: Next.js, Tailwind, Shadcn, Tabler Icons, Lucide React, React Hook Form, Zod
+- Use raw hex code or pixel measurements for styling—always use Tailwind classes or design tokens
+- Create additional components unless explicitly requested
+- Hallucinate design properties; if Penpot value is missing, ask user or use closest Tailwind equivalent
