@@ -11,6 +11,7 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import { getPersonalityGroupInfo } from '@/lib/constants/personality-groups';
 
 interface Result {
   _id: string;
@@ -42,9 +43,6 @@ interface Content {
   mainImage?: string;
 }
 
-const DUMMY_ALT_COLORS = ['bg-red-400', 'bg-sky-300', 'bg-rose-400', 'bg-violet-400'];
-const DUMMY_ALT_NAMES = ['The Inventor', 'The Performer', 'The Promoter', 'The Counselor'];
-
 export default function ResultClient({
   result,
   content,
@@ -56,6 +54,7 @@ export default function ResultClient({
   const [showShareOptions, setShowShareOptions] = useState(false);
 
   const isGuest = !result.user || result.user.userType === 'guest';
+  const primaryGroup = getPersonalityGroupInfo(result.personalityType);
 
   const dominantTraits = [
     result.scores.extrovert >= result.scores.introvert ? 'Extroverted' : 'Introverted',
@@ -113,7 +112,7 @@ export default function ResultClient({
         <div className="grid grid-cols-1 lg:grid-cols-[3fr_2fr_2fr] gap-6 items-start">
 
           {/* Col 1: Illustration card */}
-          <div className="relative rounded-2xl overflow-visible bg-emerald-400 min-h-[400px]">
+          <div className={cn('relative rounded-2xl overflow-visible min-h-[400px]', primaryGroup.bgColor)}>
             {/* Background trait words */}
             <div className="absolute inset-0 flex flex-col items-end justify-center pr-6 pointer-events-none select-none overflow-hidden rounded-2xl">
               {dominantTraits.map((trait) => (
@@ -173,9 +172,7 @@ export default function ResultClient({
                 <h3 className="heading-3">{result.user?.name ?? 'Pengguna'}</h3>
                 <p className="para-sm text-muted-foreground">Warna/tipe kepribadianmu:</p>
                 <p className="para-sm-bold">
-                  {content?.personalityGroup
-                    ? `${content.personalityGroup} / ${content.personalityName ?? result.personalityType}`
-                    : (content?.personalityName ?? result.personalityType)}
+                  {`${primaryGroup.personalityGroupName} / ${content?.personalityName ?? result.personalityType}`}
                 </p>
               </div>
             </div>
@@ -315,17 +312,17 @@ export default function ResultClient({
                 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-4': alternatives.length === 4,
               })}
             >
-              {alternatives.map((type, index) => (
+              {alternatives.map((type) => {
+                const altGroup = getPersonalityGroupInfo(type);
+                return (
                 <div
                   key={type}
                   className="bg-card border border-brand-neutral-200 rounded-2xl overflow-hidden flex flex-col"
                 >
-                  <div
-                    className={cn('h-40 w-full', DUMMY_ALT_COLORS[index % DUMMY_ALT_COLORS.length])}
-                  />
+                  <div className={cn('h-40 w-full', altGroup.bgColor)} />
                   <div className="p-4 pb-6 flex flex-col gap-3">
                     <h4 className="heading-4">
-                      {DUMMY_ALT_NAMES[index % DUMMY_ALT_NAMES.length]} ({type})
+                      {altGroup.personalityGroupName} ({type})
                     </h4>
                     <p className="para-sm text-muted-foreground">
                       Pemikir cerdas yang selalu tertantang untuk melakukan perdebatan dan
@@ -333,7 +330,8 @@ export default function ResultClient({
                     </p>
                   </div>
                 </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         )}
