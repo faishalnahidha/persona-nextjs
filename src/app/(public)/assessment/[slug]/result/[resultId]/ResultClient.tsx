@@ -2,13 +2,21 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Share2, UserPlus, BookOpen, Download } from 'lucide-react';
+import {
+  IconLock,
+  IconHelpCircle,
+  IconDeviceFloppy,
+  IconShare3,
+} from '@tabler/icons-react';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
+import { getPersonalityGroupInfo } from '@/lib/constants/personality-groups';
 
 interface Result {
   _id: string;
   personalityType: string;
-  alternativeType1?: string;
-  alternativeType2?: string;
+  alternativeTypes: string[];
   scores: {
     extrovert: number;
     introvert: number;
@@ -46,271 +54,288 @@ export default function ResultClient({
   const [showShareOptions, setShowShareOptions] = useState(false);
 
   const isGuest = !result.user || result.user.userType === 'guest';
+  const primaryGroup = getPersonalityGroupInfo(result.personalityType);
 
-  // Calculate dominant traits
-  const traits = {
-    ei: result.scores.extrovert > result.scores.introvert ? 'Extrovert' : 'Introvert',
-    sn: result.scores.sensory > result.scores.intuitive ? 'Sensory' : 'Intuitive',
-    tf: result.scores.thinking > result.scores.feeling ? 'Thinking' : 'Feeling',
-    jp: result.scores.judging > result.scores.perceiving ? 'Judging' : 'Perceiving',
-  };
+  const dominantTraits = [
+    result.scores.extrovert >= result.scores.introvert ? 'Extroverted' : 'Introverted',
+    result.scores.sensory >= result.scores.intuitive ? 'Sensory' : 'Intuitive',
+    result.scores.thinking >= result.scores.feeling ? 'Thinking' : 'Feeling',
+    result.scores.judging >= result.scores.perceiving ? 'Judging' : 'Perceiving',
+  ];
 
   const dimensions = [
     {
-      name: 'Extrovert vs Introvert',
-      left: { label: 'Extrovert (E)', value: result.scores.extrovert },
-      right: { label: 'Introvert (I)', value: result.scores.introvert },
+      left: { label: 'Extroverted', value: result.scores.extrovert },
+      right: { label: 'Introverted', value: result.scores.introvert },
     },
     {
-      name: 'Sensory vs Intuitive',
-      left: { label: 'Sensory (S)', value: result.scores.sensory },
-      right: { label: 'Intuitive (N)', value: result.scores.intuitive },
+      left: { label: 'Sensory', value: result.scores.sensory },
+      right: { label: 'Intuitive', value: result.scores.intuitive },
     },
     {
-      name: 'Thinking vs Feeling',
-      left: { label: 'Thinking (T)', value: result.scores.thinking },
-      right: { label: 'Feeling (F)', value: result.scores.feeling },
+      left: { label: 'Thinking', value: result.scores.thinking },
+      right: { label: 'Feeling', value: result.scores.feeling },
     },
     {
-      name: 'Judging vs Perceiving',
-      left: { label: 'Judging (J)', value: result.scores.judging },
-      right: { label: 'Perceiving (P)', value: result.scores.perceiving },
+      left: { label: 'Judging', value: result.scores.judging },
+      right: { label: 'Perceiving', value: result.scores.perceiving },
     },
   ];
 
+  const alternatives = result.alternativeTypes.slice(0, 4);
+
   const handleShare = (platform: string) => {
     const url = window.location.href;
-    const text = `Saya adalah tipe kepribadian ${result.personalityType}! Temukan tipe kepribadian Anda di Persona.`;
-
+    const text = `Saya adalah tipe kepribadian ${result.personalityType}! Temukan tipe kepribadianmu di Persona.`;
     const shareUrls: Record<string, string> = {
       twitter: `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`,
       facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`,
       whatsapp: `https://wa.me/?text=${encodeURIComponent(text + ' ' + url)}`,
       telegram: `https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent(text)}`,
     };
-
     if (shareUrls[platform]) {
       window.open(shareUrls[platform], '_blank', 'width=600,height=400');
     }
-
     setShowShareOptions(false);
   };
 
   const handleCopyLink = () => {
     navigator.clipboard.writeText(window.location.href);
-    alert('Link berhasil disalin!');
     setShowShareOptions(false);
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 py-12 px-6">
-      <div className="max-w-4xl mx-auto">
-        {/* Main Result Card */}
-        <div className="bg-white rounded-lg shadow-lg p-8 mb-6 text-center">
-          <div className="mb-4">
-            <span className="inline-block px-4 py-2 bg-green-100 text-green-700 text-sm font-medium rounded-full">
-              ✓ Tes Selesai
-            </span>
-          </div>
+    <div className="bg-background min-h-screen">
+      <div className="max-w-[1280px] mx-auto px-4 md:px-10 py-16 space-y-12">
 
-          <h1 className="text-4xl font-bold text-gray-800 mb-2">
-            Tipe Kepribadian Anda
-          </h1>
+        {/* ── Section 1: Result Hero ── */}
+        <div className="grid grid-cols-1 lg:grid-cols-[3fr_2fr_2fr] gap-6 items-start">
 
-          <div className="my-8">
-            <div className="inline-block bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-2xl px-12 py-8">
-              <div className="text-7xl font-bold tracking-wider">
+          {/* Col 1: Illustration card */}
+          <div className={cn('relative rounded-2xl overflow-visible min-h-[400px]', primaryGroup.bgColor)}>
+            {/* Background trait words */}
+            <div className="absolute inset-0 flex flex-col items-end justify-center pr-6 pointer-events-none select-none overflow-hidden rounded-2xl">
+              {dominantTraits.map((trait) => (
+                <span
+                  key={trait}
+                  className="text-white/25 font-heading font-bold text-4xl leading-snug text-right"
+                >
+                  {trait}
+                </span>
+              ))}
+            </div>
+            {/* Type code */}
+            <div className="relative z-10 flex justify-end p-6">
+              <span className="text-white font-heading font-bold text-7xl tracking-tight leading-none">
                 {result.personalityType}
-              </div>
-              {content?.personalityName && (
-                <div className="text-xl mt-4 opacity-90">
-                  {content.personalityName}
-                </div>
-              )}
+              </span>
             </div>
-          </div>
-
-          {content?.subtitle && (
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto mb-6">
-              {content.subtitle}
-            </p>
-          )}
-
-          {/* Guest CTA */}
-          {isGuest && (
-            <div className="bg-yellow-50 border-2 border-yellow-200 rounded-lg p-6 mb-6">
-              <h3 className="text-lg font-semibold text-yellow-900 mb-2">
-                💾 Simpan Hasil Tes Anda!
-              </h3>
-              <p className="text-yellow-800 mb-4">
-                Daftar sekarang untuk menyimpan hasil tes dan mengakses konten eksklusif tentang kepribadian Anda.
-              </p>
-              <button
-                onClick={() => router.push('/register')}
-                className="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-6 py-3 rounded-lg transition-colors inline-flex items-center gap-2"
-              >
-                <UserPlus size={20} />
-                Daftar Gratis
-              </button>
-            </div>
-          )}
-
-          {/* Action Buttons */}
-          <div className="flex flex-wrap gap-4 justify-center">
-            {content && (
-              <button
-                onClick={() => router.push(`/content/${content.slug}`)}
-                className="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-6 py-3 rounded-lg transition-colors inline-flex items-center gap-2"
-              >
-                <BookOpen size={20} />
-                Pelajari Tipe Kepribadian Anda
-              </button>
+            {/* Illustration / placeholder */}
+            {content?.mainImage ? (
+              <img
+                src={content.mainImage}
+                alt={content.personalityName ?? result.personalityType}
+                className="relative z-10 w-3/4 mx-auto block object-contain pb-0"
+              />
+            ) : (
+              <div className="h-64" />
             )}
+          </div>
 
-            <div className="relative">
-              <button
-                onClick={() => setShowShareOptions(!showShareOptions)}
-                className="bg-white hover:bg-gray-50 text-gray-800 font-semibold px-6 py-3 rounded-lg border-2 border-gray-300 transition-colors inline-flex items-center gap-2"
-              >
-                <Share2 size={20} />
-                Bagikan Hasil
-              </button>
-
-              {showShareOptions && (
-                <div className="absolute top-full mt-2 right-0 bg-white rounded-lg shadow-xl border border-gray-200 py-2 w-48 z-10">
-                  <button
-                    onClick={() => handleShare('whatsapp')}
-                    className="w-full text-left px-4 py-2 hover:bg-gray-100 transition-colors"
-                  >
-                    📱 WhatsApp
-                  </button>
-                  <button
-                    onClick={() => handleShare('facebook')}
-                    className="w-full text-left px-4 py-2 hover:bg-gray-100 transition-colors"
-                  >
-                    📘 Facebook
-                  </button>
-                  <button
-                    onClick={() => handleShare('twitter')}
-                    className="w-full text-left px-4 py-2 hover:bg-gray-100 transition-colors"
-                  >
-                    🐦 Twitter
-                  </button>
-                  <button
-                    onClick={() => handleShare('telegram')}
-                    className="w-full text-left px-4 py-2 hover:bg-gray-100 transition-colors"
-                  >
-                    ✈️ Telegram
-                  </button>
-                  <hr className="my-2" />
-                  <button
-                    onClick={handleCopyLink}
-                    className="w-full text-left px-4 py-2 hover:bg-gray-100 transition-colors"
-                  >
-                    🔗 Salin Link
-                  </button>
-                </div>
+          {/* Col 2: Summary card */}
+          <div className="bg-card border border-brand-neutral-200 rounded-2xl p-6 flex flex-col gap-5">
+            <Badge variant="outline">Ringkasan kepribadianmu</Badge>
+            <div className="flex flex-col gap-3 flex-1">
+              <h2 className="heading-2">
+                {content?.personalityName ?? result.personalityType}
+              </h2>
+              {content?.subtitle && (
+                <p className="para-regular text-muted-foreground">{content.subtitle}</p>
               )}
             </div>
+            {content?.slug && (
+              <Button
+                className="w-fit"
+                onClick={() => router.push(`/content/${content.slug}`)}
+              >
+                Baca Selengkapnya
+              </Button>
+            )}
           </div>
-        </div>
 
-        {/* Score Breakdown */}
-        <div className="bg-white rounded-lg shadow-lg p-8 mb-6">
-          <h2 className="text-2xl font-bold text-gray-800 mb-6">
-            Skor Detail Kepribadian
-          </h2>
+          {/* Col 3: Score card */}
+          <div className="bg-card border border-brand-neutral-200 rounded-2xl p-6 flex flex-col gap-6">
+            {/* Header info */}
+            <div className="flex flex-col gap-3">
+              <Badge variant="outline">Detail hasil tes</Badge>
+              <div className="flex flex-col gap-1">
+                <h3 className="heading-3">{result.user?.name ?? 'Pengguna'}</h3>
+                <p className="para-sm text-muted-foreground">Warna/tipe kepribadianmu:</p>
+                <p className="para-sm-bold">
+                  {`${primaryGroup.personalityGroupName} / ${content?.personalityName ?? result.personalityType}`}
+                </p>
+              </div>
+            </div>
 
-          <div className="space-y-6">
-            {dimensions.map((dim, index) => {
-              const leftPercent = dim.left.value;
-              const rightPercent = dim.right.value;
-
-              return (
-                <div key={index}>
-                  <div className="flex justify-between items-center mb-2">
-                    <span className="text-sm font-medium text-gray-700">
-                      {dim.name}
-                    </span>
-                  </div>
-
-                  {/* Dual Progress Bar */}
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm font-semibold text-gray-700 w-32 text-right">
-                      {dim.left.label}
-                    </span>
-                    <div className="flex-1 flex items-center">
-                      {/* Left bar */}
-                      <div className="flex-1 h-8 bg-gray-100 rounded-l-lg overflow-hidden flex justify-end items-center">
-                        <div
-                          className="bg-indigo-500 h-full flex items-center justify-end pr-2"
-                          style={{ width: `${leftPercent}%` }}
-                        >
-                          {leftPercent > 15 && (
-                            <span className="text-white text-sm font-semibold">
-                              {leftPercent}%
-                            </span>
+            {/* Dual progress bars */}
+            <div className="flex flex-col gap-4">
+              {dimensions.map((dim) => {
+                const leftDominant = dim.left.value >= dim.right.value;
+                return (
+                  <div key={dim.left.label} className="flex flex-col gap-1.5">
+                    <div className="flex h-7 overflow-hidden rounded-sm">
+                      <div
+                        className={cn(
+                          'flex shrink-0 items-center justify-end pr-2',
+                          leftDominant ? 'bg-brand-neutral-600' : 'bg-brand-neutral-200',
+                        )}
+                        style={{ width: `${dim.left.value}%` }}
+                      >
+                        <span
+                          className={cn(
+                            'para-sm-bold',
+                            leftDominant ? 'text-white' : 'text-foreground',
                           )}
-                        </div>
+                        >
+                          {dim.left.value}%
+                        </span>
                       </div>
-                      {/* Right bar */}
-                      <div className="flex-1 h-8 bg-gray-100 rounded-r-lg overflow-hidden flex items-center">
-                        <div
-                          className="bg-purple-500 h-full flex items-center pl-2"
-                          style={{ width: `${rightPercent}%` }}
-                        >
-                          {rightPercent > 15 && (
-                            <span className="text-white text-sm font-semibold">
-                              {rightPercent}%
-                            </span>
+                      <div
+                        className={cn(
+                          'flex shrink-0 items-center justify-start pl-2',
+                          !leftDominant ? 'bg-brand-neutral-600' : 'bg-brand-neutral-200',
+                        )}
+                        style={{ width: `${dim.right.value}%` }}
+                      >
+                        <span
+                          className={cn(
+                            'para-sm-bold',
+                            !leftDominant ? 'text-white' : 'text-foreground',
                           )}
-                        </div>
+                        >
+                          {dim.right.value}%
+                        </span>
                       </div>
                     </div>
-                    <span className="text-sm font-semibold text-gray-700 w-32">
-                      {dim.right.label}
-                    </span>
+                    <div className="flex justify-between">
+                      <span className="para-sm text-muted-foreground">{dim.left.label}</span>
+                      <span className="para-sm text-muted-foreground">{dim.right.label}</span>
+                    </div>
                   </div>
-                </div>
-              );
-            })}
+                );
+              })}
+            </div>
+
+            {/* Action buttons */}
+            <div className="flex gap-2 flex-wrap">
+              <Button variant="outline" size="sm" className="gap-2">
+                <IconDeviceFloppy size={16} />
+                Simpan Hasil
+              </Button>
+              <div className="relative">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="gap-2"
+                  onClick={() => setShowShareOptions(!showShareOptions)}
+                >
+                  <IconShare3 size={16} />
+                  Share
+                </Button>
+                {showShareOptions && (
+                  <div className="absolute top-full mt-2 right-0 bg-card border border-brand-neutral-200 rounded-xl shadow-lg py-2 w-48 z-10">
+                    {(['whatsapp', 'facebook', 'twitter', 'telegram'] as const).map(
+                      (platform) => (
+                        <button
+                          key={platform}
+                          onClick={() => handleShare(platform)}
+                          className="w-full text-left px-4 py-2 para-sm hover:bg-muted transition-colors capitalize"
+                        >
+                          {platform === 'twitter' ? 'X / Twitter' : platform.charAt(0).toUpperCase() + platform.slice(1)}
+                        </button>
+                      ),
+                    )}
+                    <hr className="my-1 border-border" />
+                    <button
+                      onClick={handleCopyLink}
+                      className="w-full text-left px-4 py-2 para-sm hover:bg-muted transition-colors"
+                    >
+                      Salin Link
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
         </div>
 
-        {/* Alternative Types */}
-        {(result.alternativeType1 || result.alternativeType2) && (
-          <div className="bg-white rounded-lg shadow-lg p-8">
-            <h2 className="text-2xl font-bold text-gray-800 mb-4">
-              Tipe Kepribadian Alternatif
-            </h2>
-            <p className="text-gray-600 mb-6">
-              Berdasarkan skor Anda yang cukup seimbang pada beberapa dimensi, tipe kepribadian ini juga mungkin menggambarkan diri Anda:
-            </p>
-
-            <div className="flex gap-4">
-              {result.alternativeType1 && (
-                <div className="flex-1 bg-indigo-50 border-2 border-indigo-200 rounded-lg p-4 text-center">
-                  <div className="text-3xl font-bold text-indigo-700">
-                    {result.alternativeType1}
-                  </div>
-                  <div className="text-sm text-indigo-600 mt-1">
-                    Alternatif 1
-                  </div>
+        {/* ── Section 2: Panduan kepribadianmu (guest) ── */}
+        {isGuest && (
+          <div className="flex flex-col gap-6">
+            <div className="flex items-center gap-3">
+              <h2 className="heading-2">Panduan kepribadianmu</h2>
+              <IconLock size={20} className="text-foreground" strokeWidth={1.5} />
+            </div>
+            <div className="bg-card border border-brand-neutral-200 rounded-2xl p-6">
+              <div className="flex flex-col gap-4">
+                <div className="flex flex-col gap-2">
+                  <h4 className="heading-4">Lihat panduan khusus tipe kepribadianmu</h4>
+                  <p className="para-regular text-muted-foreground">
+                    Daftar sekarang untuk membaca konten eksklusif tentang: pemilihan karir,
+                    lingkungan kerja, sampai tipe bos yang ideal untuk kamu.
+                  </p>
                 </div>
-              )}
-              {result.alternativeType2 && (
-                <div className="flex-1 bg-purple-50 border-2 border-purple-200 rounded-lg p-4 text-center">
-                  <div className="text-3xl font-bold text-purple-700">
-                    {result.alternativeType2}
-                  </div>
-                  <div className="text-sm text-purple-600 mt-1">
-                    Alternatif 2
-                  </div>
-                </div>
-              )}
+                <Button className="w-fit" onClick={() => router.push('/register')}>
+                  Daftar Gratis
+                </Button>
+              </div>
             </div>
           </div>
         )}
+
+        {/* ── Section 3: Bandingkan dengan tipe kepribadian lain ── */}
+        {alternatives.length > 0 && (
+          <div className="flex flex-col gap-6">
+            <div className="flex items-center gap-3">
+              <h2 className="heading-2">Bandingkan dengan tipe kepribadian lain</h2>
+              <IconHelpCircle
+                size={20}
+                className="text-muted-foreground"
+                strokeWidth={1.5}
+              />
+            </div>
+            <div
+              className={cn('grid gap-6', {
+                'grid-cols-1 max-w-xs': alternatives.length === 1,
+                'grid-cols-1 sm:grid-cols-2 max-w-xl': alternatives.length === 2,
+                'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3': alternatives.length === 3,
+                'grid-cols-1 sm:grid-cols-2 lg:grid-cols-4': alternatives.length === 4,
+              })}
+            >
+              {alternatives.map((type) => {
+                const altGroup = getPersonalityGroupInfo(type);
+                return (
+                <div
+                  key={type}
+                  className="bg-card border border-brand-neutral-200 rounded-2xl overflow-hidden flex flex-col"
+                >
+                  <div className={cn('h-40 w-full', altGroup.bgColor)} />
+                  <div className="p-4 pb-6 flex flex-col gap-3">
+                    <h4 className="heading-4">
+                      {altGroup.personalityGroupName} ({type})
+                    </h4>
+                    <p className="para-sm text-muted-foreground">
+                      Pemikir cerdas yang selalu tertantang untuk melakukan perdebatan dan
+                      diskusi-diskusi intelektual
+                    </p>
+                  </div>
+                </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
       </div>
     </div>
   );

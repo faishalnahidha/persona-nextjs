@@ -43,7 +43,7 @@ export default async function ResultPage({
   const resultData = {
     _id: result._id.toString(),
     personalityType: result.personalityType,
-    alternativeTypes: result.alternativeTypes,
+    alternativeTypes: (result.alternativeTypes ?? []) as string[],
     scores: result.scores,
     completedAt: result.completedAt.toISOString(),
     user: result.userId
