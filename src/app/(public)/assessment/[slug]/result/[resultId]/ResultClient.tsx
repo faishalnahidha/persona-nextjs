@@ -13,6 +13,16 @@ import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { getPersonalityGroupInfo } from '@/lib/constants/personality-groups';
 
+function getPersonalityIllustrationPath(
+  personalityType: string,
+  variant: 'withframe' | 'plain',
+): string {
+  const type = personalityType.toLowerCase();
+  return variant === 'withframe'
+    ? `/images/illustration/svg-withframe-${type}.svg`
+    : `/images/illustration/svg-${type}.svg`;
+}
+
 interface Result {
   _id: string;
   personalityType: string;
@@ -130,16 +140,12 @@ export default function ResultClient({
                 {result.personalityType}
               </span>
             </div>
-            {/* Illustration / placeholder */}
-            {content?.mainImage ? (
-              <img
-                src={content.mainImage}
-                alt={content.personalityName ?? result.personalityType}
-                className="relative z-10 w-3/4 mx-auto block object-contain pb-0"
-              />
-            ) : (
-              <div className="h-64" />
-            )}
+            {/* Illustration */}
+            <img
+              src={getPersonalityIllustrationPath(result.personalityType, 'withframe')}
+              alt={content?.personalityName ?? result.personalityType}
+              className="relative z-10 w-3/4 mx-auto block object-contain pb-0"
+            />
           </div>
 
           {/* Col 2: Summary card */}
@@ -315,21 +321,27 @@ export default function ResultClient({
               {alternatives.map((type) => {
                 const altGroup = getPersonalityGroupInfo(type);
                 return (
-                <div
-                  key={type}
-                  className="bg-card border border-brand-neutral-200 rounded-2xl overflow-hidden flex flex-col"
-                >
-                  <div className={cn('h-40 w-full', altGroup.bgColor)} />
-                  <div className="p-4 pb-6 flex flex-col gap-3">
-                    <h4 className="heading-4">
-                      {altGroup.personalityGroupName} ({type})
-                    </h4>
-                    <p className="para-sm text-muted-foreground">
-                      Pemikir cerdas yang selalu tertantang untuk melakukan perdebatan dan
-                      diskusi-diskusi intelektual
-                    </p>
+                  <div
+                    key={type}
+                    className="bg-card border border-brand-neutral-200 rounded-2xl overflow-hidden flex flex-col"
+                  >
+                    <div className={cn('relative h-40 w-full overflow-hidden', altGroup.bgColor)}>
+                      <img
+                        src={getPersonalityIllustrationPath(type, 'plain')}
+                        alt={type}
+                        className="absolute bottom-0 left-1/2 h-full w-auto -translate-x-1/2 object-contain object-bottom"
+                      />
+                    </div>
+                    <div className="p-4 pb-6 flex flex-col gap-3">
+                      <h4 className="heading-4">
+                        {altGroup.personalityGroupName} ({type})
+                      </h4>
+                      <p className="para-sm text-muted-foreground">
+                        Pemikir cerdas yang selalu tertantang untuk melakukan perdebatan dan
+                        diskusi-diskusi intelektual
+                      </p>
+                    </div>
                   </div>
-                </div>
                 );
               })}
             </div>
