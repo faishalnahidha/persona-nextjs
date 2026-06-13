@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import {
   IconLock,
@@ -12,6 +13,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { getPersonalityGroupInfo } from '@/lib/constants/personality-groups';
+import Header from '@/components/header';
 
 function getPersonalityIllustrationPath(
   personalityType: string,
@@ -115,239 +117,248 @@ export default function ResultClient({
   };
 
   return (
-    <div className="bg-background min-h-screen">
-      <div className="max-w-[1280px] mx-auto px-4 md:px-10 py-16 space-y-12">
+    <div className="min-h-screen">
+      <Header />
+      <div className='flex justify-center py-20 md:pt-38'>
+        <div className="container w-full flex flex-col gap-6 px-6 lg:px-10">
 
-        {/* ── Section 1: Result Hero ── */}
-        <div className="grid grid-cols-1 lg:grid-cols-[3fr_2fr_2fr] gap-6 items-start">
+          {/* ── Section 1: Result Hero ── */}
+          <div className="grid grid-cols-1 lg:grid-cols-[3fr_2fr_2fr] gap-6 items-start">
 
-          {/* Col 1: Illustration card */}
-          <div className={cn('relative rounded-2xl overflow-visible min-h-[400px]', primaryGroup.bgColor)}>
-            {/* Background trait words */}
-            <div className="absolute inset-0 flex flex-col items-end justify-center pr-6 pointer-events-none select-none overflow-hidden rounded-2xl">
-              {dominantTraits.map((trait) => (
-                <span
-                  key={trait}
-                  className="text-white/25 font-heading font-bold text-4xl leading-snug text-right"
-                >
-                  {trait}
+            {/* Col 1: Illustration card */}
+            <div className={cn('relative rounded-2xl overflow-visible min-h-[560px]', primaryGroup.bgColor)}>
+              <div className="relative flex flex-col items-end gap-2 p-6">
+                {/* Type code */}
+                <span className="text-primary-foreground font-heading font-medium text-7xl tracking-tight leading-none">
+                  {result.personalityType}
                 </span>
-              ))}
-            </div>
-            {/* Type code */}
-            <div className="relative z-10 flex justify-end p-6">
-              <span className="text-white font-heading font-bold text-7xl tracking-tight leading-none">
-                {result.personalityType}
-              </span>
-            </div>
-            {/* Illustration */}
-            <img
-              src={getPersonalityIllustrationPath(result.personalityType, 'withframe')}
-              alt={content?.personalityName ?? result.personalityType}
-              className="relative z-10 w-3/4 mx-auto block object-contain pb-0"
-            />
-          </div>
-
-          {/* Col 2: Summary card */}
-          <div className="bg-card border border-brand-neutral-200 rounded-2xl p-6 flex flex-col gap-5">
-            <Badge variant="outline">Ringkasan kepribadianmu</Badge>
-            <div className="flex flex-col gap-3 flex-1">
-              <h2 className="heading-2">
-                {content?.personalityName ?? result.personalityType}
-              </h2>
-              {content?.subtitle && (
-                <p className="para-regular text-muted-foreground">{content.subtitle}</p>
-              )}
-            </div>
-            {content?.slug && (
-              <Button
-                className="w-fit"
-                onClick={() => router.push(`/content/${content.slug}`)}
-              >
-                Baca Selengkapnya
-              </Button>
-            )}
-          </div>
-
-          {/* Col 3: Score card */}
-          <div className="bg-card border border-brand-neutral-200 rounded-2xl p-6 flex flex-col gap-6">
-            {/* Header info */}
-            <div className="flex flex-col gap-3">
-              <Badge variant="outline">Detail hasil tes</Badge>
-              <div className="flex flex-col gap-1">
-                <h3 className="heading-3">{result.user?.name ?? 'Pengguna'}</h3>
-                <p className="para-sm text-muted-foreground">Warna/tipe kepribadianmu:</p>
-                <p className="para-sm-bold">
-                  {`${primaryGroup.personalityGroupName} / ${content?.personalityName ?? result.personalityType}`}
-                </p>
-              </div>
-            </div>
-
-            {/* Dual progress bars */}
-            <div className="flex flex-col gap-4">
-              {dimensions.map((dim) => {
-                const leftDominant = dim.left.value >= dim.right.value;
-                return (
-                  <div key={dim.left.label} className="flex flex-col gap-1.5">
-                    <div className="flex h-7 overflow-hidden rounded-sm">
-                      <div
-                        className={cn(
-                          'flex shrink-0 items-center justify-end pr-2',
-                          leftDominant ? 'bg-brand-neutral-600' : 'bg-brand-neutral-200',
-                        )}
-                        style={{ width: `${dim.left.value}%` }}
-                      >
-                        <span
-                          className={cn(
-                            'para-sm-bold',
-                            leftDominant ? 'text-white' : 'text-foreground',
-                          )}
-                        >
-                          {dim.left.value}%
-                        </span>
-                      </div>
-                      <div
-                        className={cn(
-                          'flex shrink-0 items-center justify-start pl-2',
-                          !leftDominant ? 'bg-brand-neutral-600' : 'bg-brand-neutral-200',
-                        )}
-                        style={{ width: `${dim.right.value}%` }}
-                      >
-                        <span
-                          className={cn(
-                            'para-sm-bold',
-                            !leftDominant ? 'text-white' : 'text-foreground',
-                          )}
-                        >
-                          {dim.right.value}%
-                        </span>
-                      </div>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="para-sm text-muted-foreground">{dim.left.label}</span>
-                      <span className="para-sm text-muted-foreground">{dim.right.label}</span>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-
-            {/* Action buttons */}
-            <div className="flex gap-2 flex-wrap">
-              <Button variant="outline" size="sm" className="gap-2">
-                <IconDeviceFloppy size={16} />
-                Simpan Hasil
-              </Button>
-              <div className="relative">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="gap-2"
-                  onClick={() => setShowShareOptions(!showShareOptions)}
-                >
-                  <IconShare3 size={16} />
-                  Share
-                </Button>
-                {showShareOptions && (
-                  <div className="absolute top-full mt-2 right-0 bg-card border border-brand-neutral-200 rounded-xl shadow-lg py-2 w-48 z-10">
-                    {(['whatsapp', 'facebook', 'twitter', 'telegram'] as const).map(
-                      (platform) => (
-                        <button
-                          key={platform}
-                          onClick={() => handleShare(platform)}
-                          className="w-full text-left px-4 py-2 para-sm hover:bg-muted transition-colors capitalize"
-                        >
-                          {platform === 'twitter' ? 'X / Twitter' : platform.charAt(0).toUpperCase() + platform.slice(1)}
-                        </button>
-                      ),
-                    )}
-                    <hr className="my-1 border-border" />
-                    <button
-                      onClick={handleCopyLink}
-                      className="w-full text-left px-4 py-2 para-sm hover:bg-muted transition-colors"
+                {/* Background trait words */}
+                <div className="relative flex flex-col select-none">
+                  {dominantTraits.map((trait) => (
+                    <span
+                      key={trait}
+                      className="text-primary-foreground/40 font-heading text-5xl text-right"
                     >
-                      Salin Link
-                    </button>
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* ── Section 2: Panduan kepribadianmu (guest) ── */}
-        {isGuest && (
-          <div className="flex flex-col gap-6">
-            <div className="flex items-center gap-3">
-              <h2 className="heading-2">Panduan kepribadianmu</h2>
-              <IconLock size={20} className="text-foreground" strokeWidth={1.5} />
-            </div>
-            <div className="bg-card border border-brand-neutral-200 rounded-2xl p-6">
-              <div className="flex flex-col gap-4">
-                <div className="flex flex-col gap-2">
-                  <h4 className="heading-4">Lihat panduan khusus tipe kepribadianmu</h4>
-                  <p className="para-regular text-muted-foreground">
-                    Daftar sekarang untuk membaca konten eksklusif tentang: pemilihan karir,
-                    lingkungan kerja, sampai tipe bos yang ideal untuk kamu.
-                  </p>
+                      {trait}
+                    </span>
+                  ))}
                 </div>
-                <Button className="w-fit" onClick={() => router.push('/register')}>
-                  Daftar Gratis
-                </Button>
               </div>
-            </div>
-          </div>
-        )}
 
-        {/* ── Section 3: Bandingkan dengan tipe kepribadian lain ── */}
-        {alternatives.length > 0 && (
-          <div className="flex flex-col gap-6">
-            <div className="flex items-center gap-3">
-              <h2 className="heading-2">Bandingkan dengan tipe kepribadian lain</h2>
-              <IconHelpCircle
-                size={20}
-                className="text-muted-foreground"
-                strokeWidth={1.5}
+              {/* Illustration */}
+              <Image
+                src={getPersonalityIllustrationPath(result.personalityType, 'withframe')}
+                alt={content?.personalityName ?? result.personalityType}
+                width={666}
+                height={945}
+                priority
+                className="absolute -top-10 left-0 z-10 w-full mx-auto block object-contain drop-shadow-[-4px_8px_40px_rgba(0,0,0,0.2)]"
               />
             </div>
-            <div
-              className={cn('grid gap-6', {
-                'grid-cols-1 max-w-xs': alternatives.length === 1,
-                'grid-cols-1 sm:grid-cols-2 max-w-xl': alternatives.length === 2,
-                'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3': alternatives.length === 3,
-                'grid-cols-1 sm:grid-cols-2 lg:grid-cols-4': alternatives.length === 4,
-              })}
-            >
-              {alternatives.map((type) => {
-                const altGroup = getPersonalityGroupInfo(type);
-                return (
-                  <div
-                    key={type}
-                    className="bg-card border border-brand-neutral-200 rounded-2xl overflow-hidden flex flex-col"
+
+            {/* Col 2: Summary card */}
+            <div className="bg-card border border-brand-neutral-200 rounded-2xl p-6 flex flex-col gap-5">
+              <Badge variant="outline">Ringkasan kepribadianmu</Badge>
+              <div className="flex flex-col gap-3 flex-1">
+                <h2 className="heading-2">
+                  {content?.personalityName ?? result.personalityType}
+                </h2>
+                {content?.subtitle && (
+                  <p className="para-regular text-muted-foreground">{content.subtitle}</p>
+                )}
+              </div>
+              {content?.slug && (
+                <Button
+                  className="w-fit"
+                  onClick={() => router.push(`/content/${content.slug}`)}
+                >
+                  Baca Selengkapnya
+                </Button>
+              )}
+            </div>
+
+            {/* Col 3: Score card */}
+            <div className="bg-card border border-brand-neutral-200 rounded-2xl p-6 flex flex-col gap-6">
+              {/* Header info */}
+              <div className="flex flex-col gap-3">
+                <Badge variant="outline">Detail hasil tes</Badge>
+                <div className="flex flex-col gap-1">
+                  <h3 className="heading-3">{result.user?.name ?? 'Pengguna'}</h3>
+                  <p className="para-sm text-muted-foreground">Warna/tipe kepribadianmu:</p>
+                  <p className="para-sm-bold">
+                    {`${primaryGroup.personalityGroupName} / ${content?.personalityName ?? result.personalityType}`}
+                  </p>
+                </div>
+              </div>
+
+              {/* Dual progress bars */}
+              <div className="flex flex-col gap-4">
+                {dimensions.map((dim) => {
+                  const leftDominant = dim.left.value >= dim.right.value;
+                  return (
+                    <div key={dim.left.label} className="flex flex-col gap-1.5">
+                      <div className="flex h-7 overflow-hidden rounded-sm">
+                        <div
+                          className={cn(
+                            'flex shrink-0 items-center justify-end pr-2',
+                            leftDominant ? 'bg-brand-neutral-600' : 'bg-brand-neutral-200',
+                          )}
+                          style={{ width: `${dim.left.value}%` }}
+                        >
+                          <span
+                            className={cn(
+                              'para-sm-bold',
+                              leftDominant ? 'text-white' : 'text-foreground',
+                            )}
+                          >
+                            {dim.left.value}%
+                          </span>
+                        </div>
+                        <div
+                          className={cn(
+                            'flex shrink-0 items-center justify-start pl-2',
+                            !leftDominant ? 'bg-brand-neutral-600' : 'bg-brand-neutral-200',
+                          )}
+                          style={{ width: `${dim.right.value}%` }}
+                        >
+                          <span
+                            className={cn(
+                              'para-sm-bold',
+                              !leftDominant ? 'text-white' : 'text-foreground',
+                            )}
+                          >
+                            {dim.right.value}%
+                          </span>
+                        </div>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="para-sm text-muted-foreground">{dim.left.label}</span>
+                        <span className="para-sm text-muted-foreground">{dim.right.label}</span>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+
+              {/* Action buttons */}
+              <div className="flex gap-2 flex-wrap">
+                <Button variant="outline" size="sm" className="gap-2">
+                  <IconDeviceFloppy size={16} />
+                  Simpan Hasil
+                </Button>
+                <div className="relative">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="gap-2"
+                    onClick={() => setShowShareOptions(!showShareOptions)}
                   >
-                    <div className={cn('relative h-40 w-full overflow-hidden', altGroup.bgColor)}>
-                      <img
-                        src={getPersonalityIllustrationPath(type, 'plain')}
-                        alt={type}
-                        className="absolute bottom-0 left-1/2 h-full w-auto -translate-x-1/2 object-contain object-bottom"
-                      />
+                    <IconShare3 size={16} />
+                    Share
+                  </Button>
+                  {showShareOptions && (
+                    <div className="absolute top-full mt-2 right-0 bg-card border border-brand-neutral-200 rounded-xl shadow-lg py-2 w-48 z-10">
+                      {(['whatsapp', 'facebook', 'twitter', 'telegram'] as const).map(
+                        (platform) => (
+                          <button
+                            key={platform}
+                            onClick={() => handleShare(platform)}
+                            className="w-full text-left px-4 py-2 para-sm hover:bg-muted transition-colors capitalize"
+                          >
+                            {platform === 'twitter' ? 'X / Twitter' : platform.charAt(0).toUpperCase() + platform.slice(1)}
+                          </button>
+                        ),
+                      )}
+                      <hr className="my-1 border-border" />
+                      <button
+                        onClick={handleCopyLink}
+                        className="w-full text-left px-4 py-2 para-sm hover:bg-muted transition-colors"
+                      >
+                        Salin Link
+                      </button>
                     </div>
-                    <div className="p-4 pb-6 flex flex-col gap-3">
-                      <h4 className="heading-4">
-                        {altGroup.personalityGroupName} ({type})
-                      </h4>
-                      <p className="para-sm text-muted-foreground">
-                        Pemikir cerdas yang selalu tertantang untuk melakukan perdebatan dan
-                        diskusi-diskusi intelektual
-                      </p>
-                    </div>
-                  </div>
-                );
-              })}
+                  )}
+                </div>
+              </div>
             </div>
           </div>
-        )}
 
+          {/* ── Section 2: Panduan kepribadianmu (guest) ── */}
+          {isGuest && (
+            <div className="flex flex-col gap-6">
+              <div className="flex items-center gap-3">
+                <h2 className="heading-2">Panduan kepribadianmu</h2>
+                <IconLock size={20} className="text-foreground" strokeWidth={1.5} />
+              </div>
+              <div className="bg-card border border-brand-neutral-200 rounded-2xl p-6">
+                <div className="flex flex-col gap-4">
+                  <div className="flex flex-col gap-2">
+                    <h4 className="heading-4">Lihat panduan khusus tipe kepribadianmu</h4>
+                    <p className="para-regular text-muted-foreground">
+                      Daftar sekarang untuk membaca konten eksklusif tentang: pemilihan karir,
+                      lingkungan kerja, sampai tipe bos yang ideal untuk kamu.
+                    </p>
+                  </div>
+                  <Button className="w-fit" onClick={() => router.push('/register')}>
+                    Daftar Gratis
+                  </Button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* ── Section 3: Bandingkan dengan tipe kepribadian lain ── */}
+          {alternatives.length > 0 && (
+            <div className="flex flex-col gap-6">
+              <div className="flex items-center gap-3">
+                <h2 className="heading-2">Bandingkan dengan tipe kepribadian lain</h2>
+                <IconHelpCircle
+                  size={20}
+                  className="text-muted-foreground"
+                  strokeWidth={1.5}
+                />
+              </div>
+              <div
+                className={cn('grid gap-6', {
+                  'grid-cols-1 max-w-xs': alternatives.length === 1,
+                  'grid-cols-1 sm:grid-cols-2 max-w-xl': alternatives.length === 2,
+                  'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3': alternatives.length === 3,
+                  'grid-cols-1 sm:grid-cols-2 lg:grid-cols-4': alternatives.length === 4,
+                })}
+              >
+                {alternatives.map((type) => {
+                  const altGroup = getPersonalityGroupInfo(type);
+                  return (
+                    <div
+                      key={type}
+                      className="bg-card border border-brand-neutral-200 rounded-2xl overflow-hidden flex flex-col"
+                    >
+                      <div className={cn('relative h-40 w-full overflow-hidden', altGroup.bgColor)}>
+                        <Image
+                          src={getPersonalityIllustrationPath(type, 'plain')}
+                          alt={type}
+                          width={321}
+                          height={626}
+                          className="absolute bottom-0 left-1/2 h-full w-auto -translate-x-1/2 object-contain object-bottom"
+                        />
+                      </div>
+                      <div className="p-4 pb-6 flex flex-col gap-3">
+                        <h4 className="heading-4">
+                          {altGroup.personalityGroupName} ({type})
+                        </h4>
+                        <p className="para-sm text-muted-foreground">
+                          Pemikir cerdas yang selalu tertantang untuk melakukan perdebatan dan
+                          diskusi-diskusi intelektual
+                        </p>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+        </div>
       </div>
     </div>
   );
