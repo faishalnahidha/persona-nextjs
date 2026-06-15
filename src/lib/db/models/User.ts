@@ -96,6 +96,13 @@ const UserSchema = new Schema<IUser>(
       trim: true,
       maxlength: [50, 'Name cannot exceed 50 characters'],
     },
+    dateOfBirth: {
+      type: Date,
+    },
+    gender: {
+      type: String,
+      enum: ['male', 'female'],
+    },
     profilePicture: {
       type: String,
     },

@@ -12,8 +12,28 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import { getPersonalityGroupInfo } from '@/lib/constants/personality-groups';
+import { getPersonalityGroup } from '@/lib/constants/personality-groups';
+import { getPersonalityName, getPersonalityNameWithLetter } from '@/lib/constants/personality-names';
 import Header from '@/components/header';
+
+function calculateAge(dateOfBirth: string): number {
+  const birth = new Date(dateOfBirth);
+  const today = new Date();
+  let age = today.getFullYear() - birth.getFullYear();
+  const monthDiff = today.getMonth() - birth.getMonth();
+  if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
+    age--;
+  }
+  return age;
+}
+
+function formatUserDisplayName(
+  name: string,
+  dateOfBirth?: string,
+): string {
+  if (!dateOfBirth) return name;
+  return `${name} (${calculateAge(dateOfBirth)})`;
+}
 
 function getPersonalityIllustrationPath(
   personalityType: string,
@@ -43,6 +63,7 @@ interface Result {
   user: {
     name: string;
     userType: 'guest' | 'registered';
+    dateOfBirth?: string;
   } | null;
 }
 
@@ -66,7 +87,7 @@ export default function ResultClient({
   const [showShareOptions, setShowShareOptions] = useState(false);
 
   const isGuest = !result.user || result.user.userType === 'guest';
-  const primaryGroup = getPersonalityGroupInfo(result.personalityType);
+  const primaryGroup = getPersonalityGroup(result.personalityType);
 
   const dominantTraits = [
     result.scores.extrovert >= result.scores.introvert ? 'Extroverted' : 'Introverted',
@@ -120,13 +141,13 @@ export default function ResultClient({
     <div className="min-h-screen">
       <Header />
       <div className='flex justify-center py-20 md:pt-38'>
-        <div className="container w-full flex flex-col gap-6 px-6 lg:px-10">
+        <div className="container w-full flex flex-col gap-6 lg:gap-12 px-6 lg:px-10">
 
           {/* ── Section 1: Result Hero ── */}
-          <div className="grid grid-cols-1 lg:grid-cols-[3fr_2fr_2fr] gap-6 items-start">
+          <div className="grid grid-cols-1 lg:grid-cols-[3fr_2fr_2fr] items-start gap-6 lg:mb-18 xl:mb-32">
 
             {/* Col 1: Illustration card */}
-            <div className={cn('relative rounded-2xl overflow-visible min-h-[560px]', primaryGroup.bgColor)}>
+            <div className={cn('relative rounded-2xl overflow-visible h-full', primaryGroup.bgColor)}>
               <div className="relative flex flex-col items-end gap-2 p-6">
                 {/* Type code */}
                 <span className="text-primary-foreground font-heading font-medium text-7xl tracking-tight leading-none">
@@ -137,7 +158,7 @@ export default function ResultClient({
                   {dominantTraits.map((trait) => (
                     <span
                       key={trait}
-                      className="text-primary-foreground/40 font-heading text-5xl text-right"
+                      className="text-primary-foreground/40 font-heading font-light text-5xl text-right"
                     >
                       {trait}
                     </span>
@@ -152,63 +173,76 @@ export default function ResultClient({
                 width={666}
                 height={945}
                 priority
-                className="absolute -top-10 left-0 z-10 w-full mx-auto block object-contain drop-shadow-[-4px_8px_40px_rgba(0,0,0,0.2)]"
+                className="absolute -top-10 xl:-top-16 left-0 z-10 w-full mx-auto block object-contain drop-shadow-[-4px_8px_40px_rgba(0,0,0,0.2)]"
               />
             </div>
 
             {/* Col 2: Summary card */}
-            <div className="bg-card border border-brand-neutral-200 rounded-2xl p-6 flex flex-col gap-5">
-              <Badge variant="outline">Ringkasan kepribadianmu</Badge>
-              <div className="flex flex-col gap-3 flex-1">
+            <div className="bg-card border rounded-2xl p-6 flex flex-col gap-6 min-h-[560px]">
+
+              <div className="flex flex-col gap-3">
+                <Badge variant="secondary" className="rounded-sm">Ringkasan kepribadianmu</Badge>
                 <h2 className="heading-2">
-                  {content?.personalityName ?? result.personalityType}
+                  {getPersonalityName(result.personalityType)}
                 </h2>
                 {content?.subtitle && (
-                  <p className="para-regular text-muted-foreground">{content.subtitle}</p>
+                  <p className="para-regular text-muted">{content.subtitle}</p>
                 )}
+                <p className="para-regular text-foreground-alt">Kamu yang memiliki tipe kepribadian The Champion (ENFP) adalah seorang yang bersemangat, idealis, dan kreatif. Dapat menguasai berbagai keahlian yang menarik bagi mereka, dan sangat baik dalam berhubungan dengan orang lain. <br /> <br />The Champion hidup dengan nilai-nilai yang sesuai dengan nilai-nilai pribadinya. Mereka berpikiran terbuka dan fleksibel, serta memiliki berbagai minat dan keahlian.</p>
               </div>
-              {content?.slug && (
+              {/* {content?.slug && (
                 <Button
                   className="w-fit"
                   onClick={() => router.push(`/content/${content.slug}`)}
                 >
                   Baca Selengkapnya
                 </Button>
-              )}
+              )} */}
+              <Button
+                className="w-fit rounded-full"
+                onClick={() => router.push(`/content/#`)}
+              >
+                Baca Selengkapnya
+              </Button>
             </div>
 
             {/* Col 3: Score card */}
-            <div className="bg-card border border-brand-neutral-200 rounded-2xl p-6 flex flex-col gap-6">
+            <div className="bg-card border border-brand-neutral-200 rounded-2xl p-6 flex flex-col gap-6 h-full">
               {/* Header info */}
               <div className="flex flex-col gap-3">
-                <Badge variant="outline">Detail hasil tes</Badge>
-                <div className="flex flex-col gap-1">
-                  <h3 className="heading-3">{result.user?.name ?? 'Pengguna'}</h3>
-                  <p className="para-sm text-muted-foreground">Warna/tipe kepribadianmu:</p>
+                <Badge variant="secondary" className="rounded-sm">Detail hasil tes</Badge>
+                <h3 className="heading-4">
+                  {formatUserDisplayName(
+                    result.user?.name ?? 'Guest User',
+                    result.user?.dateOfBirth,
+                  )}
+                </h3>
+                <div className="flex flex-col">
+                  <p className="para-mini text-muted-foreground">Warna/tipe kepribadianmu:</p>
                   <p className="para-sm-bold">
-                    {`${primaryGroup.personalityGroupName} / ${content?.personalityName ?? result.personalityType}`}
+                    {`${primaryGroup.personalityGroupName} / ${getPersonalityNameWithLetter(result.personalityType)}`}
                   </p>
                 </div>
               </div>
 
-              {/* Dual progress bars */}
+              {/* Balance of 100% progress bars */}
               <div className="flex flex-col gap-4">
                 {dimensions.map((dim) => {
                   const leftDominant = dim.left.value >= dim.right.value;
                   return (
                     <div key={dim.left.label} className="flex flex-col gap-1.5">
-                      <div className="flex h-7 overflow-hidden rounded-sm">
+                      <div className="flex h-7 overflow-hidden rounded-lg">
                         <div
                           className={cn(
-                            'flex shrink-0 items-center justify-end pr-2',
-                            leftDominant ? 'bg-brand-neutral-600' : 'bg-brand-neutral-200',
+                            'flex shrink-0 items-center justify-start pl-3',
+                            leftDominant ? 'bg-brand-neutral-600 rounded-xs' : 'bg-brand-neutral-200',
                           )}
                           style={{ width: `${dim.left.value}%` }}
                         >
                           <span
                             className={cn(
-                              'para-sm-bold',
-                              leftDominant ? 'text-white' : 'text-foreground',
+                              'font-mono text-xs tracking-widest',
+                              leftDominant ? 'text-brand-neutral-100' : 'text-brand-neutral-400',
                             )}
                           >
                             {dim.left.value}%
@@ -216,24 +250,25 @@ export default function ResultClient({
                         </div>
                         <div
                           className={cn(
-                            'flex shrink-0 items-center justify-start pl-2',
-                            !leftDominant ? 'bg-brand-neutral-600' : 'bg-brand-neutral-200',
+                            'flex shrink-0 items-center justify-end pr-3',
+                            !leftDominant ? 'bg-brand-neutral-600 rounded-xs' : 'bg-brand-neutral-200',
                           )}
                           style={{ width: `${dim.right.value}%` }}
                         >
                           <span
                             className={cn(
-                              'para-sm-bold',
-                              !leftDominant ? 'text-white' : 'text-foreground',
+                              'font-mono text-xs tracking-widest',
+                              !leftDominant ? 'text-brand-neutral-100' : 'text-brand-neutral-400',
                             )}
                           >
                             {dim.right.value}%
                           </span>
                         </div>
                       </div>
+                      {/* Parameter labels */}
                       <div className="flex justify-between">
-                        <span className="para-sm text-muted-foreground">{dim.left.label}</span>
-                        <span className="para-sm text-muted-foreground">{dim.right.label}</span>
+                        <span className="para-mini text-muted-foreground">{dim.left.label}</span>
+                        <span className="para-mini text-muted-foreground">{dim.right.label}</span>
                       </div>
                     </div>
                   );
@@ -242,22 +277,21 @@ export default function ResultClient({
 
               {/* Action buttons */}
               <div className="flex gap-2 flex-wrap">
-                <Button variant="outline" size="sm" className="gap-2">
-                  <IconDeviceFloppy size={16} />
+                <Button variant="outline" className="rounded-full gap-2">
+                  <IconDeviceFloppy />
                   Simpan Hasil
                 </Button>
                 <div className="relative">
                   <Button
                     variant="outline"
-                    size="sm"
-                    className="gap-2"
+                    className="rounded-full gap-2"
                     onClick={() => setShowShareOptions(!showShareOptions)}
                   >
-                    <IconShare3 size={16} />
+                    <IconShare3 />
                     Share
                   </Button>
                   {showShareOptions && (
-                    <div className="absolute top-full mt-2 right-0 bg-card border border-brand-neutral-200 rounded-xl shadow-lg py-2 w-48 z-10">
+                    <div className="absolute top-full mt-2 right-0 bg-card border rounded-2xl shadow-lg py-2 w-48 z-10">
                       {(['whatsapp', 'facebook', 'twitter', 'telegram'] as const).map(
                         (platform) => (
                           <button
@@ -327,7 +361,7 @@ export default function ResultClient({
                 })}
               >
                 {alternatives.map((type) => {
-                  const altGroup = getPersonalityGroupInfo(type);
+                  const altGroup = getPersonalityGroup(type);
                   return (
                     <div
                       key={type}

@@ -63,7 +63,7 @@ export default async function ResultPage({
 
   // Fetch result
   const result = await Result.findById(resultId)
-    .populate('userId', 'name userType')
+    .populate('userId', 'name userType dateOfBirth')
     .lean();
 
   if (!result) {
@@ -95,6 +95,9 @@ export default async function ResultPage({
       ? {
         name: (result.userId as unknown as { name: string }).name,
         userType: (result.userId as unknown as { userType: 'guest' | 'registered' }).userType,
+        dateOfBirth: (result.userId as unknown as { dateOfBirth?: Date }).dateOfBirth
+          ? (result.userId as unknown as { dateOfBirth: Date }).dateOfBirth.toISOString()
+          : undefined,
       }
       : null,
   };
