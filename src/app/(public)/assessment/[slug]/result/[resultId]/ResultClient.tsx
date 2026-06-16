@@ -173,7 +173,7 @@ export default function ResultClient({
                 width={666}
                 height={945}
                 priority
-                className="absolute -top-10 xl:-top-16 left-0 z-10 w-full mx-auto block object-contain drop-shadow-[-4px_8px_40px_rgba(0,0,0,0.2)]"
+                className="absolute -top-12 xl:-top-16 left-0 z-10 w-full mx-auto block object-contain drop-shadow-[-4px_8px_40px_rgba(0,0,0,0.2)]"
               />
             </div>
 
@@ -207,7 +207,7 @@ export default function ResultClient({
             </div>
 
             {/* Col 3: Score card */}
-            <div className="bg-card border border-brand-neutral-200 rounded-2xl p-6 flex flex-col gap-6 h-full">
+            <div className="bg-card border rounded-2xl p-6 flex flex-col gap-6 h-full">
               {/* Header info */}
               <div className="flex flex-col gap-3">
                 <Badge variant="secondary" className="rounded-sm">Detail hasil tes</Badge>
@@ -322,18 +322,18 @@ export default function ResultClient({
             <div className="flex flex-col gap-6">
               <div className="flex items-center gap-3">
                 <h2 className="heading-2">Panduan kepribadianmu</h2>
-                <IconLock size={20} className="text-foreground" strokeWidth={1.5} />
+                <IconLock size={32} className="text-muted-foreground" strokeWidth={2} />
               </div>
               <div className="bg-card border border-brand-neutral-200 rounded-2xl p-6">
                 <div className="flex flex-col gap-4">
                   <div className="flex flex-col gap-2">
                     <h4 className="heading-4">Lihat panduan khusus tipe kepribadianmu</h4>
-                    <p className="para-regular text-muted-foreground">
+                    <p className="para-regular text-foreground-alt">
                       Daftar sekarang untuk membaca konten eksklusif tentang: pemilihan karir,
                       lingkungan kerja, sampai tipe bos yang ideal untuk kamu.
                     </p>
                   </div>
-                  <Button className="w-fit" onClick={() => router.push('/register')}>
+                  <Button size="lg" className="w-50 h-12 rounded-full text-base" onClick={() => router.push('/register')}>
                     Daftar Gratis
                   </Button>
                 </div>
@@ -347,19 +347,20 @@ export default function ResultClient({
               <div className="flex items-center gap-3">
                 <h2 className="heading-2">Bandingkan dengan tipe kepribadian lain</h2>
                 <IconHelpCircle
-                  size={20}
+                  size={32}
                   className="text-muted-foreground"
-                  strokeWidth={1.5}
+                  strokeWidth={2}
                 />
               </div>
-              <div
+              {/* <div
                 className={cn('grid gap-6', {
                   'grid-cols-1 max-w-xs': alternatives.length === 1,
                   'grid-cols-1 sm:grid-cols-2 max-w-xl': alternatives.length === 2,
                   'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3': alternatives.length === 3,
                   'grid-cols-1 sm:grid-cols-2 lg:grid-cols-4': alternatives.length === 4,
                 })}
-              >
+              > */}
+              <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 max-w-xl">
                 {alternatives.map((type) => {
                   const altGroup = getPersonalityGroup(type);
                   return (
