@@ -10,7 +10,7 @@ const GROUPS: Record<PersonalityGroupCode, PersonalityGroup> = {
   SJ: {
     personalityGroup: 'SJ',
     personalityGroupName: 'Gold (SJ)',
-    bgColor: 'bg-amber-400',
+    bgColor: 'bg-amber-300',
   },
   NT: {
     personalityGroup: 'NT',

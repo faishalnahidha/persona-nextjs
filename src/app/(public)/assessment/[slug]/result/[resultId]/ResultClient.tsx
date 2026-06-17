@@ -5,7 +5,7 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import {
   IconLock,
-  IconHelpCircle,
+  IconHelp,
   IconDeviceFloppy,
   IconShare3,
 } from '@tabler/icons-react';
@@ -37,12 +37,14 @@ function formatUserDisplayName(
 
 function getPersonalityIllustrationPath(
   personalityType: string,
-  variant: 'withframe' | 'plain',
+  variant: 'withframe' | 'plain' | 'thumbnail',
 ): string {
   const type = personalityType.toLowerCase();
   return variant === 'withframe'
     ? `/images/illustration/svg-withframe-${type}.svg`
-    : `/images/illustration/svg-${type}.svg`;
+    : variant === 'plain'
+      ? `/images/illustration/svg-${type}.svg`
+      : `/images/illustration/svg-thumbnail-${type}.svg`;
 }
 
 interface Result {
@@ -144,7 +146,7 @@ export default function ResultClient({
         <div className="container w-full flex flex-col gap-6 lg:gap-12 px-6 lg:px-10">
 
           {/* ── Section 1: Result Hero ── */}
-          <div className="grid grid-cols-1 lg:grid-cols-[3fr_2fr_2fr] items-start gap-6 lg:mb-18 xl:mb-32">
+          <div className="grid grid-cols-1 lg:grid-cols-[3fr_2fr_2fr] items-start gap-6 lg:mb-18 2xl:mb-36">
 
             {/* Col 1: Illustration card */}
             <div className={cn('relative rounded-2xl overflow-visible h-full', primaryGroup.bgColor)}>
@@ -173,7 +175,7 @@ export default function ResultClient({
                 width={666}
                 height={945}
                 priority
-                className="absolute -top-12 xl:-top-16 left-0 z-10 w-full mx-auto block object-contain drop-shadow-[-4px_8px_40px_rgba(0,0,0,0.2)]"
+                className="absolute -top-12 left-0 z-10 w-full mx-auto block object-contain drop-shadow-[-4px_8px_40px_rgba(0,0,0,0.2)]"
               />
             </div>
 
@@ -322,7 +324,7 @@ export default function ResultClient({
             <div className="flex flex-col gap-6">
               <div className="flex items-center gap-3">
                 <h2 className="heading-2">Panduan kepribadianmu</h2>
-                <IconLock size={32} className="text-muted-foreground" strokeWidth={2} />
+                <IconLock size={28} className="text-muted-foreground" strokeWidth={2} />
               </div>
               <div className="bg-card border border-brand-neutral-200 rounded-2xl p-6">
                 <div className="flex flex-col gap-4">
@@ -346,42 +348,32 @@ export default function ResultClient({
             <div className="flex flex-col gap-6">
               <div className="flex items-center gap-3">
                 <h2 className="heading-2">Bandingkan dengan tipe kepribadian lain</h2>
-                <IconHelpCircle
-                  size={32}
-                  className="text-muted-foreground"
-                  strokeWidth={2}
-                />
+                <IconHelp size={28} className="text-muted-foreground" strokeWidth={2} />
               </div>
-              {/* <div
-                className={cn('grid gap-6', {
-                  'grid-cols-1 max-w-xs': alternatives.length === 1,
-                  'grid-cols-1 sm:grid-cols-2 max-w-xl': alternatives.length === 2,
-                  'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3': alternatives.length === 3,
-                  'grid-cols-1 sm:grid-cols-2 lg:grid-cols-4': alternatives.length === 4,
-                })}
-              > */}
-              <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 max-w-xl">
+              <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
                 {alternatives.map((type) => {
                   const altGroup = getPersonalityGroup(type);
                   return (
                     <div
                       key={type}
-                      className="bg-card border border-brand-neutral-200 rounded-2xl overflow-hidden flex flex-col"
+                      className="bg-card border rounded-2xl overflow-hidden flex flex-col hover:shadow-xl transition-shadow duration-300 hover:cursor-pointer select-none"
+                      onClick={() => router.push(`#`)}
                     >
-                      <div className={cn('relative h-40 w-full overflow-hidden', altGroup.bgColor)}>
+                      <div className={cn('relative w-full aspect-video overflow-hidden', altGroup.bgColor)}>
                         <Image
-                          src={getPersonalityIllustrationPath(type, 'plain')}
+                          src={getPersonalityIllustrationPath(type, 'thumbnail')}
                           alt={type}
-                          width={321}
-                          height={626}
-                          className="absolute bottom-0 left-1/2 h-full w-auto -translate-x-1/2 object-contain object-bottom"
+                          width={426}
+                          height={318}
+                          className="relative object-cover object-center"
                         />
                       </div>
                       <div className="p-4 pb-6 flex flex-col gap-3">
+                        <Badge variant="secondary" className="rounded-sm">{getPersonalityGroup(type).personalityGroupName}</Badge>
                         <h4 className="heading-4">
-                          {altGroup.personalityGroupName} ({type})
+                          {getPersonalityNameWithLetter(type)}
                         </h4>
-                        <p className="para-sm text-muted-foreground">
+                        <p className="para-sm text-foreground-alt">
                           Pemikir cerdas yang selalu tertantang untuk melakukan perdebatan dan
                           diskusi-diskusi intelektual
                         </p>
