@@ -38,10 +38,16 @@ export default async function ResultPage({
     const isFeeling = personalityType[2] === 'F';
     const isJudging = personalityType[3] === 'J';
 
+    // Generate 4 plausible alternatives by flipping one letter at a time
+    const alt1 = personalityType[0] + personalityType[1] + personalityType[2] + (isJudging ? 'P' : 'J');
+    const alt2 = personalityType[0] + personalityType[1] + (isFeeling ? 'T' : 'F') + personalityType[3];
+    const alt3 = personalityType[0] + (isIntuitive ? 'S' : 'N') + personalityType[2] + personalityType[3];
+    const alt4 = (isIntroverted ? 'E' : 'I') + personalityType[1] + personalityType[2] + personalityType[3];
+
     const mockResult = {
       _id: `mock-${personalityType}`,
       personalityType,
-      alternativeTypes: [] as string[],
+      alternativeTypes: [alt1, alt2, alt3, alt4],
       scores: {
         extrovert: isIntroverted ? 30 : 70,
         introvert: isIntroverted ? 70 : 30,
