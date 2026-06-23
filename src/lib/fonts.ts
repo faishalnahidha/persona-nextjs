@@ -8,7 +8,7 @@ import {
 // Heading font
 export const readexPro = Readex_Pro({
   subsets: ['latin'],
-  weight: ['400', '500', '600'],
+  weight: ['300', '400', '500', '600'],
   variable: '--font-heading',
   display: 'swap',
 });

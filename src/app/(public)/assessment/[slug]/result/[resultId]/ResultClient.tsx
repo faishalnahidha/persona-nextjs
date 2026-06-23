@@ -1,17 +1,51 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import {
   IconLock,
-  IconHelpCircle,
+  IconHelp,
   IconDeviceFloppy,
   IconShare3,
 } from '@tabler/icons-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import { getPersonalityGroupInfo } from '@/lib/constants/personality-groups';
+import { getPersonalityGroup } from '@/lib/constants/personality-groups';
+import { getPersonalityName, getPersonalityNameWithLetter } from '@/lib/constants/personality-names';
+import Header from '@/components/header';
+
+function calculateAge(dateOfBirth: string): number {
+  const birth = new Date(dateOfBirth);
+  const today = new Date();
+  let age = today.getFullYear() - birth.getFullYear();
+  const monthDiff = today.getMonth() - birth.getMonth();
+  if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
+    age--;
+  }
+  return age;
+}
+
+function formatUserDisplayName(
+  name: string,
+  dateOfBirth?: string,
+): string {
+  if (!dateOfBirth) return name;
+  return `${name} (${calculateAge(dateOfBirth)})`;
+}
+
+function getPersonalityIllustrationPath(
+  personalityType: string,
+  variant: 'withframe' | 'plain' | 'thumbnail',
+): string {
+  const type = personalityType.toLowerCase();
+  return variant === 'withframe'
+    ? `/images/illustration/svg-withframe-${type}.svg`
+    : variant === 'plain'
+      ? `/images/illustration/svg-${type}.svg`
+      : `/images/illustration/svg-thumbnail-${type}.svg`;
+}
 
 interface Result {
   _id: string;
@@ -31,6 +65,7 @@ interface Result {
   user: {
     name: string;
     userType: 'guest' | 'registered';
+    dateOfBirth?: string;
   } | null;
 }
 
@@ -54,7 +89,7 @@ export default function ResultClient({
   const [showShareOptions, setShowShareOptions] = useState(false);
 
   const isGuest = !result.user || result.user.userType === 'guest';
-  const primaryGroup = getPersonalityGroupInfo(result.personalityType);
+  const primaryGroup = getPersonalityGroup(result.personalityType);
 
   const dominantTraits = [
     result.scores.extrovert >= result.scores.introvert ? 'Extroverted' : 'Introverted',
@@ -105,237 +140,252 @@ export default function ResultClient({
   };
 
   return (
-    <div className="bg-background min-h-screen">
-      <div className="max-w-[1280px] mx-auto px-4 md:px-10 py-16 space-y-12">
+    <div className="min-h-screen">
+      <Header />
+      <div className='flex justify-center py-20 md:pt-38'>
+        <div className="container w-full flex flex-col gap-6 lg:gap-12 px-6 lg:px-10">
 
-        {/* ── Section 1: Result Hero ── */}
-        <div className="grid grid-cols-1 lg:grid-cols-[3fr_2fr_2fr] gap-6 items-start">
+          {/* ── Section 1: Result Hero ── */}
+          <div className="grid grid-cols-1 lg:grid-cols-[3fr_2fr_2fr] items-start gap-6 lg:mb-18 2xl:mb-36">
 
-          {/* Col 1: Illustration card */}
-          <div className={cn('relative rounded-2xl overflow-visible min-h-[400px]', primaryGroup.bgColor)}>
-            {/* Background trait words */}
-            <div className="absolute inset-0 flex flex-col items-end justify-center pr-6 pointer-events-none select-none overflow-hidden rounded-2xl">
-              {dominantTraits.map((trait) => (
-                <span
-                  key={trait}
-                  className="text-white/25 font-heading font-bold text-4xl leading-snug text-right"
-                >
-                  {trait}
+            {/* Col 1: Illustration card */}
+            <div className={cn('relative rounded-2xl overflow-visible h-full', primaryGroup.bgColor)}>
+              <div className="relative flex flex-col items-end gap-2 p-6">
+                {/* Type code */}
+                <span className="text-primary-foreground font-heading font-medium text-7xl tracking-tight leading-none">
+                  {result.personalityType}
                 </span>
-              ))}
-            </div>
-            {/* Type code */}
-            <div className="relative z-10 flex justify-end p-6">
-              <span className="text-white font-heading font-bold text-7xl tracking-tight leading-none">
-                {result.personalityType}
-              </span>
-            </div>
-            {/* Illustration / placeholder */}
-            {content?.mainImage ? (
-              <img
-                src={content.mainImage}
-                alt={content.personalityName ?? result.personalityType}
-                className="relative z-10 w-3/4 mx-auto block object-contain pb-0"
-              />
-            ) : (
-              <div className="h-64" />
-            )}
-          </div>
+                {/* Background trait words */}
+                <div className="relative flex flex-col select-none">
+                  {dominantTraits.map((trait) => (
+                    <span
+                      key={trait}
+                      className="text-primary-foreground/40 font-heading font-light text-5xl text-right"
+                    >
+                      {trait}
+                    </span>
+                  ))}
+                </div>
+              </div>
 
-          {/* Col 2: Summary card */}
-          <div className="bg-card border border-brand-neutral-200 rounded-2xl p-6 flex flex-col gap-5">
-            <Badge variant="outline">Ringkasan kepribadianmu</Badge>
-            <div className="flex flex-col gap-3 flex-1">
-              <h2 className="heading-2">
-                {content?.personalityName ?? result.personalityType}
-              </h2>
-              {content?.subtitle && (
-                <p className="para-regular text-muted-foreground">{content.subtitle}</p>
-              )}
+              {/* Illustration */}
+              <Image
+                src={getPersonalityIllustrationPath(result.personalityType, 'withframe')}
+                alt={content?.personalityName ?? result.personalityType}
+                width={666}
+                height={945}
+                priority
+                className="absolute -top-12 left-0 z-10 w-full mx-auto block object-contain drop-shadow-[-4px_8px_40px_rgba(0,0,0,0.2)]"
+              />
             </div>
-            {content?.slug && (
+
+            {/* Col 2: Summary card */}
+            <div className="bg-card border rounded-2xl p-6 flex flex-col gap-6 min-h-[560px]">
+
+              <div className="flex flex-col gap-3">
+                <Badge variant="secondary" className="rounded-sm">Ringkasan kepribadianmu</Badge>
+                <h2 className="heading-2">
+                  {getPersonalityName(result.personalityType)}
+                </h2>
+                {content?.subtitle && (
+                  <p className="para-regular text-muted">{content.subtitle}</p>
+                )}
+                <p className="para-regular text-foreground-alt">Kamu yang memiliki tipe kepribadian The Champion (ENFP) adalah seorang yang bersemangat, idealis, dan kreatif. Dapat menguasai berbagai keahlian yang menarik bagi mereka, dan sangat baik dalam berhubungan dengan orang lain. <br /> <br />The Champion hidup dengan nilai-nilai yang sesuai dengan nilai-nilai pribadinya. Mereka berpikiran terbuka dan fleksibel, serta memiliki berbagai minat dan keahlian.</p>
+              </div>
+              {/* {content?.slug && (
+                <Button
+                  className="w-fit"
+                  onClick={() => router.push(`/content/${content.slug}`)}
+                >
+                  Baca Selengkapnya
+                </Button>
+              )} */}
               <Button
-                className="w-fit"
-                onClick={() => router.push(`/content/${content.slug}`)}
+                className="w-fit rounded-full"
+                onClick={() => router.push(`/content/#`)}
               >
                 Baca Selengkapnya
               </Button>
-            )}
-          </div>
-
-          {/* Col 3: Score card */}
-          <div className="bg-card border border-brand-neutral-200 rounded-2xl p-6 flex flex-col gap-6">
-            {/* Header info */}
-            <div className="flex flex-col gap-3">
-              <Badge variant="outline">Detail hasil tes</Badge>
-              <div className="flex flex-col gap-1">
-                <h3 className="heading-3">{result.user?.name ?? 'Pengguna'}</h3>
-                <p className="para-sm text-muted-foreground">Warna/tipe kepribadianmu:</p>
-                <p className="para-sm-bold">
-                  {`${primaryGroup.personalityGroupName} / ${content?.personalityName ?? result.personalityType}`}
-                </p>
-              </div>
             </div>
 
-            {/* Dual progress bars */}
-            <div className="flex flex-col gap-4">
-              {dimensions.map((dim) => {
-                const leftDominant = dim.left.value >= dim.right.value;
-                return (
-                  <div key={dim.left.label} className="flex flex-col gap-1.5">
-                    <div className="flex h-7 overflow-hidden rounded-sm">
-                      <div
-                        className={cn(
-                          'flex shrink-0 items-center justify-end pr-2',
-                          leftDominant ? 'bg-brand-neutral-600' : 'bg-brand-neutral-200',
-                        )}
-                        style={{ width: `${dim.left.value}%` }}
-                      >
-                        <span
-                          className={cn(
-                            'para-sm-bold',
-                            leftDominant ? 'text-white' : 'text-foreground',
-                          )}
-                        >
-                          {dim.left.value}%
-                        </span>
-                      </div>
-                      <div
-                        className={cn(
-                          'flex shrink-0 items-center justify-start pl-2',
-                          !leftDominant ? 'bg-brand-neutral-600' : 'bg-brand-neutral-200',
-                        )}
-                        style={{ width: `${dim.right.value}%` }}
-                      >
-                        <span
-                          className={cn(
-                            'para-sm-bold',
-                            !leftDominant ? 'text-white' : 'text-foreground',
-                          )}
-                        >
-                          {dim.right.value}%
-                        </span>
-                      </div>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="para-sm text-muted-foreground">{dim.left.label}</span>
-                      <span className="para-sm text-muted-foreground">{dim.right.label}</span>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-
-            {/* Action buttons */}
-            <div className="flex gap-2 flex-wrap">
-              <Button variant="outline" size="sm" className="gap-2">
-                <IconDeviceFloppy size={16} />
-                Simpan Hasil
-              </Button>
-              <div className="relative">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="gap-2"
-                  onClick={() => setShowShareOptions(!showShareOptions)}
-                >
-                  <IconShare3 size={16} />
-                  Share
-                </Button>
-                {showShareOptions && (
-                  <div className="absolute top-full mt-2 right-0 bg-card border border-brand-neutral-200 rounded-xl shadow-lg py-2 w-48 z-10">
-                    {(['whatsapp', 'facebook', 'twitter', 'telegram'] as const).map(
-                      (platform) => (
-                        <button
-                          key={platform}
-                          onClick={() => handleShare(platform)}
-                          className="w-full text-left px-4 py-2 para-sm hover:bg-muted transition-colors capitalize"
-                        >
-                          {platform === 'twitter' ? 'X / Twitter' : platform.charAt(0).toUpperCase() + platform.slice(1)}
-                        </button>
-                      ),
-                    )}
-                    <hr className="my-1 border-border" />
-                    <button
-                      onClick={handleCopyLink}
-                      className="w-full text-left px-4 py-2 para-sm hover:bg-muted transition-colors"
-                    >
-                      Salin Link
-                    </button>
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* ── Section 2: Panduan kepribadianmu (guest) ── */}
-        {isGuest && (
-          <div className="flex flex-col gap-6">
-            <div className="flex items-center gap-3">
-              <h2 className="heading-2">Panduan kepribadianmu</h2>
-              <IconLock size={20} className="text-foreground" strokeWidth={1.5} />
-            </div>
-            <div className="bg-card border border-brand-neutral-200 rounded-2xl p-6">
-              <div className="flex flex-col gap-4">
-                <div className="flex flex-col gap-2">
-                  <h4 className="heading-4">Lihat panduan khusus tipe kepribadianmu</h4>
-                  <p className="para-regular text-muted-foreground">
-                    Daftar sekarang untuk membaca konten eksklusif tentang: pemilihan karir,
-                    lingkungan kerja, sampai tipe bos yang ideal untuk kamu.
+            {/* Col 3: Score card */}
+            <div className="bg-card border rounded-2xl p-6 flex flex-col gap-6 h-full">
+              {/* Header info */}
+              <div className="flex flex-col gap-3">
+                <Badge variant="secondary" className="rounded-sm">Detail hasil tes</Badge>
+                <h3 className="heading-4">
+                  {formatUserDisplayName(
+                    result.user?.name ?? 'Guest User',
+                    result.user?.dateOfBirth,
+                  )}
+                </h3>
+                <div className="flex flex-col">
+                  <p className="para-mini text-muted-foreground">Warna/tipe kepribadianmu:</p>
+                  <p className="para-sm-bold">
+                    {`${primaryGroup.personalityGroupName} / ${getPersonalityNameWithLetter(result.personalityType)}`}
                   </p>
                 </div>
-                <Button className="w-fit" onClick={() => router.push('/register')}>
-                  Daftar Gratis
+              </div>
+
+              {/* Balance of 100% progress bars */}
+              <div className="flex flex-col gap-4">
+                {dimensions.map((dim) => {
+                  const leftDominant = dim.left.value >= dim.right.value;
+                  return (
+                    <div key={dim.left.label} className="flex flex-col gap-1.5">
+                      <div className="flex h-7 overflow-hidden rounded-lg">
+                        <div
+                          className={cn(
+                            'flex shrink-0 items-center justify-start pl-3',
+                            leftDominant ? 'bg-brand-neutral-600 rounded-xs' : 'bg-brand-neutral-200',
+                          )}
+                          style={{ width: `${dim.left.value}%` }}
+                        >
+                          <span
+                            className={cn(
+                              'font-mono text-xs tracking-widest',
+                              leftDominant ? 'text-brand-neutral-100' : 'text-brand-neutral-400',
+                            )}
+                          >
+                            {dim.left.value}%
+                          </span>
+                        </div>
+                        <div
+                          className={cn(
+                            'flex shrink-0 items-center justify-end pr-3',
+                            !leftDominant ? 'bg-brand-neutral-600 rounded-xs' : 'bg-brand-neutral-200',
+                          )}
+                          style={{ width: `${dim.right.value}%` }}
+                        >
+                          <span
+                            className={cn(
+                              'font-mono text-xs tracking-widest',
+                              !leftDominant ? 'text-brand-neutral-100' : 'text-brand-neutral-400',
+                            )}
+                          >
+                            {dim.right.value}%
+                          </span>
+                        </div>
+                      </div>
+                      {/* Parameter labels */}
+                      <div className="flex justify-between">
+                        <span className="para-mini text-muted-foreground">{dim.left.label}</span>
+                        <span className="para-mini text-muted-foreground">{dim.right.label}</span>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+
+              {/* Action buttons */}
+              <div className="flex gap-2 flex-wrap">
+                <Button variant="outline" className="rounded-full gap-2">
+                  <IconDeviceFloppy />
+                  Simpan Hasil
                 </Button>
+                <div className="relative">
+                  <Button
+                    variant="outline"
+                    className="rounded-full gap-2"
+                    onClick={() => setShowShareOptions(!showShareOptions)}
+                  >
+                    <IconShare3 />
+                    Share
+                  </Button>
+                  {showShareOptions && (
+                    <div className="absolute top-full mt-2 right-0 bg-card border rounded-2xl shadow-lg py-2 w-48 z-10">
+                      {(['whatsapp', 'facebook', 'twitter', 'telegram'] as const).map(
+                        (platform) => (
+                          <button
+                            key={platform}
+                            onClick={() => handleShare(platform)}
+                            className="w-full text-left px-4 py-2 para-sm hover:bg-muted transition-colors capitalize"
+                          >
+                            {platform === 'twitter' ? 'X / Twitter' : platform.charAt(0).toUpperCase() + platform.slice(1)}
+                          </button>
+                        ),
+                      )}
+                      <hr className="my-1 border-border" />
+                      <button
+                        onClick={handleCopyLink}
+                        className="w-full text-left px-4 py-2 para-sm hover:bg-muted transition-colors"
+                      >
+                        Salin Link
+                      </button>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           </div>
-        )}
 
-        {/* ── Section 3: Bandingkan dengan tipe kepribadian lain ── */}
-        {alternatives.length > 0 && (
-          <div className="flex flex-col gap-6">
-            <div className="flex items-center gap-3">
-              <h2 className="heading-2">Bandingkan dengan tipe kepribadian lain</h2>
-              <IconHelpCircle
-                size={20}
-                className="text-muted-foreground"
-                strokeWidth={1.5}
-              />
-            </div>
-            <div
-              className={cn('grid gap-6', {
-                'grid-cols-1 max-w-xs': alternatives.length === 1,
-                'grid-cols-1 sm:grid-cols-2 max-w-xl': alternatives.length === 2,
-                'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3': alternatives.length === 3,
-                'grid-cols-1 sm:grid-cols-2 lg:grid-cols-4': alternatives.length === 4,
-              })}
-            >
-              {alternatives.map((type) => {
-                const altGroup = getPersonalityGroupInfo(type);
-                return (
-                <div
-                  key={type}
-                  className="bg-card border border-brand-neutral-200 rounded-2xl overflow-hidden flex flex-col"
-                >
-                  <div className={cn('h-40 w-full', altGroup.bgColor)} />
-                  <div className="p-4 pb-6 flex flex-col gap-3">
-                    <h4 className="heading-4">
-                      {altGroup.personalityGroupName} ({type})
-                    </h4>
-                    <p className="para-sm text-muted-foreground">
-                      Pemikir cerdas yang selalu tertantang untuk melakukan perdebatan dan
-                      diskusi-diskusi intelektual
+          {/* ── Section 2: Panduan kepribadianmu (guest) ── */}
+          {isGuest && (
+            <div className="flex flex-col gap-6">
+              <div className="flex items-center gap-3">
+                <h2 className="heading-2">Panduan kepribadianmu</h2>
+                <IconLock size={28} className="text-muted-foreground" strokeWidth={2} />
+              </div>
+              <div className="bg-card border border-brand-neutral-200 rounded-2xl p-6">
+                <div className="flex flex-col gap-4">
+                  <div className="flex flex-col gap-2">
+                    <h4 className="heading-4">Lihat panduan khusus tipe kepribadianmu</h4>
+                    <p className="para-regular text-foreground-alt">
+                      Daftar sekarang untuk membaca konten eksklusif tentang: pemilihan karir,
+                      lingkungan kerja, sampai tipe bos yang ideal untuk kamu.
                     </p>
                   </div>
+                  <Button size="lg" className="w-50 h-12 rounded-full text-base" onClick={() => router.push('/register')}>
+                    Daftar Gratis
+                  </Button>
                 </div>
-                );
-              })}
+              </div>
             </div>
-          </div>
-        )}
+          )}
 
+          {/* ── Section 3: Bandingkan dengan tipe kepribadian lain ── */}
+          {alternatives.length > 0 && (
+            <div className="flex flex-col gap-6">
+              <div className="flex items-center gap-3">
+                <h2 className="heading-2">Bandingkan dengan tipe kepribadian lain</h2>
+                <IconHelp size={28} className="text-muted-foreground" strokeWidth={2} />
+              </div>
+              <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
+                {alternatives.map((type) => {
+                  const altGroup = getPersonalityGroup(type);
+                  return (
+                    <div
+                      key={type}
+                      className="bg-card border rounded-2xl overflow-hidden flex flex-col hover:shadow-xl transition-shadow duration-300 hover:cursor-pointer select-none"
+                      onClick={() => router.push(`#`)}
+                    >
+                      <div className={cn('relative w-full aspect-video overflow-hidden', altGroup.bgColor)}>
+                        <Image
+                          src={getPersonalityIllustrationPath(type, 'thumbnail')}
+                          alt={type}
+                          width={426}
+                          height={318}
+                          className="relative object-cover object-center"
+                        />
+                      </div>
+                      <div className="p-4 pb-6 flex flex-col gap-3">
+                        <Badge variant="secondary" className="rounded-sm">{getPersonalityGroup(type).personalityGroupName}</Badge>
+                        <h4 className="heading-4">
+                          {getPersonalityNameWithLetter(type)}
+                        </h4>
+                        <p className="para-sm text-foreground-alt">
+                          Pemikir cerdas yang selalu tertantang untuk melakukan perdebatan dan
+                          diskusi-diskusi intelektual
+                        </p>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+        </div>
       </div>
     </div>
   );

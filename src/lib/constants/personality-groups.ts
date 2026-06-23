@@ -1,30 +1,30 @@
 export type PersonalityGroupCode = 'SJ' | 'NT' | 'NF' | 'SP';
 
-export interface PersonalityGroupInfo {
+export interface PersonalityGroup {
   personalityGroup: PersonalityGroupCode;
   personalityGroupName: string;
   bgColor: string;
 }
 
-const GROUPS: Record<PersonalityGroupCode, PersonalityGroupInfo> = {
+const GROUPS: Record<PersonalityGroupCode, PersonalityGroup> = {
   SJ: {
     personalityGroup: 'SJ',
-    personalityGroupName: 'Gold [SJ]',
-    bgColor: 'bg-amber-400',
+    personalityGroupName: 'Gold (SJ)',
+    bgColor: 'bg-amber-300',
   },
   NT: {
     personalityGroup: 'NT',
-    personalityGroupName: 'Blue [NT]',
+    personalityGroupName: 'Blue (NT)',
     bgColor: 'bg-sky-400',
   },
   NF: {
     personalityGroup: 'NF',
-    personalityGroupName: 'Green [NF]',
+    personalityGroupName: 'Green (NF)',
     bgColor: 'bg-emerald-400',
   },
   SP: {
     personalityGroup: 'SP',
-    personalityGroupName: 'Red [SP]',
+    personalityGroupName: 'Red (SP)',
     bgColor: 'bg-red-400',
   },
 };
@@ -48,7 +48,7 @@ const TYPE_TO_GROUP: Record<string, PersonalityGroupCode> = {
   ISFP: 'SP',
 };
 
-export function getPersonalityGroupInfo(type: string): PersonalityGroupInfo {
+export function getPersonalityGroup(type: string): PersonalityGroup {
   const code = TYPE_TO_GROUP[type.toUpperCase()];
   return code
     ? GROUPS[code]
