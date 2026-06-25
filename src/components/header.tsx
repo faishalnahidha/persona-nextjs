@@ -1,14 +1,16 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useSession, signOut } from 'next-auth/react';
 
 import Link from "next/link";
 import Image from "next/image";
 
-import { IconLogin2, IconMenu2 } from "@tabler/icons-react";
+import { IconLogin2, IconMenu2, IconLogout } from "@tabler/icons-react";
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   NavigationMenu,
   NavigationMenuItem,
@@ -36,6 +38,7 @@ const navLinks = [
 export default function Header({ scrollEffect = true }: HeaderProps) {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { data: session } = useSession();
 
   useEffect(() => {
     if (!scrollEffect) return;
@@ -87,10 +90,22 @@ export default function Header({ scrollEffect = true }: HeaderProps) {
             />
           </Link>
 
-          {/* Mobile: Login Icon */}
-          <Button asChild size="icon" className="rounded-full lg:hidden pr-[2px]" aria-label="Login">
-            <Link href="#login"><IconLogin2 /></Link>
-          </Button>
+          {/* Mobile: Auth Icon */}
+          {session ? (
+            <Button
+              variant="ghost"
+              size="icon"
+              className="rounded-full lg:hidden"
+              aria-label="Sign out"
+              onClick={() => signOut({ callbackUrl: '/' })}
+            >
+              <IconLogout />
+            </Button>
+          ) : (
+            <Button asChild size="icon" className="rounded-full lg:hidden pr-[2px]" aria-label="Login">
+              <Link href="/login"><IconLogin2 /></Link>
+            </Button>
+          )}
 
           {/* Desktop: Nav */}
           <NavigationMenu className="hidden lg:flex">
@@ -103,9 +118,29 @@ export default function Header({ scrollEffect = true }: HeaderProps) {
                 </NavigationMenuItem>
               ))}
               <NavigationMenuItem>
-                <Button asChild size="lg" className="rounded-full ml-4">
-                  <Link href="#login">Login<IconLogin2 /></Link>
-                </Button>
+                {session ? (
+                  <div className="flex items-center gap-3 ml-4">
+                    <Avatar className="size-8">
+                      <AvatarImage src={session.user?.image ?? undefined} alt={session.user?.name ?? 'User'} />
+                      <AvatarFallback className="para-sm-bold">
+                        {session.user?.name?.charAt(0).toUpperCase() ?? 'U'}
+                      </AvatarFallback>
+                    </Avatar>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="rounded-full"
+                      onClick={() => signOut({ callbackUrl: '/' })}
+                    >
+                      <IconLogout className="size-4" />
+                      Sign out
+                    </Button>
+                  </div>
+                ) : (
+                  <Button asChild size="lg" className="rounded-full ml-4">
+                    <Link href="/login">Login<IconLogin2 /></Link>
+                  </Button>
+                )}
               </NavigationMenuItem>
             </NavigationMenuList>
           </NavigationMenu>

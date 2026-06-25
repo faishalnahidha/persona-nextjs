@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import mongoose, { Schema, Document, Model } from 'mongoose';
+import bcrypt from 'bcryptjs';
 
 /**
  * Unified User Model
@@ -15,6 +16,7 @@ export interface IUser extends Document {
   // Basic Info (for registered users)
   email?: string;
   password?: string;
+  googleId?: string;
   username?: string;
   name: string;
 
@@ -56,6 +58,9 @@ export interface IUser extends Document {
   // Timestamps
   createdAt: Date;
   updatedAt: Date;
+
+  // Instance Methods
+  comparePassword(candidate: string): Promise<boolean>;
 }
 
 const UserSchema = new Schema<IUser>(
@@ -82,6 +87,10 @@ const UserSchema = new Schema<IUser>(
     password: {
       type: String,
       minlength: [6, 'Password must be at least 6 characters'],
+    },
+    googleId: {
+      type: String,
+      sparse: true,
     },
     username: {
       type: String,
@@ -171,21 +180,29 @@ UserSchema.index({ personalityType: 1 }); // Group by personality type
 UserSchema.index({ totalPoints: -1 }); // Leaderboard queries
 
 /**
- * Validation: Registered users must have email, password, and username
+ * Validation: Registered users must have email and username.
+ * Password is required unless the account is Google-linked (googleId present).
  */
 UserSchema.pre('save', async function () {
   if (this.userType === 'registered') {
     if (!this.email) {
       throw new Error('Registered users must have an email');
     }
-    if (!this.password) {
-      throw new Error('Registered users must have a password');
+    if (!this.password && !this.googleId) {
+      throw new Error('Registered users must have a password or a linked Google account');
     }
     if (!this.username) {
       throw new Error('Registered users must have a username');
     }
   }
-  // No next() needed; if it finishes without throwing, it proceeds
+});
+
+/**
+ * Password hashing: hash plain-text password before saving
+ */
+UserSchema.pre('save', async function () {
+  if (!this.isModified('password') || !this.password) return;
+  this.password = await bcrypt.hash(this.password, 12);
 });
 
 /**
@@ -320,6 +337,16 @@ UserSchema.methods.awardDailyLogin = async function (dailyLoginPoints: number) {
   }
 
   return false; // Already logged in today
+};
+
+/**
+ * Method: Compare a plain-text password against the stored hash
+ */
+UserSchema.methods.comparePassword = async function (
+  candidate: string,
+): Promise<boolean> {
+  if (!this.password) return false;
+  return bcrypt.compare(candidate, this.password);
 };
 
 const User: Model<IUser> =

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { readexPro, openSans, robotoSerif, geistMono } from '@/lib/fonts'
+import Providers from '@/components/providers';
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -18,7 +19,7 @@ export default function RootLayout({
       className={`${readexPro.variable} ${openSans.variable} ${robotoSerif.variable} ${geistMono.variable}`}
     >
       <body className="min-h-screen bg-background-gradient font-body antialiased">
-        {children}
+        <Providers>{children}</Providers>
       </body>
     </html>
   );
