@@ -191,9 +191,6 @@ UserSchema.pre('save', async function () {
     if (!this.password && !this.googleId) {
       throw new Error('Registered users must have a password or a linked Google account');
     }
-    if (!this.username) {
-      throw new Error('Registered users must have a username');
-    }
   }
 });
 

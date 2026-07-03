@@ -183,6 +183,11 @@ export default function AssessmentClient({
       if (response.ok) {
         sessionStorage.removeItem(`assessment_${assessment._id}`);
         sessionStorage.removeItem('guest_data');
+        sessionStorage.setItem('guest_user_id', result.userId);
+        sessionStorage.setItem(
+          'guest_result_url',
+          `/assessment/${assessment.slug}/result/${result.resultId}`,
+        );
         router.push(`/assessment/${assessment.slug}/result/${result.resultId}`);
       } else {
         alert('Terjadi kesalahan: ' + result.error);

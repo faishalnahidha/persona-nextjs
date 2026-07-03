@@ -7,6 +7,7 @@ import { z } from 'zod';
 import { signIn } from 'next-auth/react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
+import { toast } from 'sonner';
 
 import { IconBrandGoogle, IconLoader2 } from '@tabler/icons-react';
 import { Button } from '@/components/ui/button';
@@ -62,7 +63,8 @@ export default function LoginForm() {
     if (result?.error) {
       setServerError('Invalid email or password. Please try again.');
     } else {
-      router.push(callbackUrl);
+      toast.success('Berhasil login!');
+      setTimeout(() => router.push(callbackUrl), 1000);
     }
   }
 

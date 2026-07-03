@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import {
   IconLock,
   IconHelp,
@@ -86,6 +86,7 @@ export default function ResultClient({
   content: Content | null;
 }) {
   const router = useRouter();
+  const pathname = usePathname();
   const [showShareOptions, setShowShareOptions] = useState(false);
 
   const isGuest = !result.user || result.user.userType === 'guest';
@@ -386,7 +387,11 @@ export default function ResultClient({
                   <Button
                     size='lg'
                     className='w-full md:w-50 h-12 rounded-full text-base'
-                    onClick={() => router.push('/register')}
+                    onClick={() =>
+                      router.push(
+                        `/register?callbackUrl=${encodeURIComponent(pathname)}`,
+                      )
+                    }
                   >
                     Daftar Gratis
                   </Button>

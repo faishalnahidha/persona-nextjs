@@ -1,15 +1,27 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { signIn } from 'next-auth/react';
 import Link from 'next/link';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { format } from 'date-fns';
+import { id as idLocale } from 'date-fns/locale';
+import { toast } from 'sonner';
 
-import { IconBrandGoogle, IconLoader2 } from '@tabler/icons-react';
+import { IconBrandGoogle, IconCalendar, IconLoader2 } from '@tabler/icons-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Calendar } from '@/components/ui/calendar';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Label } from '@/components/ui/label';
 import {
   Card,
   CardContent,
@@ -26,37 +38,50 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
+import { cn } from '@/lib/utils';
 
 const RegisterSchema = z
   .object({
-    name: z.string().min(1, 'Name is required').max(50),
-    email: z.string().email('Enter a valid email address'),
+    name: z.string().min(1, 'Nama wajib diisi').max(50),
+    dateOfBirth: z.date().optional(),
+    gender: z.enum(['male', 'female']).optional(),
+    email: z.string().email('Masukkan alamat email yang valid'),
     username: z
       .string()
-      .min(3, 'At least 3 characters')
+      .min(3, 'Minimal 3 karakter')
       .max(30)
       .regex(
         /^[a-z0-9_]+$/,
-        'Only lowercase letters, numbers, and underscores',
-      ),
-    password: z.string().min(6, 'At least 6 characters'),
-    confirmPassword: z.string().min(1, 'Please confirm your password'),
+        'Hanya huruf kecil, angka, dan garis bawah',
+      )
+      .optional()
+      .or(z.literal('')),
+    password: z.string().min(6, 'Minimal 6 karakter'),
+    confirmPassword: z.string().min(1, 'Konfirmasi password wajib diisi'),
   })
   .refine(data => data.password === data.confirmPassword, {
-    message: 'Passwords do not match',
+    message: 'Password tidak cocok',
     path: ['confirmPassword'],
   });
 
 type RegisterValues = z.infer<typeof RegisterSchema>;
 
 export default function RegisterForm() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
   const [googleLoading, setGoogleLoading] = useState(false);
   const [serverError, setServerError] = useState<string | null>(null);
+  const [guestUserId, setGuestUserId] = useState<string | null>(null);
+  const [callbackUrl, setCallbackUrl] = useState('/');
+  const [calendarOpen, setCalendarOpen] = useState(false);
 
   const form = useForm<RegisterValues>({
     resolver: zodResolver(RegisterSchema),
     defaultValues: {
       name: '',
+      dateOfBirth: undefined,
+      gender: undefined,
       email: '',
       username: '',
       password: '',
@@ -65,6 +90,28 @@ export default function RegisterForm() {
   });
 
   const { isSubmitting } = form.formState;
+
+  useEffect(() => {
+    const fromQuery = searchParams.get('callbackUrl');
+    const fromStorage = sessionStorage.getItem('guest_result_url');
+    setCallbackUrl(fromQuery ?? fromStorage ?? '/');
+
+    const storedId = sessionStorage.getItem('guest_user_id');
+    if (!storedId) return;
+
+    setGuestUserId(storedId);
+
+    fetch(`/api/user/guest/${storedId}`)
+      .then(res => (res.ok ? res.json() : null))
+      .then(data => {
+        if (!data) return;
+        if (data.name) form.setValue('name', data.name);
+        if (data.dateOfBirth)
+          form.setValue('dateOfBirth', new Date(data.dateOfBirth));
+        if (data.gender) form.setValue('gender', data.gender);
+      })
+      .catch(() => null);
+  }, [form, searchParams]);
 
   async function onSubmit(values: RegisterValues) {
     setServerError(null);
@@ -75,28 +122,43 @@ export default function RegisterForm() {
       body: JSON.stringify({
         name: values.name,
         email: values.email,
-        username: values.username,
+        username: values.username || undefined,
         password: values.password,
+        confirmPassword: values.confirmPassword,
+        dateOfBirth: values.dateOfBirth?.toISOString(),
+        gender: values.gender,
+        guestUserId: guestUserId ?? undefined,
       }),
     });
 
     const data = await res.json();
 
     if (!res.ok) {
-      setServerError(data.error ?? 'Registration failed. Please try again.');
+      setServerError(data.error ?? 'Pendaftaran gagal. Coba lagi.');
       return;
     }
 
-    await signIn('credentials', {
+    sessionStorage.removeItem('guest_user_id');
+    sessionStorage.removeItem('guest_result_url');
+
+    const signInResult = await signIn('credentials', {
       email: values.email,
       password: values.password,
-      callbackUrl: '/',
+      redirect: false,
     });
+
+    if (signInResult?.error) {
+      setServerError('Akun berhasil dibuat, tapi gagal login otomatis. Silakan login.');
+      return;
+    }
+
+    toast.success('Akun berhasil dibuat!');
+    setTimeout(() => router.push(callbackUrl), 1000);
   }
 
   async function handleGoogleSignIn() {
     setGoogleLoading(true);
-    await signIn('google', { callbackUrl: '/' });
+    await signIn('google', { callbackUrl });
   }
 
   return (
@@ -109,7 +171,6 @@ export default function RegisterForm() {
       </CardHeader>
 
       <CardContent className='space-y-6'>
-        {/* Google OAuth */}
         <Button
           type='button'
           variant='outline'
@@ -131,9 +192,9 @@ export default function RegisterForm() {
           <Separator className='flex-1' />
         </div>
 
-        {/* Registration form */}
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-6'>
+          <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-5'>
+            {/* Name */}
             <FormField
               control={form.control}
               name='name'
@@ -152,6 +213,97 @@ export default function RegisterForm() {
               )}
             />
 
+            {/* Date of birth */}
+            <FormField
+              control={form.control}
+              name='dateOfBirth'
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className='para-sm-medium'>
+                    Tanggal lahir
+                  </FormLabel>
+                  <Popover open={calendarOpen} onOpenChange={setCalendarOpen}>
+                    <PopoverTrigger asChild>
+                      <FormControl>
+                        <Button
+                          type='button'
+                          variant='outline'
+                          className={cn(
+                            'w-full justify-start text-left font-normal',
+                            !field.value && 'text-muted-foreground',
+                          )}
+                        >
+                          <IconCalendar className='mr-2 size-4' />
+                          {field.value
+                            ? format(field.value, 'd MMMM yyyy', {
+                                locale: idLocale,
+                              })
+                            : 'Pilih tanggal lahir'}
+                        </Button>
+                      </FormControl>
+                    </PopoverTrigger>
+                    <PopoverContent className='w-auto p-0' align='start'>
+                      <Calendar
+                        mode='single'
+                        captionLayout='dropdown'
+                        selected={field.value}
+                        onSelect={date => {
+                          field.onChange(date);
+                          setCalendarOpen(false);
+                        }}
+                        fromYear={1950}
+                        toYear={new Date().getFullYear() - 5}
+                        disabled={date => date > new Date()}
+                        defaultMonth={field.value ?? new Date(2000, 0)}
+                      />
+                    </PopoverContent>
+                  </Popover>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* Gender */}
+            <FormField
+              control={form.control}
+              name='gender'
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className='para-sm-medium'>
+                    Jenis kelamin
+                  </FormLabel>
+                  <FormControl>
+                    <RadioGroup
+                      value={field.value}
+                      onValueChange={field.onChange}
+                      className='flex gap-6'
+                    >
+                      <div className='flex items-center gap-2'>
+                        <RadioGroupItem value='male' id='gender-male' />
+                        <Label
+                          htmlFor='gender-male'
+                          className='para-sm cursor-pointer'
+                        >
+                          Laki-laki
+                        </Label>
+                      </div>
+                      <div className='flex items-center gap-2'>
+                        <RadioGroupItem value='female' id='gender-female' />
+                        <Label
+                          htmlFor='gender-female'
+                          className='para-sm cursor-pointer'
+                        >
+                          Perempuan
+                        </Label>
+                      </div>
+                    </RadioGroup>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* Email */}
             <FormField
               control={form.control}
               name='email'
@@ -171,12 +323,18 @@ export default function RegisterForm() {
               )}
             />
 
+            {/* Username (optional) */}
             <FormField
               control={form.control}
               name='username'
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className='para-sm-medium'>Username</FormLabel>
+                  <div className='flex items-baseline justify-between'>
+                    <FormLabel className='para-sm-medium'>Username</FormLabel>
+                    <span className='para-mini text-muted-foreground'>
+                      opsional
+                    </span>
+                  </div>
                   <FormControl>
                     <Input
                       placeholder='contoh: anibudiman_123'
@@ -192,6 +350,7 @@ export default function RegisterForm() {
               )}
             />
 
+            {/* Password */}
             <FormField
               control={form.control}
               name='password'
@@ -211,6 +370,7 @@ export default function RegisterForm() {
               )}
             />
 
+            {/* Confirm password */}
             <FormField
               control={form.control}
               name='confirmPassword'
@@ -262,4 +422,3 @@ export default function RegisterForm() {
     </Card>
   );
 }
-
