@@ -6,48 +6,107 @@ Next.js 16 application for personality assessment with MongoDB integration.
 ## Directory Structure
 
 ```
-src/
-├── app/                          # Next.js App Router directory
-│   ├── (public)/                 # Route group (public routes)
-│   │   └── assessment/
-│   │       └── [id]/             # Dynamic route segment
-│   │           ├── page.tsx      # Assessment page
-│   │           ├── AssessmentClient.tsx
-│   │           └── result/
-│   │               └── [resultId]/
-│   │                   ├── page.tsx
-│   │                   └── ResultClient.tsx
-│   ├── api/                      # API routes
-│   │   ├── assessment/
-│   │   │   └── submit/
-│   │   │       └── route.ts      # Assessment submission endpoint
-│   │   └── test-db/
-│   │       └── route.ts          # Database test endpoint
-│   ├── globals.css               # Global styles
-│   ├── layout.tsx                # Root layout component
-│   └── page.tsx                  # Home page
+persona-nextjs/
+├── public/                           # Static assets
+│   ├── images/
+│   │   ├── avatar-tp/                # MBTI type avatar images (.webp)
+│   │   │   └── avatar-tp-{type}.webp # (enfp, entj, esfp, isfj, ...)
+│   │   └── illustration/             # MBTI personality SVG illustrations
+│   │       ├── svg-{type}.svg        # Full illustrations (all 16 types)
+│   │       ├── svg-thumbnail-{type}.svg
+│   │       └── svg-withframe-{type}.svg
+│   └── logo-persona-full.svg
 │
-├── components/                   # React components
-│   └── ui/                       # Shadcn UI components
-│       ├── button.tsx
-│       ├── card.tsx
-│       ├── form.tsx
-│       ├── input.tsx
-│       ├── label.tsx
-│       └── table.tsx
+├── scripts/                          # Utility/seed scripts
+│   ├── debug-env.ts                  # Environment variable debugger
+│   ├── question-data.json            # Raw question data for seeding
+│   └── seed-assessment.ts            # DB seed script for assessments
 │
-└── lib/                          # Utility libraries
-    ├── constants/
-    │   └── points.ts             # Points/constants configuration
-    ├── db/                       # Database related code
-    │   ├── models/               # Mongoose models
-    │   │   ├── Assessment.ts
-    │   │   ├── Content.ts
-    │   │   ├── Result.ts
-    │   │   └── User.ts
-    │   └── mongodb.ts            # MongoDB connection utility
-    ├── fonts.ts                  # Font configuration
-    └── utils.ts                  # General utility functions
+└── src/
+    ├── app/                          # Next.js App Router directory
+    │   ├── (auth)/                   # Route group (unauthenticated routes)
+    │   │   ├── login/                # Login page (placeholder)
+    │   │   └── register/             # Register page (placeholder)
+    │   ├── (protected)/              # Route group (auth-required routes)
+    │   │   ├── dashboard/            # Dashboard page (placeholder)
+    │   │   └── profile/              # Profile page (placeholder)
+    │   ├── (public)/                 # Route group (public routes)
+    │   │   ├── assessment/
+    │   │   │   └── [slug]/           # Dynamic route segment
+    │   │   │       ├── page.tsx      # Assessment page
+    │   │   │       ├── AssessmentClient.tsx
+    │   │   │       ├── ScoreBadge.tsx
+    │   │   │       └── result/
+    │   │   │           └── [resultId]/
+    │   │   │               ├── page.tsx
+    │   │   │               └── ResultClient.tsx
+    │   │   └── content/
+    │   │       └── [slug]/           # Dynamic content page (placeholder)
+    │   ├── admin/                    # Admin section (placeholders)
+    │   │   ├── assessments/
+    │   │   │   └── new/
+    │   │   ├── content/
+    │   │   │   └── new/
+    │   │   └── users/
+    │   ├── api/                      # API routes
+    │   │   ├── assessment/
+    │   │   │   ├── submit/
+    │   │   │   │   └── route.ts      # Assessment submission endpoint
+    │   │   │   └── [id]/             # Single assessment endpoint (placeholder)
+    │   │   ├── auth/                 # Auth endpoint (placeholder)
+    │   │   ├── content/
+    │   │   │   └── [id]/             # Single content endpoint (placeholder)
+    │   │   ├── test-db/
+    │   │   │   └── route.ts          # Database test endpoint
+    │   │   └── users/                # Users endpoint (placeholder)
+    │   ├── globals.css               # Global styles
+    │   ├── layout.tsx                # Root layout component
+    │   └── page.tsx                  # Home page
+    │
+    ├── components/                   # React components
+    │   ├── admin/                    # Admin-specific components (placeholder)
+    │   ├── assessment/               # Assessment-specific components (placeholder)
+    │   ├── content/                  # Content-specific components (placeholder)
+    │   ├── layout/                   # Layout components (placeholder)
+    │   ├── ui/                       # Shadcn UI components
+    │   │   ├── accordion.tsx
+    │   │   ├── avatar.tsx
+    │   │   ├── badge.tsx
+    │   │   ├── button.tsx
+    │   │   ├── calendar.tsx
+    │   │   ├── card.tsx
+    │   │   ├── drawer.tsx
+    │   │   ├── field.tsx
+    │   │   ├── form.tsx
+    │   │   ├── input-group.tsx
+    │   │   ├── input.tsx
+    │   │   ├── label.tsx
+    │   │   ├── navigation-menu.tsx
+    │   │   ├── popover.tsx
+    │   │   ├── radio-group.tsx
+    │   │   ├── select.tsx
+    │   │   ├── separator.tsx
+    │   │   └── table.tsx
+    │   ├── header.tsx                # Site-wide header component
+    │   └── hero-form.tsx             # Hero section form component
+    │
+    ├── lib/                          # Utility libraries
+    │   ├── auth/                     # Auth configuration (placeholder)
+    │   ├── constants/
+    │   │   ├── personality-groups.ts # MBTI group definitions
+    │   │   ├── personality-names.ts  # MBTI type names/labels
+    │   │   └── points.ts             # Scoring points configuration
+    │   ├── db/                       # Database related code
+    │   │   ├── models/               # Mongoose models
+    │   │   │   ├── Assessment.ts
+    │   │   │   ├── Content.ts
+    │   │   │   ├── Result.ts
+    │   │   │   └── User.ts
+    │   │   └── mongodb.ts            # MongoDB connection utility
+    │   ├── fonts.ts                  # Font configuration
+    │   └── utils.ts                  # General utility functions
+    │
+    └── types/                        # TypeScript type definitions (placeholder)
 ```
 
 ## Key Files
@@ -57,19 +116,35 @@ src/
 - **`page.tsx`**: Home page component
 - **`globals.css`**: Global CSS styles and Tailwind configuration
 
-### Public Routes (`src/app/(public)/assessment/`)
-- **`[id]/page.tsx`**: Dynamic assessment page
-- **`[id]/AssessmentClient.tsx`**: Client component for assessment interaction
-- **`[id]/result/[resultId]/page.tsx`**: Result display page
-- **`[id]/result/[resultId]/ResultClient.tsx`**: Client component for result display
+### Auth Routes (`src/app/(auth)/`)
+Placeholder directories for login and register pages.
+
+### Protected Routes (`src/app/(protected)/`)
+Placeholder directories for authenticated-only pages (dashboard, profile).
+
+### Public Routes (`src/app/(public)/`)
+- **`assessment/[slug]/page.tsx`**: Dynamic assessment page
+- **`assessment/[slug]/AssessmentClient.tsx`**: Client component for assessment interaction
+- **`assessment/[slug]/ScoreBadge.tsx`**: Score badge display component
+- **`assessment/[slug]/result/[resultId]/page.tsx`**: Result display page
+- **`assessment/[slug]/result/[resultId]/ResultClient.tsx`**: Client component for result display
+- **`content/[slug]/`**: Dynamic content/article page (placeholder)
+
+### Admin Routes (`src/app/admin/`)
+Placeholder section for admin management of assessments, content, and users.
 
 ### API Routes (`src/app/api/`)
 - **`assessment/submit/route.ts`**: Handles assessment submission
+- **`assessment/[id]/`**: Single assessment CRUD endpoint (placeholder)
+- **`auth/`**: NextAuth.js handler (placeholder)
+- **`content/[id]/`**: Single content CRUD endpoint (placeholder)
 - **`test-db/route.ts`**: Database connection testing endpoint
+- **`users/`**: User management endpoint (placeholder)
 
-### Components (`src/components/ui/`)
-Shadcn UI components:
-- Button, Card, Form, Input, Label, Table
+### Components (`src/components/`)
+- **`header.tsx`**: Site-wide navigation header
+- **`hero-form.tsx`**: Home page hero section with form
+- **`ui/`**: Shadcn UI primitives — Accordion, Avatar, Badge, Button, Calendar, Card, Drawer, Field, Form, Input, InputGroup, Label, NavigationMenu, Popover, RadioGroup, Select, Separator, Table
 
 ### Database (`src/lib/db/`)
 - **`mongodb.ts`**: MongoDB connection setup
@@ -80,9 +155,22 @@ Shadcn UI components:
   - `User.ts`: User data model
 
 ### Utilities (`src/lib/`)
+- **`auth/`**: Auth configuration (placeholder)
 - **`fonts.ts`**: Font loading configuration (Readex Pro, Open Sans, Arvo, Geist Mono)
 - **`utils.ts`**: General utility functions
-- **`constants/points.ts`**: Points/constants configuration
+- **`constants/points.ts`**: Scoring points configuration
+- **`constants/personality-groups.ts`**: MBTI personality group definitions
+- **`constants/personality-names.ts`**: MBTI type name/label mappings
+
+### Static Assets (`public/images/`)
+- **`avatar-tp/`**: MBTI personality type avatar images (`.webp`)
+- **`illustration/`**: 16 MBTI type SVG illustrations in three variants: default, thumbnail, and withframe
+- **`logo-persona-full.svg`**: Full application logo
+
+### Scripts (`scripts/`)
+- **`seed-assessment.ts`**: Seeds assessment data into MongoDB
+- **`question-data.json`**: Source question data for seeding
+- **`debug-env.ts`**: Utility to debug environment variable loading
 
 ## Technology Stack
 - **Framework**: Next.js 16.1.1 (App Router)
